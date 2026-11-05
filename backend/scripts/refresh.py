@@ -1,4 +1,4 @@
-"""python -m scripts.refresh  -  the scheduled job behind the public site.
+"""python -m scripts.refresh  -  the 3-hourly job behind the public site.
 
 A new data folder gets a full build. After that, scores and injuries refresh each run and
 the slower sources and the models refresh once a week.
