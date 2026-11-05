@@ -6,6 +6,8 @@ from app.models.match.train import train_match_model
 from app.models.similarity.engine import train_similarity
 from app.models.transfer.train import train_transfer_model
 from app.services.predictions import evaluate_live, refresh_predictions
+from app.services.simulations import run_simulation
+from app.services.what_if import refresh_demo
 
 
 def retrain(model: str = "match") -> None:
@@ -29,5 +31,7 @@ def refresh_outputs() -> None:
     try:
         refresh_predictions(cursor)
         evaluate_live(cursor)
+        run_simulation(cursor)  # reuses the stored run when nothing has changed
+        refresh_demo(cursor)
     finally:
         cursor.close()

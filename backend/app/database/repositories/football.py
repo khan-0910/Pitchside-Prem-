@@ -48,7 +48,8 @@ def derive_standings(con: duckdb.DuckDBPyConnection, season_id: str, snapshot: d
                    sum(gf) AS gf, sum(ga) AS ga
             FROM side GROUP BY team_id
         ), teams_in_season AS (
-            SELECT DISTINCT home_team_id AS team_id FROM fixtures WHERE season_id = ?
+            SELECT home_team_id AS team_id FROM fixtures WHERE season_id = ?
+            UNION SELECT away_team_id FROM fixtures WHERE season_id = ?
         )
         SELECT t.team_id, coalesce(played, 0), coalesce(won, 0), coalesce(drawn, 0),
                coalesce(lost, 0), coalesce(gf, 0), coalesce(ga, 0),
@@ -56,7 +57,7 @@ def derive_standings(con: duckdb.DuckDBPyConnection, season_id: str, snapshot: d
         FROM teams_in_season t LEFT JOIN agg USING (team_id)
         ORDER BY pts DESC, gd DESC, coalesce(gf, 0) DESC, t.team_id
         """,
-        [season_id, season_id, season_id],
+        [season_id, season_id, season_id, season_id],
     ).fetchall()
     df = pd.DataFrame(rows, columns=["team_id", "played", "won", "drawn", "lost", "goals_for",
                                      "goals_against", "goal_difference", "points"])

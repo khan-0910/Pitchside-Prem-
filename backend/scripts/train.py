@@ -10,6 +10,8 @@ from app.models.match.train import train_match_model
 from app.models.similarity.engine import train_similarity
 from app.models.transfer.train import train_transfer_model
 from app.services.predictions import refresh_predictions
+from app.services.simulations import run_simulation
+from app.services.what_if import refresh_demo
 
 
 def main() -> None:
@@ -25,6 +27,10 @@ def main() -> None:
         print(json.dumps(train_similarity(con), indent=1, default=str))
     if "transfer" in wanted:
         print(json.dumps(train_transfer_model(con), indent=1, default=str))
+    if "match" in wanted:
+        run = run_simulation(con)
+        print("simulation:", run["simulation_id"], run["iterations"], "iterations")
+        print("what-if demo:", refresh_demo(con))
 
 
 if __name__ == "__main__":
