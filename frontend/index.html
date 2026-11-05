@@ -3,14 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#071511" />
+    <meta name="theme-color" content="#0B6B3B" />
     <meta name="description" content="Premier League predictions, player comparisons, valuations and season simulations built on real data." />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/node_modules/@fontsource/big-shoulders-display/files/big-shoulders-display-latin-900-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/node_modules/@fontsource-variable/archivo/files/archivo-latin-wdth-italic.woff2" />
     <title>Pitchside</title>
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // The homepage headline is the first thing a person should see, so it paints before the app loads.
+      if (location.pathname === "/") {
+        document.getElementById("root").innerHTML =
+          '<div style="min-height:100dvh;background:repeating-linear-gradient(180deg,#0b6738 0 150px,#0e7842 150px 300px);color:#fff;padding:0 max(1.25rem,5.5vw)">' +
+          '<div style="height:84px"></div>' +
+          '<div style="margin-top:2vh;font-family:\'Archivo Variable\',sans-serif;font-stretch:125%;font-style:italic;font-weight:900;letter-spacing:-.025em;line-height:.94;font-size:clamp(2.5rem,8.15vw,10rem)">' +
+          'THE GAME HAS<br />A DATA SIDE.</div></div>';
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

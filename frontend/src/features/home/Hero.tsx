@@ -5,106 +5,96 @@ import { Link } from "react-router-dom";
 import { gsap, useGSAP } from "@/animations/gsap";
 import { scrollToTarget } from "@/animations/lenis";
 import { prefersReducedMotion } from "@/animations/useReducedMotion";
-import { FloatingIcons } from "@/components/football/FloatingIcons";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { timeAgo } from "@/lib/format";
 import { api } from "@/services/api";
 
 import { KickBall } from "./KickBall";
-import { PitchScene } from "./PitchScene";
+import { TeamShape } from "./TeamShape";
 
-const HEADLINE = ["THE GAME", "HAS A", "DATA SIDE."];
-
-function Particles() {
-  // Floodlight haze. CSS only, hidden for reduced motion, fewer on phones.
-  const dots = Array.from({ length: 26 }, (_, i) => ({
-    left: `${(i * 37) % 100}%`,
-    top: `${(i * 23) % 62}%`,
-    delay: `${(i * 1.7) % 9}s`,
-    duration: `${11 + (i % 7)}s`,
-  }));
-  return (
-    <div aria-hidden className="absolute inset-0 motion-reduce:hidden">
-      <style>{`@keyframes haze{0%,100%{opacity:0;transform:translate3d(0,0,0)}50%{opacity:.5;transform:translate3d(10px,-26px,0)}}`}</style>
-      {dots.map((d, i) => (
-        <span
-          key={i}
-          className={`absolute size-[3px] rounded-full bg-flood ${i % 3 ? "max-sm:hidden" : ""}`}
-          style={{ left: d.left, top: d.top, opacity: 0, animation: `haze ${d.duration} ${d.delay} infinite ease-in-out` }}
-        />
-      ))}
-    </div>
-  );
-}
+const HEADLINE = ["THE GAME HAS", "A DATA SIDE."];
 
 function LiveMark() {
   const sources = useQuery({ queryKey: ["sources"], queryFn: api.dataSources });
   const fpl = sources.data?.find((s) => s.source_id === "fpl");
   if (!fpl) return null;
   return (
-    <p className="flex items-center gap-2 text-sm">
+    <p className="flex flex-wrap items-center gap-x-2 text-sm">
       <StatusPill status={fpl.status} />
-      <span className="text-muted">Premier League data, checked {timeAgo(fpl.last_success_at).toLowerCase()}</span>
+      <span className="text-muted">Premier League data checked {timeAgo(fpl.last_success_at).toLowerCase()}</span>
     </p>
   );
 }
 
 export function Hero() {
   const root = useRef<HTMLElement>(null);
-  const copy = useRef<HTMLDivElement>(null);
+  const ball = useRef({ x: 0, y: 0 });
+  const spot = useRef<HTMLDivElement>(null);
 
-  const timeline = useRef<gsap.core.Timeline | null>(null);
-
-  // Runs after PitchScene's effect, so its timeline exists and this section's refs are attached.
   useGSAP(
     () => {
-      const q = gsap.utils.selector(copy);
-      if (prefersReducedMotion() || !timeline.current) {
-        gsap.set(q(".word"), { yPercent: 0 });
-        gsap.set(q(".intro"), { opacity: 1, y: 0 });
-        return;
-      }
-      timeline.current
-        .fromTo(q(".word"), { yPercent: 110 }, { yPercent: 0, duration: 0.8, stagger: 0.09, ease: "power4.out" }, 0.7)
-        .fromTo(q(".intro"), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 1.25);
+      const q = gsap.utils.selector(root);
+      if (prefersReducedMotion()) return;
+      const lines = q<SVGGeometryElement>(".chalk-line");
+      lines.forEach((line) => {
+        const length = line.getTotalLength();
+        gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
+      });
+      gsap.timeline()
+        .to(lines, { strokeDashoffset: 0, duration: 1, stagger: 0.12, ease: "power2.inOut" }, 0)
+        .from(q(".intro"), { y: 14, opacity: 0, duration: 0.55, stagger: 0.09 }, 0.15)
+        .from(spot.current, { scale: 0, duration: 0.7, ease: "back.out(2.2)" }, 0.5);
+
+      // Scrolling plays the ball forward out of the circle and down the pitch.
+      gsap.to(spot.current, {
+        y: () => window.innerHeight * 0.3,
+        rotation: 240,
+        ease: "none",
+        scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: 0.5 },
+      });
     },
     { scope: root },
   );
 
   return (
-    <section ref={root} className="relative flex min-h-dvh flex-col justify-end overflow-hidden" aria-labelledby="hero-title">
-      <PitchScene timeline={timeline} />
-      <Particles />
-      <FloatingIcons count={14} strength={1.5} mouse className="absolute inset-0 z-[5]" />
-      <KickBall />
-      <header className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-4 py-4 sm:px-8">
-        <span className="font-display text-2xl font-black tracking-wide">Pitchside</span>
-        <Link to="/app" className="btn-ghost">
-          Open the dashboard
-        </Link>
+    <section ref={root} className="grass on-grass relative flex min-h-dvh flex-col overflow-hidden" aria-labelledby="hero-title">
+      <svg aria-hidden viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" className="absolute inset-0 size-full" fill="none" stroke="#fff" strokeOpacity="0.9" strokeWidth="3.5">
+        <path className="chalk-line" d="M56 -10V910" />
+        <path className="chalk-line" d="M1544 -10V910" />
+        <path className="chalk-line" d="M56 690H1544" />
+        <circle className="chalk-line" cx="800" cy="690" r="170" />
+        <circle cx="800" cy="690" r="7" fill="#fff" stroke="none" />
+      </svg>
+      <TeamShape ball={ball} />
+
+      <header className="relative z-10 flex items-center justify-between px-5 py-5 sm:px-[5.5vw]">
+        <span className="display text-xl normal-case">Pitchside</span>
+        <Link to="/app" className="btn-ghost !border-white/70 hover:bg-white hover:!text-[#0f1512]">Open the dashboard</Link>
       </header>
-      <div ref={copy} className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-14 sm:px-8 sm:pb-20">
-        <h1 id="hero-title" className="text-[clamp(4rem,min(15.5vw,23vh),13.5rem)] leading-[0.86] tracking-[0.002em]" aria-label="The game has a data side.">
+
+      <div className="relative z-10 flex flex-1 flex-col px-5 pb-8 sm:px-[5.5vw]">
+        {/* index.html paints this same headline before any script loads, so it never animates in. */}
+        <h1 id="hero-title" aria-label="The game has a data side." className="display mt-[2vh] text-[clamp(2.5rem,8.15vw,10rem)]">
           {HEADLINE.map((line) => (
-            <span key={line} aria-hidden className="block overflow-hidden pb-[0.04em]">
-              <span className="word block">
-                {line}
-              </span>
+            <span key={line} aria-hidden className="block overflow-hidden pb-[0.06em] pr-[0.08em]">
+              <span className="word block whitespace-nowrap max-sm:whitespace-normal">{line}</span>
             </span>
           ))}
         </h1>
-        <p className="intro mt-5 max-w-xl text-xl">Understand the Premier League beyond the scoreline.</p>
-        <div className="intro mt-6 flex flex-wrap gap-3">
-          <Link to="/app" className="btn-primary">
-            Explore Pitchside
-          </Link>
-          <button type="button" className="btn-ghost" onClick={() => scrollToTarget("#intelligence")}>
-            Explore the Intelligence
-          </button>
+        <div className="mt-7 max-w-[24rem]">
+          <p className="intro text-lg font-medium leading-snug">Understand the Premier League beyond the scoreline.</p>
+          <div className="intro mt-4 flex flex-wrap gap-2.5">
+            <Link to="/app" className="btn-primary">Explore Pitchside</Link>
+            <button type="button" className="btn-ghost !border-white/70 hover:bg-white hover:!text-[#0f1512]" onClick={() => scrollToTarget("#intelligence")}>
+              Explore the Intelligence
+            </button>
+          </div>
+          <div className="intro mt-3 min-h-6"><LiveMark /></div>
         </div>
-        <div className="intro mt-6 min-h-6">
-          <LiveMark />
-        </div>
+      </div>
+
+      <div ref={spot} className="absolute left-1/2 top-[76.7%] z-20 -ml-[37px] -mt-[37px] max-sm:top-[74%]">
+        <KickBall position={ball} />
       </div>
     </section>
   );

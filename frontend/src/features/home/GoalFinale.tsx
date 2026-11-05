@@ -5,76 +5,70 @@ import { gsap, ScrollTrigger, useGSAP } from "@/animations/gsap";
 import { prefersReducedMotion } from "@/animations/useReducedMotion";
 import { Ball } from "@/components/football/icons";
 
-const CONFETTI = Array.from({ length: 34 }, (_, i) => i);
+const CONFETTI = Array.from({ length: 36 }, (_, i) => i);
 
-/** The move ends in a goal: the ball flies in, the net bulges, the paper comes down. */
+/** The goal line. Penalty box from above, the ball struck from the spot, the net takes it. */
 export function GoalFinale() {
   const root = useRef<HTMLElement>(null);
 
   useGSAP(
     () => {
       const q = gsap.utils.selector(root);
-      if (prefersReducedMotion()) {
-        gsap.set(q(".final-ball"), { xPercent: 0, left: "68%", top: "30%" });
-        return;
-      }
+      if (prefersReducedMotion()) return;
       gsap.set(q(".paper"), { opacity: 0 });
       const score = () => {
-        const tl = gsap.timeline();
-        tl.fromTo(q(".final-ball"),
-          { left: "2%", top: "92%", scale: 1.5, rotation: 0 },
-          { left: "68%", top: "26%", scale: 0.8, rotation: 1100, duration: 0.95, ease: "power2.in" })
-          .to(q(".net"), { scaleY: 1.07, scaleX: 1.04, y: -14, duration: 0.14, ease: "power2.out" })
-          .to(q(".net"), { scaleY: 1, scaleX: 1, y: 0, duration: 1.1, ease: "elastic.out(1, 0.25)" })
-          .to(q(".final-ball"), { top: "80%", duration: 0.5, ease: "bounce.out" }, "-=1.05")
-          .fromTo(q(".goal-word"), { scale: 0.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2.4)" }, "<-0.2");
+        const target = q(".goal-net")[0].getBoundingClientRect();
+        const start = q(".strike")[0].getBoundingClientRect();
+        const drop = target.top + target.height * 0.62 - start.top;
+        gsap.timeline()
+          .to(q(".strike"), { y: drop, x: 90, rotation: 720, scale: 0.8, duration: 0.55, ease: "power3.in" })
+          .to(q(".goal-net"), { scaleY: 1.32, duration: 0.13, ease: "power2.out" })
+          .to(q(".strike"), { y: drop + 26, duration: 0.13, ease: "power2.out" }, "<")
+          .to(q(".goal-net"), { scaleY: 1, duration: 1.1, ease: "elastic.out(1.1, 0.22)" })
+          .to(q(".strike"), { y: drop - 6, duration: 0.5, ease: "power2.out" }, "<");
         q(".paper").forEach((paper: Element) => {
           gsap.fromTo(paper,
             { opacity: 1, x: 0, y: 0, rotation: 0 },
             {
-              x: gsap.utils.random(-260, 260),
-              y: gsap.utils.random(120, 420),
-              rotation: gsap.utils.random(-540, 540),
+              x: gsap.utils.random(-340, 340),
+              y: gsap.utils.random(-420, -120),
+              rotation: gsap.utils.random(-620, 620),
               opacity: 0,
-              duration: gsap.utils.random(1.6, 3),
-              delay: 1,
-              ease: "power1.out",
+              duration: gsap.utils.random(1.5, 2.6),
+              delay: 0.55,
+              ease: "power2.out",
             });
         });
       };
-      ScrollTrigger.create({ trigger: root.current, start: "top 55%", once: true, onEnter: score });
+      ScrollTrigger.create({ trigger: root.current, start: "top 35%", once: true, onEnter: score });
     },
     { scope: root },
   );
 
   return (
-    <section ref={root} className="relative z-10 grid min-h-dvh items-center gap-8 overflow-hidden px-4 py-16 sm:px-8 lg:grid-cols-2 lg:px-24">
-      <div>
-        <h2 data-pass className="text-[clamp(3.6rem,10vw,10rem)] leading-[0.88]">SEE THE GAME DIFFERENTLY.</h2>
-        <Link to="/app" className="btn-primary mt-7">Open the dashboard</Link>
+    <section ref={root} className="on-grass relative z-10 flex min-h-[112dvh] flex-col items-center justify-end overflow-hidden pt-16">
+      <div aria-hidden className="absolute bottom-[86px] left-1/2 h-[66dvh] w-[min(1080px,88vw)] -translate-x-1/2 border-x-[3.5px] border-t-[3.5px] border-white">
+        <div className="absolute -top-[92px] left-1/2 h-[92px] w-[300px] -translate-x-1/2 overflow-hidden max-sm:hidden">
+          <div className="absolute left-0 top-0 h-[184px] w-[300px] rounded-[50%] border-[3.5px] border-white" />
+        </div>
+        <div className="absolute bottom-0 left-1/2 h-[28%] w-[46%] -translate-x-1/2 border-x-[3.5px] border-t-[3.5px] border-white" />
       </div>
-      <div aria-hidden className="relative h-[46vh] min-h-72">
-        <svg viewBox="0 0 520 300" className="absolute inset-0 size-full" preserveAspectRatio="xMidYMid meet" fill="none">
-          <defs>
-            <pattern id="net-mesh" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <path d="M0 0H20M0 0V20" stroke="#F3F5EF" strokeOpacity="0.4" />
-            </pattern>
-          </defs>
-          <g className="net" style={{ transformOrigin: "260px 290px" }}>
-            <path d="M34 22H486L510 290H10z" fill="url(#net-mesh)" />
-          </g>
-          <path d="M28 290V16H492V290" stroke="#F3F5EF" strokeWidth="9" strokeLinejoin="round" />
-          <path d="M0 292H520" stroke="#F3F5EF" strokeOpacity="0.6" strokeWidth="2" />
-        </svg>
-        <p className="goal-word absolute inset-x-0 top-[34%] text-center font-display text-[clamp(3rem,8vw,6.5rem)] font-black text-volt opacity-0 motion-reduce:opacity-100">GOAL</p>
+      <div className="relative z-10 mb-[13dvh] flex w-[min(960px,84vw)] flex-col items-center text-center">
+        <h2 data-pass className="display text-[clamp(2.4rem,7vw,6.5rem)]">SEE THE GAME DIFFERENTLY.</h2>
+        <Link to="/app" className="btn-primary mt-6">Open the dashboard</Link>
+        <span aria-hidden className="strike relative mt-7 block"><span className="block" style={{ filter: "drop-shadow(0 8px 6px rgb(0 40 20 / .5))" }}><Ball size={44} /></span></span>
+      </div>
+      <div aria-hidden className="relative w-full">
+        <div className="absolute inset-x-0 top-0 h-[3.5px] bg-white" />
+        <div className="relative mx-auto h-[86px] w-[min(430px,60vw)]">
+          <div className="goal-net net absolute inset-0 origin-top bg-black/25" />
+          <div className="absolute inset-x-[-6px] top-0 h-[7px] rounded-sm bg-white" />
+          <div className="absolute inset-y-0 -left-1.5 w-[3px] bg-white/80" />
+          <div className="absolute inset-y-0 -right-1.5 w-[3px] bg-white/80" />
+        </div>
         {CONFETTI.map((i) => (
-          <span
-            key={i}
-            className="paper absolute left-[60%] top-[28%] h-3 w-1.5 opacity-0"
-            style={{ background: i % 3 === 0 ? "#B8FF54" : i % 3 === 1 ? "#D6AD56" : "#F3F5EF" }}
-          />
+          <span key={i} className="paper absolute left-1/2 top-2 h-3 w-1.5" style={{ background: i % 3 === 0 ? "#FFD400" : i % 3 === 1 ? "#FFFFFF" : "#E0262B" }} />
         ))}
-        <span className="final-ball absolute -ml-7 -mt-7 block" style={{ left: "2%", top: "92%" }}><Ball size={56} /></span>
       </div>
     </section>
   );

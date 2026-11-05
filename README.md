@@ -6,7 +6,7 @@ A Premier League intelligence platform with live data, three machine learning mo
 
 ## Features
 
-- **Football-first design**: a stadium hero with a kickable ball, floating kit, a live LED ticker, match tickets, shirts, a formation pitch and a goal to finish.
+- **The page is a pitch**: scroll from the centre circle to the goal, with a ball you can kick, teams that hold their shape around it, and a score strip of real fixtures.
 - **Match Centre**: win, draw and loss chances, expected goals, scoreline grids and team form.
 - **Player Lab**: per-90 profiles, role labels, similar-player search and radar comparison.
 - **Transfer Intelligence**: recorded value against a model estimate with a measured range.
@@ -35,7 +35,7 @@ Layers stay apart: `data/` fetches and normalises, `features/` builds inputs, `m
 | Area | Stack |
 |---|---|
 | Backend | Python 3.14, FastAPI, Pydantic, DuckDB, pandas, NumPy, SciPy, scikit-learn, XGBoost, APScheduler, HTTPX, RapidFuzz, structlog |
-| Frontend | React 19, Vite, TypeScript, Tailwind CSS, GSAP with ScrollTrigger, Lenis, Framer Motion, Recharts, TanStack Query, Zustand, Lucide |
+| Frontend | React 19, Vite, TypeScript, Tailwind CSS, Archivo variable, GSAP with ScrollTrigger, Lenis, Framer Motion, Recharts, TanStack Query, Zustand, Phosphor Icons |
 | Testing | pytest, respx, Vitest, Testing Library, Playwright |
 
 SQLAlchemy is not used: all SQL sits in services and repositories, so a move to PostgreSQL stays contained. React Bits components are not used either, because the hand-built motion needed nothing from them.
@@ -241,10 +241,10 @@ npm --prefix frontend run e2e
 
 - Understat is down, so its loader has only been tested against the maintenance page. The `soccerdata` path has not run live.
 - Without a football-data.org key, the league table comes from results and ignores points deductions.
-- The Transfermarkt dump is from September, so that source shows as Stale. That is correct.
+- The transfermarkt-datasets maintainers paused updates in July 2026 with no return date, so that source shows as Stale and valuations stop at June 2026. That is correct, and it recovers by itself if they resume.
 - 37 current squad players have no Transfermarkt link, mostly academy players. They are on the review list if they have played.
 - DuckDB allows one writer, so ingest commands fail while the API runs.
-- Lighthouse on throttled mobile: homepage performance 80 and dashboard 84, under the 85 aim after the football animation layer. Accessibility scored 100 on both.
+- Lighthouse: homepage performance 99 on desktop. On throttled mobile the homepage scores 79 and the dashboard 83, under the 85 aim. Accessibility is 100 and layout shift is 0 on both.
 - The Docker setup has not been built or run.
 
 ## Future improvements

@@ -30,13 +30,13 @@ export function FormationPitch({ players, picked, incoming, tla, onPick }: Props
   const reduced = useReducedMotion();
   return (
     <figure className="m-0">
-      <div className="relative aspect-[68/105] w-full overflow-hidden rounded-md border border-flood/30 bg-[repeating-linear-gradient(180deg,#1b5a3e_0_9.09%,#174d35_9.09%_18.18%)] sm:aspect-[105/68] sm:bg-[repeating-linear-gradient(90deg,#1b5a3e_0_9.09%,#174d35_9.09%_18.18%)]">
-        <svg aria-hidden viewBox="0 0 1050 680" preserveAspectRatio="none" className="absolute inset-0 size-full max-sm:hidden" fill="none" stroke="#F3F5EF" strokeOpacity="0.55" strokeWidth="3">
+      <div className="relative aspect-[68/105] w-full overflow-hidden rounded-md  bg-[repeating-linear-gradient(180deg,#0e7842_0_9.09%,#0b6738_9.09%_18.18%)] sm:aspect-[105/68] sm:bg-[repeating-linear-gradient(90deg,#0e7842_0_9.09%,#0b6738_9.09%_18.18%)]">
+        <svg aria-hidden viewBox="0 0 1050 680" preserveAspectRatio="none" className="absolute inset-0 size-full max-sm:hidden" fill="none" stroke="#fff" strokeOpacity="0.85" strokeWidth="3">
           <path d="M525 0V680M0 138H165V542H0M1050 138H885V542H1050M0 248H55V432H0M1050 248H995V432H1050" />
           <circle cx="525" cy="340" r="92" />
         </svg>
         {/* Phones get the pitch upright, so eleven shirts fit a narrow screen. */}
-        <svg aria-hidden viewBox="0 0 680 1050" preserveAspectRatio="none" className="absolute inset-0 size-full sm:hidden" fill="none" stroke="#F3F5EF" strokeOpacity="0.55" strokeWidth="3">
+        <svg aria-hidden viewBox="0 0 680 1050" preserveAspectRatio="none" className="absolute inset-0 size-full sm:hidden" fill="none" stroke="#fff" strokeOpacity="0.85" strokeWidth="3">
           <path d="M0 525H680M138 0V165H542V0M138 1050V885H542V1050M248 0V55H432V0M248 1050V995H432V1050" />
           <circle cx="340" cy="525" r="92" />
         </svg>
@@ -62,7 +62,7 @@ export function FormationPitch({ players, picked, incoming, tla, onPick }: Props
                     <span className={`rounded-full ${leaving ? "ring-2 ring-alert" : ""}`}>
                       <ShirtGraphic tla={tla} label={initials(name)} size={38} />
                     </span>
-                    <span className="max-w-full truncate rounded-[2px] bg-stadium/70 px-1 text-[11px] leading-4 sm:text-xs">
+                    <span className="max-w-full truncate rounded-[2px] bg-[#0f1512]/80 px-1 text-[11px] leading-4 text-white sm:text-xs">
                       {name.split(" ").at(-1)}
                     </span>
                   </motion.button>

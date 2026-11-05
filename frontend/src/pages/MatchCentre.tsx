@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { PageTitle } from "@/components/layout/DashboardLayout";
-import { Whistle } from "@/components/football/icons";
 import { ProbabilityBar } from "@/components/ui/ProbabilityBar";
 import { DataState, EmptyState, SkeletonRows } from "@/components/ui/states";
 import { ScoreGrid } from "@/features/matches/ScoreGrid";
@@ -18,7 +17,7 @@ function Form({ teamId, name }: { teamId: string; name: string }) {
   const query = useQuery({ queryKey: ["form", teamId], queryFn: () => api.teamForm(teamId) });
   return (
     <div>
-      <h3 className="text-xl">{name} form</h3>
+      <h3 className="text-sm">{name} form</h3>
       <DataState query={query} loading={<SkeletonRows rows={2} />} isEmpty={(d) => d.matches.length === 0} empty={<EmptyState title="No results yet." />}>
         {(data) => (
           <ol className="mt-1 flex list-none flex-wrap gap-1 p-0" aria-label={`Last ${data.matches.length} results, newest first`}>
@@ -27,7 +26,7 @@ function Form({ teamId, name }: { teamId: string; name: string }) {
                 key={m.fixture_id}
                 title={`${m.is_home ? "v" : "at"} ${m.opponent}: ${m.goals_for}-${m.goals_against}`}
                 className={`num flex size-8 items-center justify-center rounded-[2px] font-semibold ${
-                  m.result === "W" ? "bg-volt text-stadium" : m.result === "L" ? "bg-alert text-stadium" : "bg-pitch"
+                  m.result === "W" ? "bg-accent text-page" : m.result === "L" ? "bg-alert text-page" : "bg-sunken"
                 }`}
               >
                 {m.result}
@@ -84,7 +83,7 @@ export default function MatchCentre() {
 
   return (
     <>
-      <PageTitle icon={Whistle} title="Match Centre" intro="Fixtures, results and the model's view of each match." />
+      <PageTitle title="Match Centre" intro="Fixtures, results and the model's view of each match." />
       <div className="mb-5 flex flex-wrap items-end gap-3">
         <div role="tablist" aria-label="Fixture type" className="flex">
           {(["SCHEDULED", "FINISHED"] as View[]).map((v) => (
@@ -94,23 +93,23 @@ export default function MatchCentre() {
               type="button"
               aria-selected={view === v}
               onClick={() => { setView(v); setCount(PAGE); setOpen(null); }}
-              className={`min-h-11 border-b-2 px-4 font-medium ${view === v ? "border-volt text-volt" : "chalk text-muted hover:text-flood"}`}
+              className={`min-h-11 border-b-2 px-4 font-medium ${view === v ? "border-accent text-accent" : "chalk text-muted hover:text-ink"}`}
             >
               {v === "SCHEDULED" ? "Upcoming" : "Results"}
             </button>
           ))}
         </div>
         <label className="min-w-40 flex-1 text-sm text-muted sm:max-w-56">Club
-          <select className="field mt-0.5 text-flood" value={team} onChange={(e) => { setTeam(e.target.value); setCount(PAGE); }}>
+          <select className="field mt-0.5 text-ink" value={team} onChange={(e) => { setTeam(e.target.value); setCount(PAGE); }}>
             <option value="">All clubs</option>
             {teams.data?.map((t) => <option key={t.team_id} value={t.team_id}>{t.name}</option>)}
           </select>
         </label>
         <label className="text-sm text-muted">From
-          <input type="date" className="field mt-0.5 text-flood" value={from} onChange={(e) => setFrom(e.target.value)} />
+          <input type="date" className="field mt-0.5 text-ink" value={from} onChange={(e) => setFrom(e.target.value)} />
         </label>
         <label className="text-sm text-muted">To
-          <input type="date" className="field mt-0.5 text-flood" value={to} onChange={(e) => setTo(e.target.value)} />
+          <input type="date" className="field mt-0.5 text-ink" value={to} onChange={(e) => setTo(e.target.value)} />
         </label>
       </div>
 
@@ -124,7 +123,7 @@ export default function MatchCentre() {
                     type="button"
                     aria-expanded={open === f.fixture_id}
                     onClick={() => setOpen(open === f.fixture_id ? null : f.fixture_id)}
-                    className="grid w-full grid-cols-1 items-center gap-x-6 gap-y-1 py-3 text-left hover:bg-deep/40 md:grid-cols-[9rem_minmax(0,1fr)_minmax(0,18rem)]"
+                    className="grid w-full grid-cols-1 items-center gap-x-6 gap-y-1 py-3 text-left hover:bg-surface/40 md:grid-cols-[9rem_minmax(0,1fr)_minmax(0,18rem)]"
                   >
                     <span className="text-sm text-muted">{kickoff(f.kickoff_utc ?? f.match_date)}</span>
                     <span className="font-medium">

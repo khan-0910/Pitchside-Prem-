@@ -1,9 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { CircleAlert, GripVertical, RotateCcw } from "lucide-react";
+import { ArrowCounterClockwise } from "@phosphor-icons/react/dist/csr/ArrowCounterClockwise";
+import { DotsSixVertical } from "@phosphor-icons/react/dist/csr/DotsSixVertical";
+import { WarningCircle } from "@phosphor-icons/react/dist/csr/WarningCircle";
 import { useDeferredValue, useState } from "react";
 
 import { PageTitle } from "@/components/layout/DashboardLayout";
-import { Ball } from "@/components/football/icons";
 import { ClubEmblem, PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState, ErrorState, SkeletonRows } from "@/components/ui/states";
 import { AVAILABILITY, GROUPS, day, euros, percent, signed } from "@/lib/format";
@@ -31,7 +32,7 @@ function Slot({ label, pick, onClear, onDrop, accepting }: {
       onDragOver={(e) => { e.preventDefault(); setOver(true); }}
       onDragLeave={() => setOver(false)}
       onDrop={(e) => { e.preventDefault(); setOver(false); onDrop(e.dataTransfer.getData("text/plain")); }}
-      className={`flex min-h-20 flex-1 items-center gap-3 border border-dashed p-3 transition-colors ${over ? "border-volt bg-deep" : "chalk"}`}
+      className={`flex min-h-20 flex-1 items-center gap-3 border border-dashed p-3 transition-colors ${over ? "border-accent bg-surface" : "chalk"}`}
     >
       {pick ? (
         <>
@@ -63,7 +64,7 @@ function Replacements({ teamId, picked, onPick }: { teamId: string; picked: stri
   return (
     <div>
       <label className="block text-sm text-muted">Search all current players
-        <input type="search" className="field mt-0.5 text-flood" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name" />
+        <input type="search" className="field mt-0.5 text-ink" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name" />
       </label>
       <div className="mt-2 max-h-96 overflow-y-auto" data-lenis-prevent>
         <DataState query={query} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No player matches that name." />}>
@@ -76,7 +77,7 @@ function Replacements({ teamId, picked, onPick }: { teamId: string; picked: stri
                   onDragStart={(e) => e.dataTransfer.setData("text/plain", `in:${p.player_id}`)}
                   className="chalk flex items-center gap-2 border-b py-1.5"
                 >
-                  <GripVertical aria-hidden className="size-4 shrink-0 text-muted max-md:hidden" />
+                  <DotsSixVertical aria-hidden size={16} className="shrink-0 text-muted max-md:hidden" />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate">{p.name}</span>
                     <span className="block truncate text-sm text-muted">{p.team_short}, {euros(p.market_value_eur)}</span>
@@ -105,9 +106,9 @@ function SquadList({ players, picked, onPick }: { players: SquadPlayer[]; picked
             onDragStart={(e) => e.dataTransfer.setData("text/plain", `out:${p.player_id}`)}
             className="chalk flex items-center gap-2 border-b py-1.5"
           >
-            <GripVertical aria-hidden className="size-4 shrink-0 text-muted max-md:hidden" />
+            <DotsSixVertical aria-hidden size={16} className="shrink-0 text-muted max-md:hidden" />
             <span className="min-w-0 flex-1">
-              <span className="block truncate">{p.name}{p.in_likely_14 && <span className="ml-2 text-sm text-volt">Likely 14</span>}</span>
+              <span className="block truncate">{p.name}{p.in_likely_14 && <span className="ml-2 text-sm text-accent">Likely 14</span>}</span>
               <span className="block truncate text-sm text-muted">
                 {euros(p.market_value_eur)}, {p.minutes.toFixed(0)} min
                 {p.availability && p.availability !== "a" ? `, ${AVAILABILITY[p.availability]?.toLowerCase()}` : ""}
@@ -136,8 +137,8 @@ function Result({ s }: { s: WhatIfScenario }) {
 
   return (
     <section aria-label="Scenario result" className="mt-8">
-      <p className="flex items-center gap-2 text-amber"><CircleAlert aria-hidden className="size-4" /> Hypothetical scenario. Nothing here has happened.</p>
-      <h2 className="mt-1 text-4xl">{s.team}: {s.player_in.name} for {s.player_out.name}</h2>
+      <p className="flex items-center gap-2 text-amber"><WarningCircle aria-hidden size={18} weight="fill" /> Hypothetical scenario. Nothing here has happened.</p>
+      <h2 className="mt-1 text-2xl">{s.team}: {s.player_in.name} for {s.player_out.name}</h2>
       <div className="mt-3"><SubBoard out={s.player_out.name} into={s.player_in.name} /></div>
       {s.position_warning && <p className="mt-1 text-amber">{s.position_warning}</p>}
       {s.notes.map((n) => <p key={n} className="mt-1 text-muted">{n}</p>)}
@@ -172,7 +173,7 @@ function Result({ s }: { s: WhatIfScenario }) {
                 </td>
                 <td className="py-2 text-right">{pct(m.is_home ? m.before.home_win : m.before.away_win)}</td>
                 <td className="py-2 text-right">{pct(m.is_home ? m.after.home_win : m.after.away_win)}</td>
-                <td className={`py-2 text-right ${m.win_change > 0.0005 ? "text-volt" : m.win_change < -0.0005 ? "text-alert" : ""}`}>{signed(m.win_change * 100, 1)} pts</td>
+                <td className={`py-2 text-right ${m.win_change > 0.0005 ? "text-accent" : m.win_change < -0.0005 ? "text-alert" : ""}`}>{signed(m.win_change * 100, 1)} pts</td>
                 <td className="py-2 text-right">{signed(m.expected_goals_change, 2)}</td>
               </tr>
             ))}
@@ -182,12 +183,12 @@ function Result({ s }: { s: WhatIfScenario }) {
 
       <div className="mt-7 grid gap-6 md:grid-cols-2">
         <div>
-          <h3 className="text-2xl">What improves</h3>
+          <h3 className="text-base">What improves</h3>
           {s.trade_offs.advantages.length === 0 && <p className="text-muted">No tracked statistic improves by 10% or more.</p>}
           <ul className="mt-1 list-disc pl-5">{s.trade_offs.advantages.map((a) => <li key={a}>{a}</li>)}</ul>
         </div>
         <div>
-          <h3 className="text-2xl">What gets worse</h3>
+          <h3 className="text-base">What gets worse</h3>
           {s.trade_offs.disadvantages.length === 0 && <p className="text-muted">No tracked statistic falls by 10% or more.</p>}
           <ul className="mt-1 list-disc pl-5">{s.trade_offs.disadvantages.map((a) => <li key={a}>{a}</li>)}</ul>
         </div>
@@ -244,11 +245,11 @@ export default function WhatIfLab() {
 
   return (
     <>
-      <PageTitle icon={Ball} title="What-If Lab" intro="Swap one player and the match model predicts again from the changed squad. Every result here is hypothetical." />
+      <PageTitle title="What-If Lab" intro="Swap one player and the match model predicts again from the changed squad. Every result here is hypothetical." />
       <label className="block max-w-sm text-sm text-muted">Club
         <span className="mt-0.5 flex items-center gap-2">
           {crest && <ClubEmblem tla={crest.tla} size={36} />}
-          <select className="field text-flood" value={team} onChange={(e) => { setTeam(e.target.value); reset(); }}>
+          <select className="field text-ink" value={team} onChange={(e) => { setTeam(e.target.value); reset(); }}>
             <option value="">Choose a club</option>
             {teams.data?.map((t) => <option key={t.team_id} value={t.team_id}>{t.name}</option>)}
           </select>
@@ -270,13 +271,13 @@ export default function WhatIfLab() {
               )}
             </section>
             <section>
-              <h2 className="text-3xl">{squad.data?.team ?? "Squad"}</h2>
+              <h2 className="text-lg">{squad.data?.team ?? "Squad"}</h2>
               <DataState query={squad} loading={<SkeletonRows />}>
                 {(data) => <SquadList players={data.players} picked={out?.player_id ?? null} onPick={pickOut} />}
               </DataState>
             </section>
             <section>
-              <h2 className="text-3xl">Replacement</h2>
+              <h2 className="text-lg">Replacement</h2>
               <Replacements teamId={team} picked={incoming?.player_id ?? null} onPick={pickIn} />
             </section>
           </div>
@@ -288,7 +289,7 @@ export default function WhatIfLab() {
                   <label key={f.fixture_id} className="flex min-h-11 items-center gap-2">
                     <input
                       type="checkbox"
-                      className="size-4 accent-[#B8FF54]"
+                      className="size-4 accent-[#0B7A43]"
                       checked={fixtures.includes(f.fixture_id)}
                       onChange={(e) => setFixtures(e.target.checked ? [...fixtures, f.fixture_id] : fixtures.filter((x) => x !== f.fixture_id))}
                     />
@@ -308,7 +309,7 @@ export default function WhatIfLab() {
               {run.isPending ? "Predicting" : "Apply replacement"}
             </button>
             <button type="button" className="btn-ghost" onClick={reset}>
-              <RotateCcw aria-hidden className="size-4" /> Reset
+              <ArrowCounterClockwise aria-hidden size={16} /> Reset
             </button>
           </div>
           {run.isError && <div className="mt-4"><ErrorState error={run.error} /></div>}

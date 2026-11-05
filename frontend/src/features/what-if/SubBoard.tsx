@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowFatDown } from "@phosphor-icons/react/dist/csr/ArrowFatDown";
+import { ArrowFatUp } from "@phosphor-icons/react/dist/csr/ArrowFatUp";
 
 import { useReducedMotion } from "@/animations/useReducedMotion";
 
@@ -16,8 +17,8 @@ export function SubBoard({ out, into }: { out: string; into: string }) {
       role="img"
       aria-label={`Substitution: ${out} off, ${into} on`}
     >
-      <p className="flex items-center gap-2 text-alert"><ArrowDown aria-hidden className="size-7 shrink-0" /><span className="truncate">{out}</span></p>
-      <p className="flex items-center gap-2 text-volt"><ArrowUp aria-hidden className="size-7 shrink-0" /><span className="truncate">{into}</span></p>
+      <p className="flex items-center gap-2 text-[#ff4d47]"><ArrowFatDown aria-hidden size={24} weight="fill" className="shrink-0" /><span className="truncate">{out}</span></p>
+      <p className="flex items-center gap-2 text-[#7dff6a]"><ArrowFatUp aria-hidden size={24} weight="fill" className="shrink-0" /><span className="truncate">{into}</span></p>
     </motion.div>
   );
 }

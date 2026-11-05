@@ -3,26 +3,26 @@ import { useRef } from "react";
 
 import { gsap, useGSAP } from "@/animations/gsap";
 import { prefersReducedMotion } from "@/animations/useReducedMotion";
-import { ClubEmblem } from "@/components/ui/identity";
+import { ShirtGraphic } from "@/components/football/ShirtCard";
 import { ProbabilityBar } from "@/components/ui/ProbabilityBar";
 import { DataState, EmptyState } from "@/components/ui/states";
 import { kickoff } from "@/lib/format";
 import { api } from "@/services/api";
 import type { Fixture } from "@/types/api";
 
-export function Ticket({ fixture }: { fixture: Fixture }) {
+export function Ticket({ fixture, white }: { fixture: Fixture; white?: boolean }) {
   return (
-    <article className="ticket w-72 shrink-0 snap-start sm:w-80">
+    <article className={`ticket on-paper w-[17.5rem] shrink-0 snap-start ${white ? "ticket-white" : ""}`}>
       <p className="text-sm text-muted">{kickoff(fixture.kickoff_utc ?? fixture.match_date)}</p>
       <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
         <div className="min-w-0 text-center">
-          <span className="flex justify-center"><ClubEmblem tla={fixture.home_tla} size={42} /></span>
-          <p className="mt-1 truncate font-display text-xl font-bold">{fixture.home_short}</p>
+          <span className="flex justify-center"><ShirtGraphic tla={fixture.home_tla} label={fixture.home_tla} size={46} /></span>
+          <p className="mt-1 truncate text-sm font-semibold">{fixture.home_short}</p>
         </div>
-        <span className="num font-display text-3xl font-black text-volt">{fixture.prediction?.most_likely_score ?? "v"}</span>
+        <span className="num font-display text-3xl font-extrabold">{fixture.prediction?.most_likely_score ?? "v"}</span>
         <div className="min-w-0 text-center">
-          <span className="flex justify-center"><ClubEmblem tla={fixture.away_tla} size={42} /></span>
-          <p className="mt-1 truncate font-display text-xl font-bold">{fixture.away_short}</p>
+          <span className="flex justify-center"><ShirtGraphic tla={fixture.away_tla} label={fixture.away_tla} size={46} /></span>
+          <p className="mt-1 truncate text-sm font-semibold">{fixture.away_short}</p>
         </div>
       </div>
       <div className="ticket-stub">
@@ -77,8 +77,8 @@ export function PinnedFixtures({ fixtures }: { fixtures: Fixture[] }) {
 
   return (
     <div ref={root} className="overflow-x-auto lg:overflow-hidden" data-lenis-prevent-horizontal>
-      <div ref={track} className="flex w-max gap-5 px-4 sm:px-8 lg:px-24">
-        {fixtures.map((f) => <Ticket key={f.fixture_id} fixture={f} />)}
+      <div ref={track} className="flex w-max gap-5 px-[7vw]">
+        {fixtures.map((f) => <Ticket key={f.fixture_id} fixture={f} white />)}
       </div>
     </div>
   );

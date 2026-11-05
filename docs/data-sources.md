@@ -7,7 +7,7 @@ Verified by real requests on 2026-11-05. Status on your machine is at `GET /api/
 | Fantasy Premier League API | None | Works. Season 2026-27, 380 fixtures, 90 played, 670 players | Current fixtures, scores, players, xG/xA, prices, injury news |
 | FPL `element-summary` | None | Works. One request per player, weekly | Player totals by past season |
 | football-data.co.uk | None | Works. 34 seasons, 1993-94 to now | Results, shots, odds, xG from 2026-27 only |
-| transfermarkt-datasets | None | Works, but dump dated 2026-09-05, valuations to 2026-06-10 | Valuations, transfers, appearances |
+| transfermarkt-datasets | None | Reachable, but its maintainers paused updates in July 2026 with no return date. Valuations stop at 2026-06-10 | Valuations, transfers, appearances |
 | football-data.org | Free key | Works. 380 fixtures, 90 results, 20 table rows, scores match FPL | Official standings with point deductions |
 | Understat | None | Down: HTTP 200 with a "We will come back soon" page | Team xG when it returns |
 
@@ -15,9 +15,9 @@ Verified by real requests on 2026-11-05. Status on your machine is at `GET /api/
 
 - **FPL** is an unofficial public API. Its schema is checked on every load, and a bad payload rolls back and keeps the last good data. FPL price is a game price, stored as `fpl_price`, and never treated as market value.
 - **football-data.co.uk** adds and drops bookmakers by year, and only 2026-27 has xG. Finished seasons are fetched once. The `Time` column appears from 2019-20 and is local, so only the date is kept.
-- **Transfermarkt** data is a third-party dump, not a live feed. Nothing in this project scrapes Transfermarkt. The health panel marks it STALE because the dump is older than 30 days, even when the download succeeds.
+- **Transfermarkt** data is a third-party dump, not a live feed. Nothing in this project scrapes Transfermarkt. Its pipeline stopped in mid-July 2026 and the maintainers give no return date, so the health panel marks it STALE even when the download succeeds. The loader picks up new files by itself if updates resume.
 - **football-data.org** free tier allows 10 requests per minute, so the loader waits 6.5 seconds between calls. On first load every club resolved, and no points differed from the table worked out from results.
-- **Understat** returns HTTP 200 for its maintenance page, so the loader looks for the page text and not the status code. `soccerdata` is optional and only imported when the site is up. That path has not run against the live site.
+- **Understat** returns HTTP 200 for its maintenance page, so the loader looks for the page text and not the status code. `soccerdata` is optional and only imported when the site is up. That path has not run against the live site. Nothing depends on this source, because team xG comes from football-data.co.uk.
 
 ## Status meaning
 

@@ -65,15 +65,15 @@ export function Radar({ series, title }: { series: Series[]; title: string }) {
     <figure className="m-0">
       <svg viewBox={`-30 -6 ${SIZE + 60} ${SIZE + 12}`} className="w-full max-w-md" role="img" aria-label={`${title}. Percentiles. ${summary}`}>
         {[25, 50, 75, 100].map((ring) => (
-          <polygon key={ring} points={shape(axes.map(() => ring))} fill="none" stroke="rgb(243 245 239 / 0.13)" />
+          <polygon key={ring} points={shape(axes.map(() => ring))} fill="none" stroke="rgb(15 21 18 / 0.13)" />
         ))}
         {axes.map((axis, i) => {
           const [x, y] = point(i, axes.length, 118);
           const [lx, ly] = point(i, axes.length, 100);
           return (
             <g key={axis.stat}>
-              <line x1={CENTER} y1={CENTER} x2={lx} y2={ly} stroke="rgb(243 245 239 / 0.13)" />
-              <text x={x} y={y} fill="#929B95" fontSize="12" textAnchor={Math.abs(x - CENTER) < 12 ? "middle" : x > CENTER ? "start" : "end"} dominantBaseline="middle">
+              <line x1={CENTER} y1={CENTER} x2={lx} y2={ly} stroke="rgb(15 21 18 / 0.13)" />
+              <text x={x} y={y} fill="#5B655F" fontSize="12" textAnchor={Math.abs(x - CENTER) < 12 ? "middle" : x > CENTER ? "start" : "end"} dominantBaseline="middle">
                 {axis.label.length > 16 ? axis.stat.toUpperCase() : axis.label}
               </text>
             </g>

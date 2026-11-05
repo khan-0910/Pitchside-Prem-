@@ -5,6 +5,17 @@ import duckdb
 
 from app.data.status import derive_status
 
+OPTIONAL = {"understat", "football_data_org"}
+NOTES = {
+    "transfermarkt": (
+        "The dataset's maintainers paused updates in July 2026 and have given no return date. Values stay "
+        "frozen until they resume, and the model estimates each player's next value from that last figure."
+    ),
+    "understat": (
+        "Nothing depends on this. Understat's site is down, and team xG comes from football-data.co.uk instead."
+    ),
+}
+
 
 def list_sources(
     con: duckdb.DuckDBPyConnection, now: datetime | None = None
@@ -24,11 +35,12 @@ def list_sources(
         )
         out.append({
             "source_id": r[0], "name": r[1], "description": r[2], "requires_key": r[3],
+            "optional": r[0] in OPTIONAL, "note": NOTES.get(r[0]) if status.value != "LIVE" else None,
             "status": status.value, "last_attempt_at": r[6], "last_success_at": r[7],
             "last_error": r[9], "records": r[10] or 0, "coverage": r[11],
             "upstream_updated_at": r[12], "data_as_of": r[13],
         })
-    return out
+    return sorted(out, key=lambda s: (s["optional"], s["source_id"]))
 
 
 def health_summary(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:

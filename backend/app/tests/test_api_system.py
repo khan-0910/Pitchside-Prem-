@@ -56,3 +56,19 @@ def test_site_serves_files_and_routes_but_never_escapes_its_folder(tmp_path, con
         assert c.get("/api/v1/nope").status_code == 404
         assert c.get("/api/v1/health").json()["status"] == "ok"
     get_settings.cache_clear()
+
+
+def test_sources_explain_themselves(con):
+    from app.services.data_health import list_sources
+    con.execute(
+        """INSERT INTO source_registry (source_id, name, ttl_seconds, stale_after_seconds, last_success_at,
+           last_attempt_ok, records, upstream_updated_at) VALUES
+           ('transfermarkt', 'TM', 3600, 3600, now(), TRUE, 10, now() - INTERVAL 90 DAY),
+           ('fpl', 'FPL', 3600, 3600, now(), TRUE, 10, NULL),
+           ('understat', 'Understat', 3600, 3600, NULL, FALSE, 0, NULL)""")
+    rows = {r["source_id"]: r for r in list_sources(con)}
+    assert rows["transfermarkt"]["status"] == "STALE" and "paused" in rows["transfermarkt"]["note"]
+    assert rows["fpl"]["status"] == "LIVE" and rows["fpl"]["note"] is None
+    assert rows["understat"]["status"] == "UNAVAILABLE"  # the state stays honest
+    assert rows["understat"]["optional"] is True and "Nothing depends" in rows["understat"]["note"]
+    assert [r["source_id"] for r in list_sources(con)][-1] == "understat"  # essentials come first

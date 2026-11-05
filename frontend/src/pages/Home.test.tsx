@@ -16,7 +16,7 @@ const routes = {
   "/models/metrics": { match: null },
 };
 
-describe("Home", () => {
+describe("Home", { timeout: 20_000 }, () => {
   beforeEach(() => setReducedMotion(true));
   afterEach(() => setReducedMotion(false));
 

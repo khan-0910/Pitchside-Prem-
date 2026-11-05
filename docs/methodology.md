@@ -73,7 +73,7 @@ It beats naive baselines and does not beat the market. A walk-forward backtest r
 
 **Undervalued rule.** Players are ranked by positive gap. A clear signal needs the low end of the range above the recorded value and at least 450 minutes this season. On 2026-11-05 no player met the clear-signal bar, and the site says so.
 
-**Live scoring.** The dump's appearances stop in September, so current rows rebuild the last 365 days from FPL totals. This is league-only and slightly different from the all-competition history.
+**Live scoring.** The dump's appearances stop in June 2026, so current rows rebuild the last 365 days from FPL totals. This is league-only and slightly different from the all-competition history.
 
 ## Season simulator
 

@@ -26,13 +26,13 @@ export function ValuationScale({ actual, predicted, low, high, highlight, animat
       <div aria-hidden className="relative h-14">
         <div className="chalk absolute inset-x-0 top-6 border-t" />
         <motion.div
-          className={`absolute top-[21px] h-1.5 origin-left ${highlight ? "bg-volt/40" : "bg-flood/20"}`}
+          className={`absolute top-[21px] h-1.5 origin-left ${highlight ? "bg-accent/40" : "bg-[#b9c1bb]"}`}
           style={{ left: `${at(low)}%`, width: `${at(high) - at(low)}%` }}
           initial={reduced ? false : { scaleX: 0 }}
           {...motionProps}
           transition={{ duration: DURATION.slow, ease: EASE }}
         />
-        <span className="absolute top-3 h-6 w-0.5 bg-flood" style={{ left: `${at(actual)}%` }} />
+        <span className="absolute top-3 h-6 w-0.5 bg-ink" style={{ left: `${at(actual)}%` }} />
         <motion.span
           className="absolute top-[14px] -translate-x-1/2"
           initial={reduced ? false : { left: `${at(actual)}%` }}
@@ -47,7 +47,7 @@ export function ValuationScale({ actual, predicted, low, high, highlight, animat
       </div>
       <div aria-hidden className="flex flex-wrap justify-between gap-x-6 text-sm">
         <span>Recorded <strong className="num font-semibold">{euros(actual)}</strong></span>
-        <span className={highlight ? "text-volt" : ""}>Model <strong className="num font-semibold">{euros(predicted)}</strong></span>
+        <span className={highlight ? "text-accent" : ""}>Model <strong className="num font-semibold">{euros(predicted)}</strong></span>
         <span className="text-muted">Range <span className="num">{euros(low)} to {euros(high)}</span></span>
       </div>
     </div>

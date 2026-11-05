@@ -155,7 +155,7 @@ def build_training_frame(con: duckdb.DuckDBPyConnection) -> pd.DataFrame:
 def build_current_frame(con: duckdb.DuckDBPyConnection, today: date | None = None) -> pd.DataFrame:
     """Today's feature row for each current PL player with a recorded value.
 
-    The dump's appearances stop in September, so the last 365 days are rebuilt from FPL totals:
+    The dump's appearances stop in June 2026, so the last 365 days are rebuilt from FPL totals:
     this season plus the unplayed share of last season. League-only, so pl_share is 1.
     """
     today = today or datetime.now(UTC).date()

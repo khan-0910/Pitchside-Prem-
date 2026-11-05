@@ -359,6 +359,8 @@ export interface DataSource {
   name: string;
   description: string;
   requires_key: boolean;
+  optional: boolean;
+  note: string | null;
   status: SourceStatus;
   last_attempt_at: string | null;
   last_success_at: string | null;

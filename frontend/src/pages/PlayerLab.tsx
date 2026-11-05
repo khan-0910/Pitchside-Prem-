@@ -5,7 +5,6 @@ import { useDeferredValue, useState } from "react";
 import { useReducedMotion } from "@/animations/useReducedMotion";
 import { Radar } from "@/components/charts/Radar";
 import { PageTitle } from "@/components/layout/DashboardLayout";
-import { Shirt } from "@/components/football/icons";
 import { ShirtGraphic } from "@/components/football/ShirtCard";
 import { PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState, SkeletonRows } from "@/components/ui/states";
@@ -26,7 +25,7 @@ function Comparison({ a, b }: { a: PlayerDetail; b: PlayerDetail }) {
   const axes = a.profile?.radar ?? [];
   return (
     <div className="mt-4">
-      <Radar title={`${a.name} compared with ${b.name}`} series={[{ name: a.name, axes, color: "#B8FF54" }, { name: b.name, axes: axesFor(b, axes), color: "#F3F5EF" }]} />
+      <Radar title={`${a.name} compared with ${b.name}`} series={[{ name: a.name, axes, color: "#0B7A43" }, { name: b.name, axes: axesFor(b, axes), color: "#0F1512" }]} />
       <DataState query={query} loading={<SkeletonRows rows={3} />}>
         {(data) => (
           <>
@@ -47,7 +46,7 @@ function Comparison({ a, b }: { a: PlayerDetail; b: PlayerDetail }) {
 function Lines({ title, rows, a, b, empty }: { title: string; rows: SimilarPlayer["shared_strengths"]; a: string; b: string; empty: string }) {
   return (
     <div>
-      <h3 className="text-xl">{title}</h3>
+      <h3 className="text-sm">{title}</h3>
       {rows.length === 0 && <p className="text-sm text-muted">{empty}</p>}
       <ul>
         {rows.map((r) => (
@@ -72,14 +71,14 @@ function Similar({ player, onCompare, compared }: { player: PlayerDetail; onComp
   return (
     <section className="mt-7">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h3 className="text-3xl">Similar players</h3>
+        <h3 className="text-lg">Similar players</h3>
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <label className="flex min-h-11 items-center gap-2">
-            <input type="checkbox" className="size-4 accent-[#B8FF54]" checked={sameClub} onChange={(e) => setSameClub(e.target.checked)} />
+            <input type="checkbox" className="size-4 accent-[#0B7A43]" checked={sameClub} onChange={(e) => setSameClub(e.target.checked)} />
             Include teammates
           </label>
           <label className="text-muted">Age at most
-            <input type="number" min={16} max={45} className="field ml-2 !w-20 text-flood" value={ageMax} onChange={(e) => setAgeMax(e.target.value)} />
+            <input type="number" min={16} max={45} className="field ml-2 !w-20 text-ink" value={ageMax} onChange={(e) => setAgeMax(e.target.value)} />
           </label>
         </div>
       </div>
@@ -130,7 +129,7 @@ function Profile({ id }: { id: string }) {
               <ShirtGraphic tla={p.tla} label={initials(p.name)} size={84} />
             </motion.div>
             <div className="min-w-0">
-              <h2 className="truncate text-4xl">{p.name}</h2>
+              <h2 className="truncate text-2xl">{p.name}</h2>
               <p className="text-muted">{p.team}, {p.age ?? "age unknown"}{p.profile ? `, ${p.profile.role}` : ""}</p>
             </div>
           </header>
@@ -158,7 +157,7 @@ function Profile({ id }: { id: string }) {
               </>
             ) : (
               <div className="mt-4">
-                <Radar title={p.name} series={[{ name: p.name, axes: p.profile.radar, color: "#B8FF54" }]} />
+                <Radar title={p.name} series={[{ name: p.name, axes: p.profile.radar, color: "#0B7A43" }]} />
                 <table className="mt-3 w-full max-w-md text-sm">
                   <caption className="sr-only">Per 90 values and percentiles</caption>
                   <tbody className="num">
@@ -203,33 +202,33 @@ export default function PlayerLab() {
 
   return (
     <>
-      <PageTitle icon={Shirt} title="Player Lab" intro="Search any current player, read their per-90 profile and find who plays like them." />
+      <PageTitle title="Player Lab" intro="Search any current player, read their per-90 profile and find who plays like them." />
       <div className="grid gap-8 lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)]">
         <section aria-label="Find a player">
           <label className="block text-sm text-muted">Search by name
-            <input type="search" className="field mt-0.5 text-flood" placeholder="Saka" value={q} onChange={(e) => setQ(e.target.value)} />
+            <input type="search" className="field mt-0.5 text-ink" placeholder="Saka" value={q} onChange={(e) => setQ(e.target.value)} />
           </label>
           <div className="mt-2 grid grid-cols-2 gap-2">
             <label className="col-span-2 text-sm text-muted">Position
-              <select className="field mt-0.5 text-flood" value={group} onChange={(e) => setGroup(e.target.value)}>
+              <select className="field mt-0.5 text-ink" value={group} onChange={(e) => setGroup(e.target.value)}>
                 <option value="">All positions</option>
                 {Object.entries(GROUPS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </label>
             <label className="col-span-2 text-sm text-muted">Club
-              <select className="field mt-0.5 text-flood" value={team} onChange={(e) => setTeam(e.target.value)}>
+              <select className="field mt-0.5 text-ink" value={team} onChange={(e) => setTeam(e.target.value)}>
                 <option value="">All clubs</option>
                 {teams.data?.map((t) => <option key={t.team_id} value={t.team_id}>{t.name}</option>)}
               </select>
             </label>
             <label className="text-sm text-muted">Age from
-              <input type="number" min={15} max={45} className="field mt-0.5 text-flood" value={ageMin} onChange={(e) => setAgeMin(e.target.value)} />
+              <input type="number" min={15} max={45} className="field mt-0.5 text-ink" value={ageMin} onChange={(e) => setAgeMin(e.target.value)} />
             </label>
             <label className="text-sm text-muted">Age to
-              <input type="number" min={15} max={45} className="field mt-0.5 text-flood" value={ageMax} onChange={(e) => setAgeMax(e.target.value)} />
+              <input type="number" min={15} max={45} className="field mt-0.5 text-ink" value={ageMax} onChange={(e) => setAgeMax(e.target.value)} />
             </label>
             <label className="col-span-2 text-sm text-muted">Minimum minutes this season
-              <input type="number" min={0} step={90} className="field mt-0.5 text-flood" value={minutes} onChange={(e) => setMinutes(e.target.value)} />
+              <input type="number" min={0} step={90} className="field mt-0.5 text-ink" value={minutes} onChange={(e) => setMinutes(e.target.value)} />
             </label>
           </div>
           <div className="mt-3 max-h-[26rem] overflow-y-auto pr-1" data-lenis-prevent>
@@ -242,7 +241,7 @@ export default function PlayerLab() {
                         type="button"
                         aria-current={active === p.player_id}
                         onClick={() => setSelected(p.player_id)}
-                        className={`chalk flex min-h-11 w-full items-center gap-2 border-b px-1 py-1.5 text-left ${active === p.player_id ? "bg-deep text-volt" : "hover:bg-deep/50"}`}
+                        className={`chalk flex min-h-11 w-full items-center gap-2 border-b px-1 py-1.5 text-left ${active === p.player_id ? "bg-surface text-accent" : "hover:bg-surface/50"}`}
                       >
                         <span className="min-w-0 flex-1 truncate">{p.name}</span>
                         <span className="text-sm text-muted">{p.tla}</span>

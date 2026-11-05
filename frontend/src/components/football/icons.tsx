@@ -63,7 +63,7 @@ export const Boot = ({ size, className }: IconProps) => (
 export const Whistle = ({ size, className }: IconProps) => (
   <svg {...svg(size, className)}>
     <path d="M13 9h17v6h-6v1a10 10 0 1 1-11-7z" />
-    <circle cx="13" cy="19" r="3.4" fill="var(--color-stadium)" />
+    <circle cx="13" cy="19" r="3.4" fill="var(--color-page)" />
     <path d="M9 5h3v4H9z" />
   </svg>
 );
@@ -101,7 +101,7 @@ export const RefCard = ({ size, className }: IconProps) => (
 export const Stopwatch = ({ size, className }: IconProps) => (
   <svg {...svg(size, className)}>
     <path d="M13 2h6v3h-2v2a11 11 0 1 1-2 0V5h-2z" />
-    <path d="M16 11v7l5 3" fill="none" stroke="var(--color-stadium)" strokeWidth="2.4" strokeLinecap="round" />
+    <path d="M16 11v7l5 3" fill="none" stroke="var(--color-page)" strokeWidth="2.4" strokeLinecap="round" />
   </svg>
 );
 
@@ -109,7 +109,7 @@ export const Cone = ({ size, className }: IconProps) => (
   <svg {...svg(size, className)}>
     <path d="M16 3l9 22H7z" />
     <path d="M3 25h26v3H3z" />
-    <path d="M12 14h8l1 3H11z" fill="var(--color-stadium)" />
+    <path d="M12 14h8l1 3H11z" fill="var(--color-page)" />
   </svg>
 );
 

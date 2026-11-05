@@ -14,8 +14,8 @@ export function PitchMeter({ prediction, home, away }: { prediction: Prediction;
 
   return (
     <div role="img" aria-label={leader}>
-      <div className="relative h-16 overflow-hidden rounded-sm border border-flood/25 bg-[repeating-linear-gradient(90deg,#174d35_0_10%,#123f2c_10%_20%)]">
-        <svg aria-hidden viewBox="0 0 400 64" preserveAspectRatio="none" className="absolute inset-0 size-full" fill="none" stroke="#F3F5EF" strokeOpacity="0.5">
+      <div className="relative h-16 overflow-hidden rounded-[4px]  bg-[repeating-linear-gradient(90deg,#0e7842_0_10%,#0b6738_10%_20%)]">
+        <svg aria-hidden viewBox="0 0 400 64" preserveAspectRatio="none" className="absolute inset-0 size-full" fill="none" stroke="#fff" strokeOpacity="0.85">
           <path d="M200 0V64M0 12H42V52H0M400 12H358V52H400" />
           <circle cx="200" cy="32" r="16" vectorEffect="non-scaling-stroke" />
         </svg>

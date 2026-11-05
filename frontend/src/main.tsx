@@ -1,8 +1,5 @@
-import "@fontsource/big-shoulders-display/700";
-import "@fontsource/big-shoulders-display/900";
-import "@fontsource/barlow/400";
-import "@fontsource/barlow/500";
-import "@fontsource/barlow/600";
+import "@fontsource-variable/archivo/wdth.css";
+import "@fontsource-variable/archivo/wdth-italic.css";
 import "lenis/dist/lenis.css";
 import "./styles/index.css";
 

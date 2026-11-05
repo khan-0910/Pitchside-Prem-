@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 import { PageTitle } from "@/components/layout/DashboardLayout";
-import { TacticsBoard } from "@/components/football/icons";
 import { ClubEmblem, PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState } from "@/components/ui/states";
 import { StatusPill } from "@/components/ui/StatusPill";
@@ -13,8 +12,8 @@ import { api } from "@/services/api";
 function Heading({ title, to }: { title: string; to?: string }) {
   return (
     <div className="mb-3 flex items-baseline justify-between gap-3">
-      <h2 className="text-3xl">{title}</h2>
-      {to && <Link to={to} className="text-sm text-muted underline underline-offset-4 hover:text-flood">See all</Link>}
+      <h2 className="text-lg">{title}</h2>
+      {to && <Link to={to} className="text-sm text-muted underline underline-offset-4 hover:text-ink">See all</Link>}
     </div>
   );
 }
@@ -57,7 +56,7 @@ function LeagueTable() {
             <p className="mt-2 text-sm text-muted">Worked out from results, so any points deduction is not included.</p>
           )}
           <p className="mt-2 flex flex-wrap gap-x-4 text-sm text-muted">
-            <span><span aria-hidden className="mr-1 inline-block size-2 bg-volt" />Top four</span>
+            <span><span aria-hidden className="mr-1 inline-block size-2 bg-accent" />Top four</span>
             <span><span aria-hidden className="mr-1 inline-block size-2 bg-gold" />Top six</span>
             <span><span aria-hidden className="mr-1 inline-block size-2 bg-alert" />Relegation zone</span>
           </p>
@@ -76,7 +75,7 @@ function Results() {
           {data.items.map((f) => (
             <li key={f.fixture_id} className="chalk grid grid-cols-[1fr_auto_1fr] items-center gap-3 border-b py-2">
               <span className="truncate text-right">{f.home_short}</span>
-              <span className="num bg-deep px-2 font-display text-xl font-bold">{f.home_goals}-{f.away_goals}</span>
+              <span className="num bg-surface px-2 font-display text-xl font-bold">{f.home_goals}-{f.away_goals}</span>
               <span className="truncate">{f.away_short}</span>
             </li>
           ))}
@@ -152,7 +151,7 @@ function Freshness() {
 export default function Overview() {
   return (
     <>
-      <PageTitle icon={TacticsBoard} title="Overview" />
+      <PageTitle title="Overview" />
       <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <section className="board min-w-0 lg:col-span-2 xl:col-span-2"><Heading title="Next up" to="/app/matches" /><FixtureRail /></section>
         <section aria-labelledby="table-h" className="board min-w-0"><div id="table-h"><Heading title="League table" /></div><LeagueTable /></section>

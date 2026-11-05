@@ -76,7 +76,7 @@ test("reduced motion keeps all the content", async ({ browser }) => {
   await page.goto("http://127.0.0.1:8000/");
   await expect(page.getByText("Understand the Premier League beyond the scoreline.")).toBeVisible();
   await expect(page.getByRole("heading", { name: /SEE THE GAME DIFFERENTLY/ })).toBeAttached();
-  await expect(page.getByText("THE GAME", { exact: true })).toBeVisible();
+  await expect(page.getByText("THE GAME HAS", { exact: true })).toBeVisible();
   await context.close();
 });
 
@@ -97,7 +97,7 @@ test("the homepage ends in a goal", async ({ page }, info) => {
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   await page.getByRole("heading", { name: /SEE THE GAME DIFFERENTLY/ }).scrollIntoViewIfNeeded();
-  await expect(page.getByText("GOAL", { exact: true })).toBeVisible({ timeout: 8000 });
+  await expect(page.getByRole("link", { name: "Open the dashboard" }).last()).toBeVisible({ timeout: 8000 });
 });
 
 test("missing routes end somewhere useful", async ({ page }) => {

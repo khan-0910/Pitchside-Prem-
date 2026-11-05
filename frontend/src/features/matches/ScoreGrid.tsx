@@ -26,8 +26,8 @@ export function ScoreGrid({ matrix, home, away }: { matrix: number[][]; home: st
                     title={`${i}-${j}: ${percent(value, 1)}`}
                     className="h-9 w-11 rounded-[2px] text-center sm:w-12"
                     style={{
-                      background: `rgb(184 255 84 / ${(strength * 0.85 + 0.03).toFixed(2)})`,
-                      color: strength > 0.55 ? "#071511" : "#F3F5EF",
+                      background: `rgb(11 122 67 / ${(strength * 0.85 + 0.03).toFixed(2)})`,
+                      color: strength > 0.55 ? "#FFFFFF" : "#0F1512",
                     }}
                   >
                     {percent(value)}

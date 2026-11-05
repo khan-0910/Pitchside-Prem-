@@ -10,7 +10,7 @@ import { percent } from "@/lib/format";
 import { api } from "@/services/api";
 import type { Simulation, Standings } from "@/types/api";
 
-const ROW = 44;
+const ROW = 38;
 
 /** Pinned on desktop: scrolling moves each club from today's place to its projected place. */
 function Moving({ simulation, standings }: { simulation: Simulation; standings: Standings }) {
@@ -47,11 +47,11 @@ function Moving({ simulation, standings }: { simulation: Simulation; standings: 
           <li
             key={row.team_id}
             data-team={row.team_id}
-            className="chalk absolute inset-x-0 flex items-center gap-2 border-b bg-deep px-2"
+            className="chalk absolute inset-x-0 flex items-center gap-2 border-b bg-white"
             style={{ top: i * ROW, height: ROW }}
           >
             <span className="num w-7 text-muted">{i + 1}</span>
-            <ClubEmblem tla={row.tla} size={26} />
+            <ClubEmblem tla={row.tla} size={20} />
             <span className="min-w-0 flex-1 truncate">{row.short_name}</span>
             <span className="num w-16 text-right">{row.expected_points.toFixed(0)}</span>
             <span className={`num w-16 text-right ${row.p_title > 0.1 ? "text-gold" : ""}`}>{percent(row.p_title)}</span>
@@ -67,17 +67,17 @@ export function TableJourney() {
   const simulation = useQuery({ queryKey: ["simulation", "latest"], queryFn: api.latestSimulation });
   const standings = useQuery({ queryKey: ["standings"], queryFn: api.standings });
   return (
-    <section className="relative z-10 mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14 lg:px-24 lg:py-32">
-      <div data-pass className="max-w-md">
-        <h2 className="text-[clamp(2.6rem,6vw,4.75rem)]">How could the table finish?</h2>
-        <p className="mt-3 text-lg text-muted">
+    <section className="relative z-10 mx-auto grid max-w-[82rem] gap-8 px-[7vw] py-20 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-14 lg:py-28 2xl:px-10">
+      <div data-pass className="max-w-sm">
+        <h2 className="text-[clamp(2rem,3.4vw,3.1rem)]">How could the table finish?</h2>
+        <p className="mt-3 text-[1.05rem] leading-snug text-muted">
           {simulation.data
             ? `${simulation.data.iterations.toLocaleString("en-GB")} simulated runs of the ${simulation.data.fixtures_remaining} fixtures left. Probabilities, never promises.`
             : "Thousands of simulated runs of the fixtures left. Probabilities, never promises."}
         </p>
-        <Link to="/app/simulator" className="btn-ghost mt-5">Open Season Simulator</Link>
+        <Link to="/app/simulator" className="btn-ghost mt-5 hover:bg-white hover:!text-[#0f1512]">Open Season Simulator</Link>
       </div>
-      <div className="board min-w-0">
+      <div className="sheet min-w-0">
         <DataState query={simulation} loading={<Skeleton className="h-96 w-full" />}>
           {(sim) => (standings.data ? <Moving simulation={sim} standings={standings.data} /> : <Skeleton className="h-96 w-full" />)}
         </DataState>

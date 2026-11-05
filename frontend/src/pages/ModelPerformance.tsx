@@ -2,17 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis } from "recharts";
 
 import { PageTitle } from "@/components/layout/DashboardLayout";
-import { Stopwatch } from "@/components/football/icons";
 import { DataState, EmptyState } from "@/components/ui/states";
 import { day, euros, percent } from "@/lib/format";
 import { api } from "@/services/api";
 import type { BacktestRow, ModelInfo } from "@/types/api";
 
-const TOOLTIP = { contentStyle: { background: "#0B2018", border: "1px solid #174D35", borderRadius: 3 } };
-const AXIS = { tick: { fill: "#929B95", fontSize: 12 }, stroke: "none" };
-const MODEL = "#B8FF54";
-const MARKET = "#D6AD56";
-const BASE = "#7FB7FF";
+const TOOLTIP = { contentStyle: { background: "#FFFFFF", border: "1px solid #D9DED9", borderRadius: 3 } };
+const AXIS = { tick: { fill: "#5B655F", fontSize: 12 }, stroke: "none" };
+const MODEL = "#0B7A43";
+const MARKET = "#B07A00";
+const BASE = "#3B6FD4";
 
 function Facts({ m }: { m: ModelInfo }) {
   const periods = m.reports.periods as Record<string, [string, string]> | undefined;
@@ -51,7 +50,7 @@ function MatchTable({ m }: { m: ModelInfo }) {
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       <div>
-        <h3 className="text-2xl">Test results</h3>
+        <h3 className="text-base">Test results</h3>
         <table className="mt-1 w-full text-left">
           <thead>
             <tr className="chalk border-b text-sm text-muted">
@@ -63,7 +62,7 @@ function MatchTable({ m }: { m: ModelInfo }) {
           </thead>
           <tbody className="num">
             {rows.map((r, i) => (
-              <tr key={r.name} className={`chalk border-b ${i === 0 ? "text-volt" : ""}`}>
+              <tr key={r.name} className={`chalk border-b ${i === 0 ? "text-accent" : ""}`}>
                 <td className="py-1.5">{r.name}</td>
                 <td className="py-1.5 text-right">{r.s.log_loss.toFixed(3)}</td>
                 <td className="py-1.5 text-right">{r.s.brier.toFixed(3)}</td>
@@ -86,7 +85,7 @@ function MatchTable({ m }: { m: ModelInfo }) {
         </p>
       </div>
       <div>
-        <h3 className="text-2xl">Model selection</h3>
+        <h3 className="text-base">Model selection</h3>
         <table className="mt-1 w-full text-left">
           <thead>
             <tr className="chalk border-b text-sm text-muted">
@@ -111,12 +110,12 @@ function MatchTable({ m }: { m: ModelInfo }) {
 function Backtest({ rows }: { rows: BacktestRow[] }) {
   return (
     <figure className="m-0">
-      <h3 className="text-2xl">Walk-forward backtest</h3>
+      <h3 className="text-base">Walk-forward backtest</h3>
       <figcaption className="text-sm text-muted">Refitted before each season, then scored on it. Lower is better. The newest season is partial.</figcaption>
       <div className="mt-2 h-72" aria-hidden>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={rows} margin={{ left: 0, right: 12, top: 8 }}>
-            <CartesianGrid stroke="rgb(243 245 239 / 0.08)" vertical={false} />
+            <CartesianGrid stroke="rgb(15 21 18 / 0.08)" vertical={false} />
             <XAxis dataKey="season" {...AXIS} />
             <YAxis domain={["auto", "auto"]} width={46} {...AXIS} tickFormatter={(v: number) => v.toFixed(2)} />
             <Tooltip {...TOOLTIP} formatter={(v) => Number(v).toFixed(3)} />
@@ -150,16 +149,16 @@ function Calibration({ data }: { data: Record<string, { predicted: number; obser
   ];
   return (
     <figure className="m-0">
-      <h3 className="text-2xl">Calibration</h3>
+      <h3 className="text-base">Calibration</h3>
       <figcaption className="text-sm text-muted">Points near the diagonal mean a stated 40% really happens about 40% of the time.</figcaption>
       <div className="mt-2 h-72" aria-hidden>
         <ResponsiveContainer width="100%" height="100%">
           <ScatterChart margin={{ left: 0, right: 12, top: 8 }}>
-            <CartesianGrid stroke="rgb(243 245 239 / 0.08)" />
+            <CartesianGrid stroke="rgb(15 21 18 / 0.08)" />
             <XAxis type="number" dataKey="predicted" name="Predicted" domain={[0, 0.8]} {...AXIS} tickFormatter={(v: number) => percent(v)} />
             <YAxis type="number" dataKey="observed" name="Observed" domain={[0, 0.8]} width={46} {...AXIS} tickFormatter={(v: number) => percent(v)} />
             <ZAxis range={[60, 60]} />
-            <ReferenceLine segment={[{ x: 0, y: 0 }, { x: 0.8, y: 0.8 }]} stroke="#929B95" strokeDasharray="4 4" />
+            <ReferenceLine segment={[{ x: 0, y: 0 }, { x: 0.8, y: 0.8 }]} stroke="#5B655F" strokeDasharray="4 4" />
             <Tooltip {...TOOLTIP} formatter={(v) => percent(Number(v), 1)} />
             <Legend wrapperStyle={{ fontSize: 13 }} />
             {series.map((s) => <Scatter key={s.key} name={s.name} data={data[s.key]} fill={s.color} shape={s.shape} isAnimationActive={false} />)}
@@ -175,7 +174,7 @@ function Confusion({ matrix }: { matrix: number[][] }) {
   const top = Math.max(...matrix.flat());
   return (
     <div>
-      <h3 className="text-2xl">Confusion matrix</h3>
+      <h3 className="text-base">Confusion matrix</h3>
       <table className="mt-2 border-separate border-spacing-0.5">
         <caption className="mb-1 text-left text-sm text-muted">Rows show what happened. Columns show the model's top pick.</caption>
         <thead>
@@ -189,7 +188,7 @@ function Confusion({ matrix }: { matrix: number[][] }) {
             <tr key={labels[i]}>
               <th scope="row" className="pr-2 text-left text-sm font-normal text-muted">{labels[i]}</th>
               {row.map((v, j) => (
-                <td key={j} className="h-12 w-20 text-center" style={{ background: `rgb(184 255 84 / ${(v / top * 0.8 + 0.04).toFixed(2)})`, color: v / top > 0.55 ? "#071511" : "#F3F5EF" }}>{v}</td>
+                <td key={j} className="h-12 w-20 text-center" style={{ background: `rgb(11 122 67 / ${(v / top * 0.8 + 0.04).toFixed(2)})`, color: v / top > 0.55 ? "#FFFFFF" : "#0F1512" }}>{v}</td>
               ))}
             </tr>
           ))}
@@ -202,7 +201,7 @@ function Confusion({ matrix }: { matrix: number[][] }) {
 function SliceTable({ title, rows }: { title: string; rows: { slice: string; mae_eur: number; median_ae_eur: number; n: number }[] }) {
   return (
     <div>
-      <h3 className="text-2xl">{title}</h3>
+      <h3 className="text-base">{title}</h3>
       <table className="mt-1 w-full text-left">
         <thead><tr className="chalk border-b text-sm text-muted"><th scope="col" className="py-1 font-normal">Slice</th><th scope="col" className="py-1 text-right font-normal">Mean error</th><th scope="col" className="py-1 text-right font-normal">Median error</th><th scope="col" className="py-1 text-right font-normal">Sample</th></tr></thead>
         <tbody className="num">
@@ -226,7 +225,7 @@ function Transfer({ m }: { m: ModelInfo }) {
         <thead><tr className="chalk border-b text-sm text-muted"><th scope="col" className="py-1.5 font-normal">Estimate</th><th scope="col" className="py-1.5 text-right font-normal">Mean error</th><th scope="col" className="py-1.5 text-right font-normal max-sm:hidden">RMSE</th><th scope="col" className="py-1.5 text-right font-normal">Median error</th><th scope="col" className="py-1.5 text-right font-normal">R², log scale</th></tr></thead>
         <tbody className="num">
           {rows.filter(([, s]) => s).map(([name, s], i) => (
-            <tr key={name} className={`chalk border-b ${i === 0 ? "text-volt" : ""}`}>
+            <tr key={name} className={`chalk border-b ${i === 0 ? "text-accent" : ""}`}>
               <td className="py-1.5">{name}</td>
               <td className="py-1.5 text-right">{euros(s.mae_eur)}</td>
               <td className="py-1.5 text-right max-sm:hidden">{euros(s.rmse_eur)}</td>
@@ -275,13 +274,13 @@ export default function ModelPerformance() {
   const query = useQuery({ queryKey: ["model-metrics"], queryFn: api.modelMetrics });
   return (
     <>
-      <PageTitle icon={Stopwatch} title="Model Performance" intro="How each model was built and how it scored on data it had never seen." />
+      <PageTitle title="Model Performance" intro="How each model was built and how it scored on data it had never seen." />
       <DataState query={query} isEmpty={(d) => !d.match && !d.transfer && !d.similarity} empty={<EmptyState title="No models have been trained yet." />}>
         {(data) => (
           <div className="space-y-14">
             {data.match && (
               <section className="space-y-7">
-                <h2 className="text-4xl">Match predictor</h2>
+                <h2 className="text-lg">Match predictor</h2>
                 <Facts m={data.match} />
                 <MatchTable m={data.match} />
                 <Backtest rows={data.match.reports.backtest as BacktestRow[]} />
@@ -291,10 +290,10 @@ export default function ModelPerformance() {
                 </div>
               </section>
             )}
-            {data.similarity && <section><h2 className="mb-4 text-4xl">Player similarity</h2><Similarity m={data.similarity} /></section>}
-            {data.transfer && <section><h2 className="mb-4 text-4xl">Transfer value</h2><Transfer m={data.transfer} /></section>}
+            {data.similarity && <section><h2 className="mb-4 text-2xl">Player similarity</h2><Similarity m={data.similarity} /></section>}
+            {data.transfer && <section><h2 className="mb-4 text-2xl">Transfer value</h2><Transfer m={data.transfer} /></section>}
             <section>
-              <h2 className="text-4xl">Limitations</h2>
+              <h2 className="text-lg">Limitations</h2>
               <ul className="mt-2 max-w-3xl list-disc space-y-1 pl-5">{LIMITS.map((l) => <li key={l}>{l}</li>)}</ul>
               <p className="mt-4 max-w-3xl text-muted">{(data.match ?? data.transfer ?? data.similarity)?.disclaimer}</p>
             </section>

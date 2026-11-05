@@ -1,10 +1,10 @@
+import { Trophy as TrophyIcon } from "@phosphor-icons/react/dist/csr/Trophy";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useState } from "react";
 
 import { useReducedMotion } from "@/animations/useReducedMotion";
 import { PageTitle } from "@/components/layout/DashboardLayout";
-import { Ball, Trophy, Trophy as TrophyIcon } from "@/components/football/icons";
 import { BallLoader } from "@/components/football/BallLoader";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { ClubEmblem } from "@/components/ui/identity";
@@ -19,18 +19,14 @@ function Bars({ rows, pick, title, color }: { rows: SimulationRow[]; pick: (r: S
   const top = Math.max(...shown.map(pick), 0.01);
   return (
     <section>
-      <h2 className="text-2xl">{title}</h2>
+      <h2 className="text-lg">{title}</h2>
       {shown.length === 0 && <p className="text-muted">No club reaches 1% in this run.</p>}
       <ul className="mt-2 space-y-1.5">
         {shown.map((r) => (
           <li key={r.team_id} className="grid grid-cols-[6.5rem_1fr_3.2rem] items-center gap-2 text-sm">
             <span className="truncate">{r.short_name}</span>
-            <span aria-hidden className="h-2.5 pr-3">
-              <motion.span layout className="relative block h-full rounded-r-[4px]" style={{ width: `${(pick(r) / top) * 100}%`, background: color }}>
-                <motion.span className="absolute -right-2 -top-[4px] block" initial={{ rotate: -720 }} animate={{ rotate: 0 }} transition={{ duration: 1 }}>
-                  <Ball size={18} />
-                </motion.span>
-              </motion.span>
+            <span aria-hidden className="h-2.5">
+              <motion.span layout className="block h-full rounded-r-[3px]" style={{ width: `${(pick(r) / top) * 100}%`, background: color }} />
             </span>
             <span className="num text-right">{percent(pick(r), 1)}</span>
           </li>
@@ -44,7 +40,7 @@ function Distribution({ rows }: { rows: SimulationRow[] }) {
   const teams = rows.length;
   return (
     <section className="min-w-0">
-      <h2 className="text-2xl">Finishing position chances</h2>
+      <h2 className="text-lg">Finishing position chances</h2>
       <p className="text-sm text-muted">Each row adds up to 100%. Darker means less likely.</p>
       <div className="mt-2 overflow-x-auto" data-lenis-prevent-horizontal>
         <table className="w-full min-w-[42rem] border-separate border-spacing-px text-xs">
@@ -63,7 +59,7 @@ function Distribution({ rows }: { rows: SimulationRow[] }) {
                     key={i}
                     title={`${r.short_name} finishing ${i + 1}: ${percent(p, 1)}`}
                     className="h-6 text-center"
-                    style={{ background: `rgb(184 255 84 / ${Math.min(p * 2.4, 0.95).toFixed(2)})`, color: p > 0.2 ? "#071511" : "transparent" }}
+                    style={{ background: `rgb(11 122 67 / ${Math.min(p * 2.6, 1).toFixed(2)})`, color: p > 0.2 ? "#071511" : "transparent" }}
                   >
                     {p > 0.2 ? Math.round(p * 100) : ""}
                   </td>
@@ -114,8 +110,8 @@ function FinalTable({ sim, previous }: { sim: Simulation; previous: Map<string, 
                     <span className="w-5 text-muted">{i + 1}</span>
                     <ClubEmblem tla={r.tla} size={22} />
                     <span className="min-w-0 max-w-28 truncate">{r.short_name}</span>
-                    {i === 0 && <motion.span className="text-gold" initial={reduced ? false : { y: -14, scale: 0 }} animate={{ y: 0, scale: 1 }} transition={{ type: "spring", stiffness: 260, damping: 9 }}><TrophyIcon size={18} /></motion.span>}
-                    {moved !== 0 && <span className={`text-sm max-sm:hidden ${moved > 0 ? "text-volt" : "text-muted"}`}>{moved > 0 ? `up ${moved}` : `down ${-moved}`}</span>}
+                    {i === 0 && <motion.span className="text-[#c99700]" initial={reduced ? false : { y: -10, scale: 0 }} animate={{ y: 0, scale: 1 }} transition={{ type: "spring", stiffness: 300, damping: 14 }}><TrophyIcon aria-hidden size={16} weight="fill" /></motion.span>}
+                    {moved !== 0 && <span className={`text-sm max-sm:hidden ${moved > 0 ? "text-accent" : "text-muted"}`}>{moved > 0 ? `up ${moved}` : `down ${-moved}`}</span>}
                   </span>
                 </td>
                 <td className="py-1.5 text-right text-muted max-sm:hidden">{r.current_points}</td>
@@ -165,7 +161,7 @@ export default function SeasonSimulator() {
 
   return (
     <>
-      <PageTitle icon={Trophy} title="Season Simulator" intro="Plays every remaining fixture thousands of times, keeping the real results so far." />
+      <PageTitle title="Season Simulator" intro="Plays every remaining fixture thousands of times, keeping the real results so far." />
       <form
         className="mb-6 flex flex-wrap items-end gap-3"
         onSubmit={(e) => {
@@ -174,10 +170,10 @@ export default function SeasonSimulator() {
         }}
       >
         <label className="text-sm text-muted">Seasons to simulate
-          <input type="number" min={100} max={50000} step={100} required className="field mt-0.5 !w-36 text-flood" value={iterations} onChange={(e) => setIterations(Number(e.target.value))} />
+          <input type="number" min={100} max={50000} step={100} required className="field mt-0.5 !w-36 text-ink" value={iterations} onChange={(e) => setIterations(Number(e.target.value))} />
         </label>
         <label className="text-sm text-muted">Random seed
-          <input type="number" min={0} className="field mt-0.5 !w-28 text-flood" value={seed} onChange={(e) => setSeed(Number(e.target.value))} />
+          <input type="number" min={0} className="field mt-0.5 !w-28 text-ink" value={seed} onChange={(e) => setSeed(Number(e.target.value))} />
         </label>
         <button type="submit" className="btn-primary" disabled={run.isPending || !valid}>
           {run.isPending ? "Simulating" : "Run simulation"}
@@ -214,8 +210,8 @@ export default function SeasonSimulator() {
           <FinalTable sim={shown} previous={previous.current} />
           <p className="max-w-3xl text-sm text-muted">{shown.note} Seed {shown.seed}, model {shown.model_version}, run {day(shown.created_at)}.</p>
           <div className="grid gap-8 md:grid-cols-2">
-            <Bars rows={shown.results} pick={(r) => r.p_title} title="Title chance" color="#D6AD56" />
-            <Bars rows={shown.results} pick={(r) => r.p_top4} title="Top-four chance" color="#B8FF54" />
+            <Bars rows={shown.results} pick={(r) => r.p_title} title="Title chance" color="#F0B400" />
+            <Bars rows={shown.results} pick={(r) => r.p_top4} title="Top-four chance" color="#0B7A43" />
           </div>
           <Distribution rows={shown.results} />
         </div>
@@ -226,13 +222,13 @@ export default function SeasonSimulator() {
       )}
 
       <section className="mt-9">
-        <h2 className="text-2xl">Earlier runs</h2>
+        <h2 className="text-lg">Earlier runs</h2>
         <DataState query={history} isEmpty={(d) => d.length === 0} empty={<EmptyState title="Runs you start will be listed here." />}>
           {(rows) => (
             <ul className="mt-2">
               {rows.map((r) => (
                 <li key={r.simulation_id} className="chalk border-b">
-                  <button type="button" onClick={() => setViewing(r.simulation_id)} className="grid min-h-11 w-full grid-cols-2 items-center gap-x-4 py-1.5 text-left hover:bg-deep/40 md:grid-cols-4">
+                  <button type="button" onClick={() => setViewing(r.simulation_id)} className="grid min-h-11 w-full grid-cols-2 items-center gap-x-4 py-1.5 text-left hover:bg-surface/40 md:grid-cols-4">
                     <span>{day(r.created_at)}</span>
                     <span className="num text-muted">{r.iterations.toLocaleString("en-GB")} seasons, seed {r.seed}</span>
                     <span>{r.title_favourite} {percent(r.p_title)}</span>

@@ -27,7 +27,7 @@ function Demo({ fn }: { fn: () => Promise<string[]> }) {
 describe("DataState", () => {
   it("shows loading, then data", async () => {
     render(wrap(<Demo fn={async () => ["ok"]} />));
-    expect(screen.getByRole("status")).toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Loading" })).toBeInTheDocument();
     expect(await screen.findByText("ok")).toBeInTheDocument();
   });
 

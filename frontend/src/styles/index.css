@@ -1,216 +1,189 @@
 @import "tailwindcss";
 
+/*
+  Pitchside's palette is the game's own: grass, chalk, ink, yellow card, red card.
+  Colour names describe jobs, so any block can flip its meaning with one scope class.
+*/
 @theme {
-  --color-stadium: #071511;
-  --color-deep: #0b2018;
-  --color-raised: #10291f;
-  --color-pitch: #174d35;
-  --color-volt: #b8ff54;
-  --color-flood: #f3f5ef;
-  --color-muted: #929b95;
-  --color-gold: #d6ad56;
-  --color-amber: #e9a23b;
-  --color-alert: #e45b5b;
-  --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
-  --font-sans: "Barlow", system-ui, sans-serif;
+  --color-page: #f2f4f1;
+  --color-surface: #ffffff;
+  --color-sunken: #e7ebe7;
+  --color-line: #d9ded9;
+  --color-ink: #0f1512;
+  --color-muted: #5b655f;
+  --color-accent: #0b7a43;
+  --color-accent-ink: #ffffff;
+  --color-gold: #8f6b00;
+  --color-amber: #a85f00;
+  --color-alert: #cf2a24;
+  --color-grass: #0c6e3c;
+  --color-card-yellow: #ffd400;
+  --color-card-red: #e0262b;
+  --font-display: "Archivo Variable", "Arial Narrow", sans-serif;
+  --font-sans: "Archivo Variable", system-ui, sans-serif;
   --ease-athletic: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
   html {
-    background: var(--color-stadium);
-    color: var(--color-flood);
+    background: var(--color-page);
+    color: var(--color-ink);
     font-family: var(--font-sans);
-    font-size: 17px;
+    font-size: 16px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    color-scheme: dark;
+    text-rendering: optimizeLegibility;
   }
-  body {
-    min-height: 100dvh;
-    overflow-x: hidden;
-    background: var(--color-stadium);
-  }
-  h1, h2, h3 {
-    font-family: var(--font-display);
-    font-weight: 900;
-    line-height: 0.98;
-    letter-spacing: 0.005em;
-    text-wrap: balance;
-  }
-  :focus-visible {
-    outline: 2px solid var(--color-volt);
-    outline-offset: 2px;
-    border-radius: 2px;
-  }
+  body { min-height: 100dvh; overflow-x: hidden; background: var(--color-page); }
+  h1, h2, h3 { font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; text-wrap: balance; }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 2px; }
   button, select, input { font: inherit; }
   button { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
 }
 
 @layer components {
+  /* Three voices from one family. */
+  .display { font-stretch: 125%; font-style: italic; font-weight: 900; letter-spacing: -0.025em; line-height: 0.94; }
+  .font-display { font-stretch: 75%; letter-spacing: 0; }
   .num { font-variant-numeric: tabular-nums lining-nums; }
+
+  /* Real grass: mown bands across the direction of travel, with a fine blade texture. */
+  .grass {
+    background-color: #0c6e3c;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(180deg, #0b6738 0 150px, #0e7842 150px 300px);
+  }
+
+  /* Anything on the grass reads white, with yellow as its highlight. */
+  .on-grass {
+    --color-ink: #ffffff;
+    --color-muted: rgb(255 255 255 / 0.82);
+    --color-accent: #ffd400;
+    --color-accent-ink: #0f1512;
+    --color-line: rgb(255 255 255 / 0.3);
+    --color-surface: rgb(255 255 255 / 0.12);
+    --color-sunken: rgb(255 255 255 / 0.16);
+    color: var(--color-ink);
+  }
+  /* A team sheet lying on the grass flips back to ink on paper. */
+  .sheet, .on-paper {
+    --color-ink: #0f1512;
+    --color-muted: #5b655f;
+    --color-accent: #0b7a43;
+    --color-accent-ink: #ffffff;
+    --color-line: #d9ded9;
+    --color-surface: #ffffff;
+    --color-sunken: #e7ebe7;
+    color: var(--color-ink);
+  }
+  .sheet {
+    position: relative;
+    padding: clamp(1.1rem, 2vw, 1.75rem);
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 1px 1px rgb(0 40 20 / 0.25), 0 26px 50px -22px rgb(0 30 15 / 0.65);
+  }
+
+  .board { position: relative; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--color-line); background: var(--color-surface); }
+
+  .chalk { border-color: var(--color-line); }
 
   .btn-primary {
     display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-    min-height: 2.75rem; padding: 0.5rem 1.25rem; border-radius: 3px;
-    background: var(--color-volt); color: var(--color-stadium); font-weight: 600;
-    transition: background-color 150ms, transform 150ms var(--ease-athletic);
+    min-height: 2.75rem; padding: 0.5rem 1.15rem; border-radius: 4px;
+    background: var(--color-accent); color: var(--color-accent-ink); font-weight: 650;
+    transition: filter 140ms, transform 140ms var(--ease-athletic);
   }
-  .btn-primary:hover { background: #cdff85; }
+  .btn-primary:hover { filter: brightness(1.08); }
   .btn-primary:active { transform: translateY(1px); }
-  .btn-primary:disabled { background: var(--color-pitch); color: var(--color-muted); }
+  .btn-primary:disabled { background: var(--color-sunken); color: var(--color-muted); }
 
   .btn-ghost {
     display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-    min-height: 2.75rem; padding: 0.5rem 1.25rem; border-radius: 3px;
-    border: 1px solid color-mix(in srgb, var(--color-flood) 28%, transparent);
-    color: var(--color-flood); font-weight: 500; transition: border-color 150ms;
+    min-height: 2.75rem; padding: 0.5rem 1.15rem; border-radius: 4px;
+    border: 1px solid var(--color-line); color: var(--color-ink); font-weight: 600;
+    transition: background-color 140ms, border-color 140ms;
   }
-  .btn-ghost:hover { border-color: var(--color-flood); }
+  .btn-ghost:hover { border-color: var(--color-ink); }
 
   .field {
-    min-height: 2.75rem; width: 100%; padding: 0.4rem 0.75rem; border-radius: 3px;
-    background: var(--color-deep); color: var(--color-flood);
-    border: 1px solid color-mix(in srgb, var(--color-flood) 16%, transparent);
+    min-height: 2.5rem; width: 100%; padding: 0.35rem 0.7rem; border-radius: 4px;
+    background: var(--color-surface); color: var(--color-ink);
+    border: 1px solid var(--color-line); transition: border-color 140ms;
   }
+  .field:hover { border-color: var(--color-muted); }
   .field::placeholder { color: var(--color-muted); }
 
-  /* A touchline, not a box: data sits on the pitch, separated by chalk. */
-  .chalk { border-color: color-mix(in srgb, var(--color-flood) 12%, transparent); }
-
-  .skeleton {
-    position: relative; overflow: hidden; border-radius: 2px;
-    background: color-mix(in srgb, var(--color-pitch) 40%, transparent);
-  }
+  .skeleton { position: relative; overflow: hidden; border-radius: 3px; background: var(--color-sunken); }
   .skeleton::after {
     content: ""; position: absolute; inset: 0; transform: translateX(-100%);
-    background: linear-gradient(90deg, transparent, rgb(243 245 239 / 0.07), transparent);
-    animation: shimmer 1.5s infinite;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.65), transparent);
+    animation: shimmer 1.4s infinite;
   }
   @keyframes shimmer { to { transform: translateX(100%); } }
 
-  .spotlight { position: relative; }
-  .spotlight::before {
-    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
-    background: radial-gradient(420px circle at var(--x, 50%) var(--y, 50%), rgb(184 255 84 / 0.07), transparent 70%);
-    transition: opacity 250ms;
-  }
-  .spotlight:hover::before { opacity: 1; }
-}
-
-@layer components {
-  /* Mown grass: light and dark bands, knocked back so numbers stay readable. */
-  .pitch-stripes {
-    background-color: var(--color-stadium);
-    background-image:
-      linear-gradient(180deg, rgb(7 21 17 / 0.62), rgb(7 21 17 / 0.8)),
-      repeating-linear-gradient(90deg, #1b5a3e 0 9rem, #124230 9rem 18rem);
-  }
-
-  /* A tactics board: the panel data sits on. */
-  .board {
-    position: relative;
-    padding: 1.25rem;
-    border-radius: 8px;
-    border: 1px solid color-mix(in srgb, var(--color-flood) 14%, transparent);
-    background: linear-gradient(155deg, rgb(20 56 41 / 0.94), rgb(9 28 21 / 0.92));
-    box-shadow: 0 22px 44px -26px #000;
-  }
-
-  .floaty { animation: drift 9s ease-in-out infinite; will-change: transform; }
-  @keyframes drift {
-    0%, 100% { transform: translate3d(0, 0, 0) rotate(-9deg); }
-    50% { transform: translate3d(14px, -26px, 0) rotate(11deg); }
-  }
-
-  /* Perimeter advertising board, dot-matrix. */
-  .led {
-    position: relative; overflow: hidden; background: #040a08;
-    border-block: 1px solid rgb(184 255 84 / 0.3);
-    font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; letter-spacing: 0.05em;
-  }
-  .led::after {
-    content: ""; position: absolute; inset: 0; pointer-events: none;
-    background-image: radial-gradient(transparent 55%, rgb(0 0 0 / 0.55) 56%);
-    background-size: 3px 3px;
-  }
-  .led-track { display: flex; width: max-content; animation: marquee 70s linear infinite; }
-  .led:hover .led-track, .led:focus-within .led-track { animation-play-state: paused; }
-  @keyframes marquee { to { transform: translate3d(-50%, 0, 0); } }
-
-  /* Match ticket with torn-off stub notches. */
+  /* Match ticket with a torn stub. */
   .ticket {
-    padding: 1rem 1.1rem 1.1rem;
-    background: linear-gradient(160deg, #1c5a40, #0f3324);
-    border-radius: 10px;
-    --cut: radial-gradient(circle 11px at 0 66%, transparent 97%, #000) left / 51% 100% no-repeat,
-           radial-gradient(circle 11px at 100% 66%, transparent 97%, #000) right / 51% 100% no-repeat;
+    padding: 0.95rem 1.05rem 1rem;
+    background: var(--color-page);
+    border-radius: 6px;
+    --cut: radial-gradient(circle 9px at 0 66%, transparent 97%, #000) left / 51% 100% no-repeat,
+           radial-gradient(circle 9px at 100% 66%, transparent 97%, #000) right / 51% 100% no-repeat;
     -webkit-mask: var(--cut);
     mask: var(--cut);
     transition: transform 220ms var(--ease-athletic);
   }
-  .ticket:hover { transform: translateY(-6px) rotate(-0.6deg); }
-  .ticket-stub { margin-top: 0.9rem; padding-top: 0.8rem; border-top: 2px dashed rgb(243 245 239 / 0.28); }
+  .ticket:hover { transform: translateY(-3px); }
+  .ticket-stub { margin-top: 0.8rem; padding-top: 0.7rem; border-top: 1.5px dashed var(--color-line); }
+  .ticket-white { background: #fff; }
 
   .shirt-card {
-    display: flex; flex-direction: column; align-items: center; padding: 0.9rem 0.8rem;
-    border-radius: 10px; background: rgb(11 32 24 / 0.75);
-    border: 1px solid color-mix(in srgb, var(--color-flood) 14%, transparent);
+    display: flex; flex-direction: column; align-items: center; padding: 0.8rem 0.6rem;
+    border-radius: 6px; background: var(--color-page);
     transition: transform 160ms var(--ease-athletic);
     transform-style: preserve-3d;
   }
 
-  .ball-track { position: relative; height: 26px; margin-bottom: 0.6rem; border-bottom: 2px solid rgb(243 245 239 / 0.3); }
-  .ball-runner { position: absolute; bottom: 1px; animation: run 1.5s ease-in-out infinite alternate; }
+  .ball-track { position: relative; height: 24px; margin-bottom: 0.6rem; border-bottom: 2px solid var(--color-line); }
+  .ball-runner { position: absolute; bottom: 1px; animation: run 1.4s ease-in-out infinite alternate; }
   @keyframes run { from { left: 0; } to { left: calc(100% - 22px); } }
   .spin-fast { animation: spin 0.55s linear infinite; }
-  .spin-slow { animation: spin 16s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .kick-ball {
-    position: absolute; right: 7%; bottom: 21%; z-index: 20; cursor: grab; border-radius: 9999px;
-    filter: drop-shadow(0 18px 18px rgb(0 0 0 / 0.5)); touch-action: none;
-  }
-  .kick-shadow {
-    position: absolute; left: 12%; right: 12%; bottom: -26px; height: 14px; border-radius: 50%;
-    background: rgb(0 0 0 / 0.5);
+  .bob { animation: bob 7s ease-in-out infinite; will-change: transform; }
+  @keyframes bob {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(-3deg); }
+    50% { transform: translate3d(0, -14px, 0) rotate(4deg); }
   }
 
-  /* Packed stands: rows of heads, fading down toward the pitch. */
-  .stands {
-    background-image:
-      radial-gradient(circle at 50% 40%, rgb(243 245 239 / 0.5) 1.2px, transparent 1.7px),
-      radial-gradient(circle at 50% 40%, rgb(184 255 84 / 0.34) 1.2px, transparent 1.7px),
-      radial-gradient(circle at 50% 40%, rgb(214 173 86 / 0.32) 1.2px, transparent 1.7px);
-    background-size: 7px 8px, 13px 11px, 17px 9px;
-    -webkit-mask-image: linear-gradient(180deg, #000 0, #000 45%, transparent 96%);
-    mask-image: linear-gradient(180deg, #000 0, #000 45%, transparent 96%);
-  }
-  .flash {
-    position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #fff; opacity: 0;
-    box-shadow: 0 0 10px 3px #fff; animation: flash 7s linear infinite;
-  }
-  @keyframes flash { 0%, 91%, 100% { opacity: 0; } 94% { opacity: 1; } }
+  .marquee { display: flex; width: max-content; animation: marquee 80s linear infinite; }
+  .marquee-host:hover .marquee, .marquee-host:focus-within .marquee { animation-play-state: paused; }
+  @keyframes marquee { to { transform: translate3d(-50%, 0, 0); } }
 
-  .beam {
-    position: absolute; left: 34px; top: 8px; width: 460px; height: 620px;
-    transform-origin: 8% 0;
-    background: conic-gradient(from 140deg at 8% 0, transparent 0deg, rgb(243 245 239 / 0.13) 22deg, transparent 46deg);
-    animation: sweep 11s ease-in-out infinite;
-  }
-  @keyframes sweep { 0%, 100% { transform: rotate(-9deg); } 50% { transform: rotate(10deg); } }
-  .lamp { filter: drop-shadow(0 0 5px #fff); }
+  .kick-ball { display: block; cursor: grab; border-radius: 9999px; touch-action: none; filter: drop-shadow(0 12px 10px rgb(0 40 20 / 0.55)); }
+  .kick-ball:active { cursor: grabbing; }
 
   .sub-board {
-    width: fit-content; min-width: 16rem; max-width: 100%; padding: 0.7rem 1.1rem; border-radius: 6px;
-    background: #040a08; border: 3px solid #2a2f2c; box-shadow: 0 14px 30px -14px #000;
-    font-family: var(--font-display); font-weight: 900; font-size: 1.9rem; line-height: 1.15; letter-spacing: 0.04em;
+    width: fit-content; min-width: 16rem; max-width: 100%; padding: 0.65rem 1rem; border-radius: 6px;
+    background: #0b0f0d; border: 3px solid #2a2f2c;
+    font-stretch: 75%; font-weight: 800; font-size: 1.7rem; line-height: 1.15;
   }
 
-  .zone-top { box-shadow: inset 3px 0 0 var(--color-volt); }
-  .zone-europe { box-shadow: inset 3px 0 0 var(--color-gold); }
-  .zone-drop { box-shadow: inset 3px 0 0 var(--color-alert); }
+  .net {
+    background-image:
+      repeating-linear-gradient(45deg, rgb(255 255 255 / 0.55) 0 1.2px, transparent 1.2px 15px),
+      repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.55) 0 1.2px, transparent 1.2px 15px);
+  }
+
+  .zone-top { box-shadow: inset 3px 0 0 #0b7a43; }
+  .zone-europe { box-shadow: inset 3px 0 0 #f0b400; }
+  .zone-drop { box-shadow: inset 3px 0 0 #e0262b; }
+
+  /* Product tables: small header, firm rows, a quiet hover. */
+  main tbody tr { transition: background-color 120ms; }
+  main tbody tr:hover { background: color-mix(in srgb, var(--color-sunken) 45%, transparent); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -20,7 +20,7 @@ export function ProbabilityBar({ prediction, homeLabel, awayLabel, compact }: Pr
   const reduced = useReducedMotion();
   const transition = reduced ? { duration: 0 } : { duration: DURATION.slow, ease: EASE };
   const leader = Math.max(home, draw, away);
-  const size = compact ? "text-base" : "text-3xl font-display font-bold";
+  const size = compact ? "text-sm font-semibold" : "text-3xl font-display font-extrabold";
   const fmt = (v: number) => percent(v);
 
   return (
@@ -29,14 +29,14 @@ export function ProbabilityBar({ prediction, homeLabel, awayLabel, compact }: Pr
       aria-label={`${homeLabel} ${percent(home)}, draw ${percent(draw)}, ${awayLabel} ${percent(away)}`}
     >
       <div aria-hidden className={`mb-1 flex justify-between ${size}`}>
-        <AnimatedNumber value={home} format={fmt} className={home === leader ? "text-volt" : ""} />
-        <AnimatedNumber value={draw} format={fmt} className={draw === leader ? "text-volt" : "text-muted"} />
-        <AnimatedNumber value={away} format={fmt} className={away === leader ? "text-volt" : ""} />
+        <AnimatedNumber value={home} format={fmt} className={home === leader ? "text-accent" : ""} />
+        <AnimatedNumber value={draw} format={fmt} className={draw === leader ? "text-accent" : "text-muted"} />
+        <AnimatedNumber value={away} format={fmt} className={away === leader ? "text-accent" : ""} />
       </div>
-      <div aria-hidden className={`flex gap-0.5 overflow-hidden ${compact ? "h-1.5" : "h-3"}`}>
-        <motion.div className="bg-volt" initial={{ flexGrow: 1 / 3 }} animate={{ flexGrow: home }} transition={transition} style={{ flexBasis: 0 }} />
-        <motion.div className="bg-muted/60" initial={{ flexGrow: 1 / 3 }} animate={{ flexGrow: draw }} transition={transition} style={{ flexBasis: 0 }} />
-        <motion.div className="bg-flood" initial={{ flexGrow: 1 / 3 }} animate={{ flexGrow: away }} transition={transition} style={{ flexBasis: 0 }} />
+      <div aria-hidden className={`flex gap-0.5 overflow-hidden rounded-[2px] ${compact ? "h-1.5" : "h-2.5"}`}>
+        <motion.div className="bg-accent" initial={{ flexGrow: 1 / 3 }} animate={{ flexGrow: home }} transition={transition} style={{ flexBasis: 0 }} />
+        <motion.div className="bg-[#b9c1bb]" initial={{ flexGrow: 1 / 3 }} animate={{ flexGrow: draw }} transition={transition} style={{ flexBasis: 0 }} />
+        <motion.div className="bg-[#0f1512]" initial={{ flexGrow: 1 / 3 }} animate={{ flexGrow: away }} transition={transition} style={{ flexBasis: 0 }} />
       </div>
       {!compact && (
         <figcaption className="mt-1 flex justify-between text-sm text-muted">

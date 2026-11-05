@@ -24,21 +24,21 @@ export function Scoreboard({ fixture }: { fixture: Fixture }) {
       <p className="text-sm text-muted">{kickoff(fixture.kickoff_utc ?? fixture.match_date)}</p>
       <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-6">
         <div className="flex min-w-0 items-center justify-end gap-3 text-right">
-          <span className="truncate font-display text-[clamp(1.2rem,2.4vw,2.4rem)] font-bold">{fixture.home_short}</span>
-          <ClubEmblem tla={fixture.home_tla} size={38} />
+          <span className="truncate text-[clamp(1.05rem,2vw,1.6rem)] font-extrabold tracking-tight">{fixture.home_short}</span>
+          <ClubEmblem tla={fixture.home_tla} size={26} />
         </div>
         <motion.div
           key={score}
           initial={reduced ? false : { opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: DURATION.base, ease: EASE }}
-          className="num bg-deep px-3 py-1 text-center font-display text-[clamp(2rem,6vw,3.75rem)] font-black leading-none sm:px-5"
+          className="num rounded-[4px] bg-[#0f1512] px-3 py-1.5 text-center font-display text-[clamp(1.9rem,4.5vw,3.2rem)] font-extrabold leading-none text-white sm:px-4"
         >
           {score ?? "v"}
         </motion.div>
         <div className="flex min-w-0 items-center gap-3">
-          <ClubEmblem tla={fixture.away_tla} size={38} />
-          <span className="truncate font-display text-[clamp(1.2rem,2.4vw,2.4rem)] font-bold">{fixture.away_short}</span>
+          <ClubEmblem tla={fixture.away_tla} size={26} />
+          <span className="truncate text-[clamp(1.05rem,2vw,1.6rem)] font-extrabold tracking-tight">{fixture.away_short}</span>
         </div>
       </div>
       <p className="mt-1 text-center text-sm text-muted">{played ? "Full time" : p ? "Most likely score" : "No prediction stored"}</p>
@@ -49,15 +49,15 @@ export function Scoreboard({ fixture }: { fixture: Fixture }) {
           <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
             <div>
               <dt className="text-muted">Expected goals, {fixture.home_short}</dt>
-              <dd className="font-display text-2xl font-bold"><AnimatedNumber value={p.expected_goals.home} format={two} /></dd>
+              <dd className="font-display text-2xl font-extrabold"><AnimatedNumber value={p.expected_goals.home} format={two} /></dd>
             </div>
             <div>
               <dt className="text-muted">Expected goals, {fixture.away_short}</dt>
-              <dd className="font-display text-2xl font-bold"><AnimatedNumber value={p.expected_goals.away} format={two} /></dd>
+              <dd className="font-display text-2xl font-extrabold"><AnimatedNumber value={p.expected_goals.away} format={two} /></dd>
             </div>
             <div>
               <dt className="text-muted">Decisiveness</dt>
-              <dd className="font-display text-2xl font-bold">{p.confidence.label}</dd>
+              <dd className="font-display text-2xl font-extrabold">{p.confidence.label}</dd>
             </div>
           </dl>
         </div>
