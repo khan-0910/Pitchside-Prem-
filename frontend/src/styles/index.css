@@ -99,6 +99,120 @@
   .spotlight:hover::before { opacity: 1; }
 }
 
+@layer components {
+  /* Mown grass: light and dark bands, knocked back so numbers stay readable. */
+  .pitch-stripes {
+    background-color: var(--color-stadium);
+    background-image:
+      linear-gradient(180deg, rgb(7 21 17 / 0.62), rgb(7 21 17 / 0.8)),
+      repeating-linear-gradient(90deg, #1b5a3e 0 9rem, #124230 9rem 18rem);
+  }
+
+  /* A tactics board: the panel data sits on. */
+  .board {
+    position: relative;
+    padding: 1.25rem;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--color-flood) 14%, transparent);
+    background: linear-gradient(155deg, rgb(20 56 41 / 0.94), rgb(9 28 21 / 0.92));
+    box-shadow: 0 22px 44px -26px #000;
+  }
+
+  .floaty { animation: drift 9s ease-in-out infinite; will-change: transform; }
+  @keyframes drift {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(-9deg); }
+    50% { transform: translate3d(14px, -26px, 0) rotate(11deg); }
+  }
+
+  /* Perimeter advertising board, dot-matrix. */
+  .led {
+    position: relative; overflow: hidden; background: #040a08;
+    border-block: 1px solid rgb(184 255 84 / 0.3);
+    font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; letter-spacing: 0.05em;
+  }
+  .led::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(transparent 55%, rgb(0 0 0 / 0.55) 56%);
+    background-size: 3px 3px;
+  }
+  .led-track { display: flex; width: max-content; animation: marquee 70s linear infinite; }
+  .led:hover .led-track, .led:focus-within .led-track { animation-play-state: paused; }
+  @keyframes marquee { to { transform: translate3d(-50%, 0, 0); } }
+
+  /* Match ticket with torn-off stub notches. */
+  .ticket {
+    padding: 1rem 1.1rem 1.1rem;
+    background: linear-gradient(160deg, #1c5a40, #0f3324);
+    border-radius: 10px;
+    --cut: radial-gradient(circle 11px at 0 66%, transparent 97%, #000) left / 51% 100% no-repeat,
+           radial-gradient(circle 11px at 100% 66%, transparent 97%, #000) right / 51% 100% no-repeat;
+    -webkit-mask: var(--cut);
+    mask: var(--cut);
+    transition: transform 220ms var(--ease-athletic);
+  }
+  .ticket:hover { transform: translateY(-6px) rotate(-0.6deg); }
+  .ticket-stub { margin-top: 0.9rem; padding-top: 0.8rem; border-top: 2px dashed rgb(243 245 239 / 0.28); }
+
+  .shirt-card {
+    display: flex; flex-direction: column; align-items: center; padding: 0.9rem 0.8rem;
+    border-radius: 10px; background: rgb(11 32 24 / 0.75);
+    border: 1px solid color-mix(in srgb, var(--color-flood) 14%, transparent);
+    transition: transform 160ms var(--ease-athletic);
+    transform-style: preserve-3d;
+  }
+
+  .ball-track { position: relative; height: 26px; margin-bottom: 0.6rem; border-bottom: 2px solid rgb(243 245 239 / 0.3); }
+  .ball-runner { position: absolute; bottom: 1px; animation: run 1.5s ease-in-out infinite alternate; }
+  @keyframes run { from { left: 0; } to { left: calc(100% - 22px); } }
+  .spin-fast { animation: spin 0.55s linear infinite; }
+  .spin-slow { animation: spin 16s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .kick-ball {
+    position: absolute; right: 7%; bottom: 21%; z-index: 20; cursor: grab; border-radius: 9999px;
+    filter: drop-shadow(0 18px 18px rgb(0 0 0 / 0.5)); touch-action: none;
+  }
+  .kick-shadow {
+    position: absolute; left: 12%; right: 12%; bottom: -26px; height: 14px; border-radius: 50%;
+    background: rgb(0 0 0 / 0.5);
+  }
+
+  /* Packed stands: rows of heads, fading down toward the pitch. */
+  .stands {
+    background-image:
+      radial-gradient(circle at 50% 40%, rgb(243 245 239 / 0.5) 1.2px, transparent 1.7px),
+      radial-gradient(circle at 50% 40%, rgb(184 255 84 / 0.34) 1.2px, transparent 1.7px),
+      radial-gradient(circle at 50% 40%, rgb(214 173 86 / 0.32) 1.2px, transparent 1.7px);
+    background-size: 7px 8px, 13px 11px, 17px 9px;
+    -webkit-mask-image: linear-gradient(180deg, #000 0, #000 45%, transparent 96%);
+    mask-image: linear-gradient(180deg, #000 0, #000 45%, transparent 96%);
+  }
+  .flash {
+    position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #fff; opacity: 0;
+    box-shadow: 0 0 10px 3px #fff; animation: flash 7s linear infinite;
+  }
+  @keyframes flash { 0%, 91%, 100% { opacity: 0; } 94% { opacity: 1; } }
+
+  .beam {
+    position: absolute; left: 34px; top: 8px; width: 460px; height: 620px;
+    transform-origin: 8% 0;
+    background: conic-gradient(from 140deg at 8% 0, transparent 0deg, rgb(243 245 239 / 0.13) 22deg, transparent 46deg);
+    animation: sweep 11s ease-in-out infinite;
+  }
+  @keyframes sweep { 0%, 100% { transform: rotate(-9deg); } 50% { transform: rotate(10deg); } }
+  .lamp { filter: drop-shadow(0 0 5px #fff); }
+
+  .sub-board {
+    width: fit-content; min-width: 16rem; max-width: 100%; padding: 0.7rem 1.1rem; border-radius: 6px;
+    background: #040a08; border: 3px solid #2a2f2c; box-shadow: 0 14px 30px -14px #000;
+    font-family: var(--font-display); font-weight: 900; font-size: 1.9rem; line-height: 1.15; letter-spacing: 0.04em;
+  }
+
+  .zone-top { box-shadow: inset 3px 0 0 var(--color-volt); }
+  .zone-europe { box-shadow: inset 3px 0 0 var(--color-gold); }
+  .zone-drop { box-shadow: inset 3px 0 0 var(--color-alert); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

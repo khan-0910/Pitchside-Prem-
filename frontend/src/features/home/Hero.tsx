@@ -5,10 +5,12 @@ import { Link } from "react-router-dom";
 import { gsap, useGSAP } from "@/animations/gsap";
 import { scrollToTarget } from "@/animations/lenis";
 import { prefersReducedMotion } from "@/animations/useReducedMotion";
+import { FloatingIcons } from "@/components/football/FloatingIcons";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { timeAgo } from "@/lib/format";
 import { api } from "@/services/api";
 
+import { KickBall } from "./KickBall";
 import { PitchScene } from "./PitchScene";
 
 const HEADLINE = ["THE GAME", "HAS A", "DATA SIDE."];
@@ -73,6 +75,8 @@ export function Hero() {
     <section ref={root} className="relative flex min-h-dvh flex-col justify-end overflow-hidden" aria-labelledby="hero-title">
       <PitchScene timeline={timeline} />
       <Particles />
+      <FloatingIcons count={14} strength={1.5} mouse className="absolute inset-0 z-[5]" />
+      <KickBall />
       <header className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-4 py-4 sm:px-8">
         <span className="font-display text-2xl font-black tracking-wide">Pitchside</span>
         <Link to="/app" className="btn-ghost">

@@ -2,11 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 import { PageTitle } from "@/components/layout/DashboardLayout";
+import { TacticsBoard } from "@/components/football/icons";
 import { ClubEmblem, PlayerAvatar } from "@/components/ui/identity";
-import { ProbabilityBar } from "@/components/ui/ProbabilityBar";
 import { DataState, EmptyState } from "@/components/ui/states";
 import { StatusPill } from "@/components/ui/StatusPill";
-import { ASSESSMENT, day, euros, kickoff, signed, timeAgo } from "@/lib/format";
+import { FixtureRail } from "@/features/matches/FixtureRail";
+import { ASSESSMENT, day, euros, signed, timeAgo } from "@/lib/format";
 import { api } from "@/services/api";
 
 function Heading({ title, to }: { title: string; to?: string }) {
@@ -18,6 +19,9 @@ function Heading({ title, to }: { title: string; to?: string }) {
   );
 }
 
+const zone = (position: number) =>
+  position <= 4 ? "zone-top" : position <= 6 ? "zone-europe" : position >= 18 ? "zone-drop" : "";
+
 function LeagueTable() {
   const query = useQuery({ queryKey: ["standings"], queryFn: api.standings });
   return (
@@ -28,7 +32,7 @@ function LeagueTable() {
             <caption className="sr-only">League table, season {data.season_id}</caption>
             <thead>
               <tr className="chalk border-b text-sm text-muted">
-                <th scope="col" className="w-7 py-1.5 font-normal">#</th>
+                <th scope="col" className="w-8 py-1.5 pl-2 font-normal">#</th>
                 <th scope="col" className="py-1.5 font-normal">Club</th>
                 <th scope="col" className="py-1.5 text-right font-normal">P</th>
                 <th scope="col" className="py-1.5 text-right font-normal">GD</th>
@@ -37,8 +41,8 @@ function LeagueTable() {
             </thead>
             <tbody className="num">
               {data.table.map((row) => (
-                <tr key={row.team_id} className="chalk border-b">
-                  <td className="py-1.5 text-muted">{row.position}</td>
+                <tr key={row.team_id} className={`chalk border-b ${zone(row.position)}`}>
+                  <td className="py-1.5 pl-2 text-muted">{row.position}</td>
                   <td className="py-1.5">
                     <span className="flex items-center gap-2"><ClubEmblem tla={row.tla} size={22} />{row.short_name}</span>
                   </td>
@@ -52,32 +56,12 @@ function LeagueTable() {
           {data.derived && (
             <p className="mt-2 text-sm text-muted">Worked out from results, so any points deduction is not included.</p>
           )}
+          <p className="mt-2 flex flex-wrap gap-x-4 text-sm text-muted">
+            <span><span aria-hidden className="mr-1 inline-block size-2 bg-volt" />Top four</span>
+            <span><span aria-hidden className="mr-1 inline-block size-2 bg-gold" />Top six</span>
+            <span><span aria-hidden className="mr-1 inline-block size-2 bg-alert" />Relegation zone</span>
+          </p>
         </>
-      )}
-    </DataState>
-  );
-}
-
-function NextMatches() {
-  const query = useQuery({ queryKey: ["upcoming", 5], queryFn: () => api.upcoming(5) });
-  return (
-    <DataState query={query} isEmpty={(d) => d.length === 0} empty={<EmptyState title="No upcoming fixtures are loaded." />}>
-      {(fixtures) => (
-        <ul className="space-y-4">
-          {fixtures.map((f) => (
-            <li key={f.fixture_id} className="chalk border-b pb-3">
-              <div className="mb-1.5 flex flex-wrap justify-between gap-x-3">
-                <span className="font-medium">{f.home_short} v {f.away_short}</span>
-                <span className="text-sm text-muted">{kickoff(f.kickoff_utc)}</span>
-              </div>
-              {f.prediction ? (
-                <ProbabilityBar compact prediction={f.prediction} homeLabel={f.home_short} awayLabel={f.away_short} />
-              ) : (
-                <p className="text-sm text-muted">No prediction stored for this fixture.</p>
-              )}
-            </li>
-          ))}
-        </ul>
       )}
     </DataState>
   );
@@ -168,17 +152,17 @@ function Freshness() {
 export default function Overview() {
   return (
     <>
-      <PageTitle title="Overview" />
+      <PageTitle icon={TacticsBoard} title="Overview" />
       <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-        <section aria-labelledby="table-h"><div id="table-h"><Heading title="League table" /></div><LeagueTable /></section>
-        <div className="space-y-10">
-          <section><Heading title="Next up" to="/app/matches" /><NextMatches /></section>
-          <section><Heading title="Latest results" to="/app/matches" /><Results /></section>
+        <section className="board min-w-0 lg:col-span-2 xl:col-span-2"><Heading title="Next up" to="/app/matches" /><FixtureRail /></section>
+        <section aria-labelledby="table-h" className="board min-w-0"><div id="table-h"><Heading title="League table" /></div><LeagueTable /></section>
+        <div className="min-w-0 space-y-10">
+          <section className="board"><Heading title="Latest results" to="/app/matches" /><Results /></section>
+          <section className="board"><Heading title="Top expected goals" to="/app/players" /><Scorers /></section>
+          <section className="board"><Heading title="Biggest value gaps" to="/app/transfers" /><ValueWatch /></section>
         </div>
-        <section><Heading title="Top expected goals" to="/app/players" /><Scorers /></section>
-        <section><Heading title="Biggest value gaps" to="/app/transfers" /><ValueWatch /></section>
       </div>
-      <section className="mt-10"><Heading title="Data freshness" to="/app/data" /><Freshness /></section>
+      <section className="board mt-10"><Heading title="Data freshness" to="/app/data" /><Freshness /></section>
     </>
   );
 }

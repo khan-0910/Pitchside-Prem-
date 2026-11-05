@@ -5,9 +5,11 @@ import { useDeferredValue, useState } from "react";
 import { useReducedMotion } from "@/animations/useReducedMotion";
 import { Radar } from "@/components/charts/Radar";
 import { PageTitle } from "@/components/layout/DashboardLayout";
+import { Shirt } from "@/components/football/icons";
+import { ShirtGraphic } from "@/components/football/ShirtCard";
 import { PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState, SkeletonRows } from "@/components/ui/states";
-import { AVAILABILITY, GROUPS, euros } from "@/lib/format";
+import { AVAILABILITY, GROUPS, euros, initials } from "@/lib/format";
 import { api } from "@/services/api";
 import type { PlayerDetail, RadarAxis, SimilarPlayer } from "@/types/api";
 
@@ -122,10 +124,10 @@ function Profile({ id }: { id: string }) {
   return (
     <DataState query={query}>
       {(p) => (
-        <article>
+        <article className="board">
           <header className="flex items-center gap-4">
-            <motion.div initial={reduced ? false : { scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-              <PlayerAvatar name={p.name} size={68} highlight />
+            <motion.div initial={reduced ? false : { scale: 0.7, opacity: 0, rotate: -8 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}>
+              <ShirtGraphic tla={p.tla} label={initials(p.name)} size={84} />
             </motion.div>
             <div className="min-w-0">
               <h2 className="truncate text-4xl">{p.name}</h2>
@@ -201,7 +203,7 @@ export default function PlayerLab() {
 
   return (
     <>
-      <PageTitle title="Player Lab" intro="Search any current player, read their per-90 profile and find who plays like them." />
+      <PageTitle icon={Shirt} title="Player Lab" intro="Search any current player, read their per-90 profile and find who plays like them." />
       <div className="grid gap-8 lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)]">
         <section aria-label="Find a player">
           <label className="block text-sm text-muted">Search by name

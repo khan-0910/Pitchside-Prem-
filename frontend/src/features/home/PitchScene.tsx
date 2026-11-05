@@ -3,6 +3,8 @@ import { useRef, type RefObject } from "react";
 import { gsap, useGSAP } from "@/animations/gsap";
 import { isCoarsePointer, prefersReducedMotion } from "@/animations/useReducedMotion";
 
+import { Stadium } from "./Stadium";
+
 /** A full pitch, 105 x 68 scaled by 10. Real proportions, drawn in the order a groundsman would. */
 const OUTER = "M30 30H1080V710H30Z";
 const HALFWAY = "M555 30V710";
@@ -75,6 +77,7 @@ export function PitchScene({ timeline }: { timeline: RefObject<gsap.core.Timelin
 
   return (
     <div aria-hidden className="absolute inset-0 overflow-hidden">
+      <Stadium />
       <div
         ref={glow}
         className="absolute inset-0 opacity-0"

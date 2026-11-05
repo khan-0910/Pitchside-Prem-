@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { PageTitle } from "@/components/layout/DashboardLayout";
+import { Whistle } from "@/components/football/icons";
 import { ProbabilityBar } from "@/components/ui/ProbabilityBar";
 import { DataState, EmptyState, SkeletonRows } from "@/components/ui/states";
 import { ScoreGrid } from "@/features/matches/ScoreGrid";
@@ -26,7 +27,7 @@ function Form({ teamId, name }: { teamId: string; name: string }) {
                 key={m.fixture_id}
                 title={`${m.is_home ? "v" : "at"} ${m.opponent}: ${m.goals_for}-${m.goals_against}`}
                 className={`num flex size-8 items-center justify-center rounded-[2px] font-semibold ${
-                  m.result === "W" ? "bg-volt text-stadium" : m.result === "L" ? "bg-alert/80 text-stadium" : "bg-pitch"
+                  m.result === "W" ? "bg-volt text-stadium" : m.result === "L" ? "bg-alert text-stadium" : "bg-pitch"
                 }`}
               >
                 {m.result}
@@ -42,7 +43,7 @@ function Form({ teamId, name }: { teamId: string; name: string }) {
 function Detail({ fixture }: { fixture: Fixture }) {
   const p = fixture.prediction;
   return (
-    <div className="grid gap-7 bg-deep/60 p-4 sm:p-6 lg:grid-cols-2">
+    <div className="board mb-3 grid gap-7 lg:grid-cols-2">
       <div className="space-y-5">
         <Scoreboard fixture={fixture} />
         <Form teamId={fixture.home_team_id} name={fixture.home_short} />
@@ -83,7 +84,7 @@ export default function MatchCentre() {
 
   return (
     <>
-      <PageTitle title="Match Centre" intro="Fixtures, results and the model's view of each match." />
+      <PageTitle icon={Whistle} title="Match Centre" intro="Fixtures, results and the model's view of each match." />
       <div className="mb-5 flex flex-wrap items-end gap-3">
         <div role="tablist" aria-label="Fixture type" className="flex">
           {(["SCHEDULED", "FINISHED"] as View[]).map((v) => (

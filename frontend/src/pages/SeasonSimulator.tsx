@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 
 import { useReducedMotion } from "@/animations/useReducedMotion";
 import { PageTitle } from "@/components/layout/DashboardLayout";
+import { Ball, Trophy, Trophy as TrophyIcon } from "@/components/football/icons";
+import { BallLoader } from "@/components/football/BallLoader";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { ClubEmblem } from "@/components/ui/identity";
 import { DataState, EmptyState, ErrorState } from "@/components/ui/states";
@@ -23,8 +25,12 @@ function Bars({ rows, pick, title, color }: { rows: SimulationRow[]; pick: (r: S
         {shown.map((r) => (
           <li key={r.team_id} className="grid grid-cols-[6.5rem_1fr_3.2rem] items-center gap-2 text-sm">
             <span className="truncate">{r.short_name}</span>
-            <span aria-hidden className="h-2.5">
-              <motion.span layout className="block h-full rounded-r-[4px]" style={{ width: `${(pick(r) / top) * 100}%`, background: color }} />
+            <span aria-hidden className="h-2.5 pr-3">
+              <motion.span layout className="relative block h-full rounded-r-[4px]" style={{ width: `${(pick(r) / top) * 100}%`, background: color }}>
+                <motion.span className="absolute -right-2 -top-[4px] block" initial={{ rotate: -720 }} animate={{ rotate: 0 }} transition={{ duration: 1 }}>
+                  <Ball size={18} />
+                </motion.span>
+              </motion.span>
             </span>
             <span className="num text-right">{percent(pick(r), 1)}</span>
           </li>
@@ -108,6 +114,7 @@ function FinalTable({ sim, previous }: { sim: Simulation; previous: Map<string, 
                     <span className="w-5 text-muted">{i + 1}</span>
                     <ClubEmblem tla={r.tla} size={22} />
                     <span className="min-w-0 max-w-28 truncate">{r.short_name}</span>
+                    {i === 0 && <motion.span className="text-gold" initial={reduced ? false : { y: -14, scale: 0 }} animate={{ y: 0, scale: 1 }} transition={{ type: "spring", stiffness: 260, damping: 9 }}><TrophyIcon size={18} /></motion.span>}
                     {moved !== 0 && <span className={`text-sm max-sm:hidden ${moved > 0 ? "text-volt" : "text-muted"}`}>{moved > 0 ? `up ${moved}` : `down ${-moved}`}</span>}
                   </span>
                 </td>
@@ -158,7 +165,7 @@ export default function SeasonSimulator() {
 
   return (
     <>
-      <PageTitle title="Season Simulator" intro="Plays every remaining fixture thousands of times, keeping the real results so far." />
+      <PageTitle icon={Trophy} title="Season Simulator" intro="Plays every remaining fixture thousands of times, keeping the real results so far." />
       <form
         className="mb-6 flex flex-wrap items-end gap-3"
         onSubmit={(e) => {
@@ -182,7 +189,7 @@ export default function SeasonSimulator() {
         {run.isPending && (
           <div role="status" className="mb-4">
             <p className="text-sm text-muted">Running {iterations.toLocaleString("en-GB")} seasons on the server</p>
-            <div className="mt-1 h-1 overflow-hidden bg-pitch/50"><div className="skeleton h-full w-full" /></div>
+            <BallLoader label="Simulating" />
           </div>
         )}
         {run.isError && <div className="mb-4"><ErrorState error={run.error} onRetry={() => run.mutate()} /></div>}

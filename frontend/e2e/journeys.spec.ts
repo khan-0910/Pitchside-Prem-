@@ -80,6 +80,26 @@ test("reduced motion keeps all the content", async ({ browser }) => {
   await context.close();
 });
 
+test("the hero ball can be kicked and comes home", async ({ page }) => {
+  await page.goto("/");
+  const ball = page.getByRole("button", { name: "Kick the ball" });
+  await expect(ball).toBeVisible();
+  await page.waitForTimeout(2200);
+  await ball.click();
+  await page.waitForTimeout(500);
+  const moved = await ball.evaluate((el) => getComputedStyle(el).transform);
+  expect(moved).not.toBe("none");
+  await noSideScroll(page);
+});
+
+test("the homepage ends in a goal", async ({ page }, info) => {
+  test.skip(info.project.name === "phone", "same section, covered on desktop");
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await page.getByRole("heading", { name: /SEE THE GAME DIFFERENTLY/ }).scrollIntoViewIfNeeded();
+  await expect(page.getByText("GOAL", { exact: true })).toBeVisible({ timeout: 8000 });
+});
+
 test("missing routes end somewhere useful", async ({ page }) => {
   await page.goto("/no-such-page");
   await expect(page.getByRole("heading", { name: "Out of play" })).toBeVisible();

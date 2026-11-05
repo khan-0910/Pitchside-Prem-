@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 
+import { LedTicker } from "@/components/football/LedTicker";
 import { Hero } from "@/features/home/Hero";
 
 const Journey = lazy(() => import("@/features/home/Journey"));
@@ -8,6 +9,7 @@ export default function Home() {
   return (
     <main>
       <Hero />
+      <LedTicker />
       <Suspense fallback={<div className="min-h-dvh" />}>
         <Journey />
       </Suspense>

@@ -3,11 +3,14 @@ import { CircleAlert, GripVertical, RotateCcw } from "lucide-react";
 import { useDeferredValue, useState } from "react";
 
 import { PageTitle } from "@/components/layout/DashboardLayout";
+import { Ball } from "@/components/football/icons";
 import { ClubEmblem, PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState, ErrorState, SkeletonRows } from "@/components/ui/states";
 import { AVAILABILITY, GROUPS, day, euros, percent, signed } from "@/lib/format";
 import { api } from "@/services/api";
 import type { PlayerSummary, SquadPlayer, WhatIfScenario } from "@/types/api";
+import { FormationPitch } from "@/features/what-if/FormationPitch";
+import { SubBoard } from "@/features/what-if/SubBoard";
 
 interface Pick {
   player_id: string;
@@ -135,6 +138,7 @@ function Result({ s }: { s: WhatIfScenario }) {
     <section aria-label="Scenario result" className="mt-8">
       <p className="flex items-center gap-2 text-amber"><CircleAlert aria-hidden className="size-4" /> Hypothetical scenario. Nothing here has happened.</p>
       <h2 className="mt-1 text-4xl">{s.team}: {s.player_in.name} for {s.player_out.name}</h2>
+      <div className="mt-3"><SubBoard out={s.player_out.name} into={s.player_in.name} /></div>
       {s.position_warning && <p className="mt-1 text-amber">{s.position_warning}</p>}
       {s.notes.map((n) => <p key={n} className="mt-1 text-muted">{n}</p>)}
 
@@ -240,7 +244,7 @@ export default function WhatIfLab() {
 
   return (
     <>
-      <PageTitle title="What-If Lab" intro="Swap one player and the match model predicts again from the changed squad. Every result here is hypothetical." />
+      <PageTitle icon={Ball} title="What-If Lab" intro="Swap one player and the match model predicts again from the changed squad. Every result here is hypothetical." />
       <label className="block max-w-sm text-sm text-muted">Club
         <span className="mt-0.5 flex items-center gap-2">
           {crest && <ClubEmblem tla={crest.tla} size={36} />}
@@ -260,6 +264,11 @@ export default function WhatIfLab() {
             <Slot label="Player joining" pick={incoming} onClear={() => setIncoming(null)} onDrop={onDrop} accepting="Drag from the search, or press Bring in" />
           </div>
           <div className="mt-6 grid gap-8 lg:grid-cols-2">
+            <section className="lg:col-span-2">
+              {squad.data && crest && (
+                <FormationPitch players={squad.data.players} picked={out?.player_id ?? null} incoming={incoming} tla={crest.tla} onPick={pickOut} />
+              )}
+            </section>
             <section>
               <h2 className="text-3xl">{squad.data?.team ?? "Squad"}</h2>
               <DataState query={squad} loading={<SkeletonRows />}>

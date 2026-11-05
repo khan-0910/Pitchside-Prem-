@@ -3,30 +3,40 @@ import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 import { Radar } from "@/components/charts/Radar";
+import { FloatingIcons } from "@/components/football/FloatingIcons";
+import { PitchMark } from "@/components/football/PitchMark";
+import { ShirtCard } from "@/components/football/ShirtCard";
 import { PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState, Skeleton } from "@/components/ui/states";
+import { PinnedFixtures } from "@/features/matches/FixtureRail";
 import { Scoreboard } from "@/features/matches/Scoreboard";
 import { ValuationScale } from "@/features/transfers/ValuationScale";
 import { ASSESSMENT, day, euros, percent, signed } from "@/lib/format";
 import { api } from "@/services/api";
 import type { ModelInfo, PlayerDetail, RadarAxis } from "@/types/api";
 
-export function Band({ id, title, lead, children, to, cta }: {
+export function Band({ id, title, lead, children, to, cta, mark, seed }: {
   id?: string;
   title: string;
   lead: string;
   children: ReactNode;
   to: string;
   cta: string;
+  mark: "circle" | "box" | "corner" | "arc";
+  seed: number;
 }) {
   return (
-    <section id={id} className="relative z-10 mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14 lg:px-24 lg:py-32">
-      <div data-pass className="max-w-md">
-        <h2 className="text-[clamp(2.6rem,6vw,4.75rem)]">{title}</h2>
-        <p className="mt-3 text-lg text-muted">{lead}</p>
-        <Link to={to} className="btn-ghost mt-5">{cta}</Link>
+    <section id={id} className="relative z-10 overflow-hidden">
+      <PitchMark mark={mark} className="right-0 top-6 w-[62%] max-w-3xl max-sm:w-full" />
+      <FloatingIcons count={8} seed={seed} />
+      <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14 lg:px-24 lg:py-28">
+        <div data-pass className="max-w-md">
+          <h2 className="text-[clamp(2.6rem,6vw,4.75rem)]">{title}</h2>
+          <p className="mt-3 text-lg text-flood/75">{lead}</p>
+          <Link to={to} className="btn-ghost mt-5">{cta}</Link>
+        </div>
+        <div className="board min-w-0">{children}</div>
       </div>
-      <div className="min-w-0">{children}</div>
     </section>
   );
 }
@@ -36,7 +46,7 @@ const HomeSkeleton = () => <Skeleton className="h-64 w-full" />;
 export function MatchSection() {
   const query = useQuery({ queryKey: ["upcoming", 1], queryFn: () => api.upcoming(1) });
   return (
-    <Band id="intelligence" title="Who is likely to win the next match?" lead="Win, draw and loss chances from form, Elo strength and squad data, scored against bookmaker prices." to="/app/matches" cta="Open Match Centre">
+    <Band id="intelligence" title="Who is likely to win the next match?" lead="Win, draw and loss chances from form, Elo strength and squad data, scored against bookmaker prices." to="/app/matches" cta="Open Match Centre" mark="circle" seed={1}>
       <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => d.length === 0} empty={<EmptyState title="No upcoming fixtures are loaded." />}>
         {(data) => <Scoreboard fixture={data[0]} />}
       </DataState>
@@ -60,22 +70,10 @@ function usePlayerPair() {
   });
 }
 
-function PlayerLine({ player }: { player: PlayerDetail }) {
-  return (
-    <div className="flex items-center gap-3">
-      <PlayerAvatar name={player.name} size={46} />
-      <div className="min-w-0">
-        <p className="truncate font-medium">{player.name}</p>
-        <p className="text-sm text-muted">{player.profile?.position_name}, {player.age ?? "age unknown"}, {player.team_short}</p>
-      </div>
-    </div>
-  );
-}
-
 export function PlayerSection() {
   const query = usePlayerPair();
   return (
-    <Band title="Which players play alike?" lead="Per-90 profiles compared within sensible positions, so a score means two players do similar work." to="/app/players" cta="Open Player Lab">
+    <Band title="Which players play alike?" lead="Per-90 profiles compared within sensible positions, so a score means two players do similar work." to="/app/players" cta="Open Player Lab" mark="box" seed={2}>
       <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => !d} empty={<EmptyState title="Player profiles are not ready yet." />}>
         {(pair) => {
           const { a, b, score } = pair!;
@@ -85,8 +83,10 @@ export function PlayerSection() {
             <div className="grid items-center gap-6 sm:grid-cols-[minmax(0,1fr)_minmax(0,14rem)]">
               <Radar title={`${a.name} and ${b.name}`} series={[{ name: a.name, axes, color: "#B8FF54" }, { name: b.name, axes: radar(b, axes), color: "#F3F5EF" }]} />
               <div className="space-y-4">
-                <PlayerLine player={a} />
-                <PlayerLine player={b} />
+                <div className="grid grid-cols-2 gap-2">
+                  <ShirtCard name={a.name} tla={a.tla} detail={`${a.team_short}, ${a.age ?? "?"}`} />
+                  <ShirtCard name={b.name} tla={b.tla} detail={`${b.team_short}, ${b.age ?? "?"}`} />
+                </div>
                 <p>
                   <span className="block font-display text-6xl font-black text-volt num">{score.toFixed(0)}</span>
                   <span className="text-sm text-muted">Similarity score out of 100. Not a probability.</span>
@@ -111,7 +111,7 @@ export function PlayerSection() {
 export function TransferSection() {
   const query = useQuery({ queryKey: ["undervalued", "home"], queryFn: () => api.undervalued({ limit: 1 }) });
   return (
-    <Band title="Who is undervalued?" lead="An estimate of each player's next recorded value, always shown with its range so a small gap is not oversold." to="/app/transfers" cta="Open Transfer Intelligence">
+    <Band title="Who is undervalued?" lead="An estimate of each player's next recorded value, always shown with its range so a small gap is not oversold." to="/app/transfers" cta="Open Transfer Intelligence" mark="corner" seed={3}>
       <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No player has a positive gap right now." />}>
         {(data) => {
           const v = data.items[0];
@@ -153,7 +153,7 @@ const PIPELINE = [
 export function HowItWorks() {
   const [active, setActive] = useState(0);
   return (
-    <section className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-8 lg:px-24 lg:py-32">
+    <section className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-8 lg:px-24 lg:py-28">
       <h2 data-pass className="max-w-2xl text-[clamp(2.6rem,6vw,4.75rem)]">How a number gets here</h2>
       <div role="tablist" aria-label="Pipeline steps" className="chalk mt-8 flex gap-1 overflow-x-auto border-b" data-lenis-prevent-horizontal>
         {PIPELINE.map((step, i) => (
@@ -186,7 +186,7 @@ function metric(model: ModelInfo, candidate: string, name: string) {
 export function Transparency() {
   const query = useQuery({ queryKey: ["model-metrics"], queryFn: api.modelMetrics });
   return (
-    <Band title="How good is it, really?" lead="Measured on matches the model never trained on. Lower is better for both scores." to="/app/models" cta="See Model Performance">
+    <Band title="How good is it, really?" lead="Measured on matches the model never trained on. Lower is better for both scores." to="/app/models" cta="See Model Performance" mark="arc" seed={5}>
       <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => !d.match} empty={<EmptyState title="No trained match model yet." />}>
         {(data) => {
           const m = data.match!;
@@ -227,10 +227,23 @@ export function Transparency() {
   );
 }
 
+export function FixturesSection() {
+  const query = useQuery({ queryKey: ["upcoming", 10], queryFn: () => api.upcoming(10) });
+  if (!query.data?.length) return null;
+  return (
+    <section className="relative z-10 py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-24">
+        <h2 data-pass className="mb-7 text-[clamp(2.6rem,6vw,4.75rem)]">Next on the fixture list</h2>
+      </div>
+      <PinnedFixtures fixtures={query.data} />
+    </section>
+  );
+}
+
 export function WhatIfSection() {
   const query = useQuery({ queryKey: ["scenario", "demo-latest"], queryFn: () => api.scenario("demo-latest") });
   return (
-    <Band title="What if a club swapped a player?" lead="A swap changes the squad numbers the match model reads, then the real model predicts again." to="/app/what-if" cta="Open What-If Lab">
+    <Band title="What if a club swapped a player?" lead="A swap changes the squad numbers the match model reads, then the real model predicts again." to="/app/what-if" cta="Open What-If Lab" mark="circle" seed={4}>
       <DataState query={query} loading={<HomeSkeleton />}>
         {(s) => {
           const m = s.matches[0];

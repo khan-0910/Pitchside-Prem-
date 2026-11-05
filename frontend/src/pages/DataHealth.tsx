@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Check, X } from "lucide-react";
 
 import { PageTitle } from "@/components/layout/DashboardLayout";
+import { CornerFlag } from "@/components/football/icons";
 import { DataState, EmptyState } from "@/components/ui/states";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { day, timeAgo } from "@/lib/format";
@@ -11,7 +12,7 @@ export default function DataHealth() {
   const query = useQuery({ queryKey: ["data-health"], queryFn: api.dataHealth, refetchInterval: 60_000 });
   return (
     <>
-      <PageTitle title="Data Health" intro="Where every number comes from, how fresh it is and what is broken." />
+      <PageTitle icon={CornerFlag} title="Data Health" intro="Where every number comes from, how fresh it is and what is broken." />
       <DataState query={query} isEmpty={(d) => d.sources.length === 0} empty={<EmptyState title="No sources are registered yet." />}>
         {(data) => (
           <div className="space-y-11">

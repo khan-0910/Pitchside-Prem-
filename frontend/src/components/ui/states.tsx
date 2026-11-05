@@ -2,6 +2,7 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import { CircleAlert, RotateCcw } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { BallLoader } from "@/components/football/BallLoader";
 import { ApiError } from "@/services/api";
 
 export function Skeleton({ className = "h-5 w-full" }: { className?: string }) {
@@ -10,10 +11,13 @@ export function Skeleton({ className = "h-5 w-full" }: { className?: string }) {
 
 export function SkeletonRows({ rows = 6 }: { rows?: number }) {
   return (
-    <div role="status" aria-label="Loading" className="space-y-3">
-      {Array.from({ length: rows }, (_, i) => (
-        <Skeleton key={i} className="h-9 w-full" />
-      ))}
+    <div>
+      <BallLoader />
+      <div aria-hidden className="space-y-3">
+        {Array.from({ length: rows }, (_, i) => (
+          <Skeleton key={i} className="h-9 w-full" />
+        ))}
+      </div>
     </div>
   );
 }

@@ -8,6 +8,8 @@ import { ProbabilityBar } from "@/components/ui/ProbabilityBar";
 import { kickoff } from "@/lib/format";
 import type { Fixture } from "@/types/api";
 
+import { PitchMeter } from "./PitchMeter";
+
 const two = (v: number) => v.toFixed(2);
 
 /** The broadcast graphic: scoreline first, then the strip, then expected goals. */
@@ -22,7 +24,7 @@ export function Scoreboard({ fixture }: { fixture: Fixture }) {
       <p className="text-sm text-muted">{kickoff(fixture.kickoff_utc ?? fixture.match_date)}</p>
       <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-6">
         <div className="flex min-w-0 items-center justify-end gap-3 text-right">
-          <span className="truncate font-display text-[clamp(1.5rem,4.5vw,2.75rem)] font-bold">{fixture.home_short}</span>
+          <span className="truncate font-display text-[clamp(1.2rem,2.4vw,2.4rem)] font-bold">{fixture.home_short}</span>
           <ClubEmblem tla={fixture.home_tla} size={38} />
         </div>
         <motion.div
@@ -36,12 +38,13 @@ export function Scoreboard({ fixture }: { fixture: Fixture }) {
         </motion.div>
         <div className="flex min-w-0 items-center gap-3">
           <ClubEmblem tla={fixture.away_tla} size={38} />
-          <span className="truncate font-display text-[clamp(1.5rem,4.5vw,2.75rem)] font-bold">{fixture.away_short}</span>
+          <span className="truncate font-display text-[clamp(1.2rem,2.4vw,2.4rem)] font-bold">{fixture.away_short}</span>
         </div>
       </div>
       <p className="mt-1 text-center text-sm text-muted">{played ? "Full time" : p ? "Most likely score" : "No prediction stored"}</p>
       {p && (
         <div className="mt-5">
+          <div className="mb-4"><PitchMeter prediction={p} home={fixture.home_short} away={fixture.away_short} /></div>
           <ProbabilityBar prediction={p} homeLabel={fixture.home_short} awayLabel={fixture.away_short} />
           <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
             <div>

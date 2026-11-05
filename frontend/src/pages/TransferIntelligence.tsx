@@ -4,6 +4,7 @@ import { useDeferredValue, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { PageTitle } from "@/components/layout/DashboardLayout";
+import { Boot } from "@/components/football/icons";
 import { DataState, EmptyState, SkeletonRows } from "@/components/ui/states";
 import { ValuationScale } from "@/features/transfers/ValuationScale";
 import { ASSESSMENT, GROUPS, day, euros, signed } from "@/lib/format";
@@ -108,7 +109,7 @@ export default function TransferIntelligence() {
 
   return (
     <>
-      <PageTitle title="Transfer Intelligence" intro="Recorded market value against the model's estimate of the next one. Estimates are not transfer fees." />
+      <PageTitle icon={Boot} title="Transfer Intelligence" intro="Recorded market value against the model's estimate of the next one. Estimates are not transfer fees." />
       <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-5">
         <label className="col-span-2 text-sm text-muted md:col-span-1">Search
           <input type="search" className="field mt-0.5 text-flood" value={q} onChange={(e) => setQ(e.target.value)} />

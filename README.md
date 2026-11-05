@@ -6,6 +6,7 @@ A Premier League intelligence platform with live data, three machine learning mo
 
 ## Features
 
+- **Football-first design**: a stadium hero with a kickable ball, floating kit, a live LED ticker, match tickets, shirts, a formation pitch and a goal to finish.
 - **Match Centre**: win, draw and loss chances, expected goals, scoreline grids and team form.
 - **Player Lab**: per-90 profiles, role labels, similar-player search and radar comparison.
 - **Transfer Intelligence**: recorded value against a model estimate with a measured range.
@@ -239,11 +240,11 @@ npm --prefix frontend run e2e
 ## Known issues
 
 - Understat is down, so its loader has only been tested against the maintenance page. The `soccerdata` path has not run live.
-- football-data.org needs a free key. Until one is set, the league table comes from results and ignores points deductions.
+- Without a football-data.org key, the league table comes from results and ignores points deductions.
 - The Transfermarkt dump is from September, so that source shows as Stale. That is correct.
 - 37 current squad players have no Transfermarkt link, mostly academy players. They are on the review list if they have played.
 - DuckDB allows one writer, so ingest commands fail while the API runs.
-- Lighthouse on throttled mobile: homepage performance 83, just under the 85 aim, and dashboard 88. Accessibility scored 100 on both.
+- Lighthouse on throttled mobile: homepage performance 80 and dashboard 84, under the 85 aim after the football animation layer. Accessibility scored 100 on both.
 - The Docker setup has not been built or run.
 
 ## Future improvements

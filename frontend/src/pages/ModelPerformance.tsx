@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis } from "recharts";
 
 import { PageTitle } from "@/components/layout/DashboardLayout";
+import { Stopwatch } from "@/components/football/icons";
 import { DataState, EmptyState } from "@/components/ui/states";
 import { day, euros, percent } from "@/lib/format";
 import { api } from "@/services/api";
@@ -274,7 +275,7 @@ export default function ModelPerformance() {
   const query = useQuery({ queryKey: ["model-metrics"], queryFn: api.modelMetrics });
   return (
     <>
-      <PageTitle title="Model Performance" intro="How each model was built and how it scored on data it had never seen." />
+      <PageTitle icon={Stopwatch} title="Model Performance" intro="How each model was built and how it scored on data it had never seen." />
       <DataState query={query} isEmpty={(d) => !d.match && !d.transfer && !d.similarity} empty={<EmptyState title="No models have been trained yet." />}>
         {(data) => (
           <div className="space-y-14">

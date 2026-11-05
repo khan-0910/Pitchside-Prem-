@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 
 import { DURATION, EASE } from "@/animations/presets";
 import { useReducedMotion } from "@/animations/useReducedMotion";
+import { Ball } from "@/components/football/icons";
 import { euros } from "@/lib/format";
 
 interface Props {
@@ -33,14 +34,16 @@ export function ValuationScale({ actual, predicted, low, high, highlight, animat
         />
         <span className="absolute top-3 h-6 w-0.5 bg-flood" style={{ left: `${at(actual)}%` }} />
         <motion.span
-          className={`absolute top-[17px] size-3.5 -translate-x-1/2 rounded-full ${highlight ? "bg-volt" : "bg-flood"}`}
+          className="absolute top-[14px] -translate-x-1/2"
           initial={reduced ? false : { left: `${at(actual)}%` }}
           {...(animateOnView
             ? { whileInView: { left: `${at(predicted)}%` }, viewport: { once: true, amount: 0.6 } }
             : { animate: { left: `${at(predicted)}%` } })}
           style={reduced ? { left: `${at(predicted)}%` } : undefined}
           transition={{ duration: DURATION.slow, ease: EASE, delay: 0.15 }}
-        />
+        >
+          <Ball size={20} />
+        </motion.span>
       </div>
       <div aria-hidden className="flex flex-wrap justify-between gap-x-6 text-sm">
         <span>Recorded <strong className="num font-semibold">{euros(actual)}</strong></span>
