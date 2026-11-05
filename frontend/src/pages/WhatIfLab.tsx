@@ -8,7 +8,7 @@ import { PageTitle } from "@/components/layout/DashboardLayout";
 import { ClubEmblem, PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState, ErrorState, SkeletonRows } from "@/components/ui/states";
 import { AVAILABILITY, GROUPS, day, euros, percent, signed } from "@/lib/format";
-import { api } from "@/services/api";
+import { api, STATIC } from "@/services/api";
 import type { PlayerSummary, SquadPlayer, WhatIfScenario } from "@/types/api";
 import { FormationPitch } from "@/features/what-if/FormationPitch";
 import { SubBoard } from "@/features/what-if/SubBoard";
@@ -299,11 +299,12 @@ export default function WhatIfLab() {
               </div>
             </fieldset>
           )}
+          {STATIC && <p className="mt-4 text-sm text-muted">Trying a swap needs the full app. You can browse squads here.</p>}
           <div className="mt-5 flex flex-wrap gap-3">
             <button
               type="button"
               className="btn-primary"
-              disabled={!out || !incoming || run.isPending}
+              disabled={STATIC || !out || !incoming || run.isPending}
               onClick={() => out && incoming && run.mutate({ team_id: team, player_out_id: out.player_id, player_in_id: incoming.player_id, fixture_ids: fixtures })}
             >
               {run.isPending ? "Predicting" : "Apply replacement"}

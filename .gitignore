@@ -12,6 +12,7 @@ backend/artifacts/
 *.duckdb.wal
 node_modules
 dist/
+frontend/public/snapshot/
 frontend/test-results/
 frontend/playwright-report/
 *.tsbuildinfo

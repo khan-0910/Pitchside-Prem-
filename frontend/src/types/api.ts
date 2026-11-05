@@ -151,6 +151,16 @@ export interface SimilarResponse {
   score_note?: string;
 }
 
+export interface TeamNewsPlayer {
+  player_id: string;
+  name: string;
+  availability: string;
+  chance_next_round: number | null;
+  news: string | null;
+}
+
+export type TeamNews = Record<string, TeamNewsPlayer[]>;
+
 export interface Comparison {
   a: PlayerDetail;
   b: PlayerDetail;

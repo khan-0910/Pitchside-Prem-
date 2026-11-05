@@ -72,3 +72,23 @@ def test_sources_explain_themselves(con):
     assert rows["understat"]["status"] == "UNAVAILABLE"  # the state stays honest
     assert rows["understat"]["optional"] is True and "Nothing depends" in rows["understat"]["note"]
     assert [r["source_id"] for r in list_sources(con)][-1] == "understat"  # essentials come first
+
+
+def test_team_news_lists_flagged_regulars_only(con):
+    from app.services.players import team_news
+
+    con.execute("INSERT INTO teams (team_id, name) VALUES ('ars', 'Arsenal')")
+    for pid, status in (("hurt", "i"), ("gone", "u"), ("fit", "a")):
+        con.execute("INSERT INTO players (player_id, name, current_team_id, availability) VALUES (?, ?, 'ars', ?)",
+                    [pid, pid, status])
+        con.execute(
+            """INSERT INTO player_statistics (player_id, source_id, season_id, observation_date, minutes)
+               VALUES (?, 'fpl', '2026-27', DATE '2026-11-01', 900)""", [pid])
+    news = team_news(con)
+    assert [p["player_id"] for p in news["ars"]] == ["hurt"]
+
+
+def test_exported_snapshot_never_claims_to_be_live():
+    from scripts.export_static import not_live
+
+    assert not_live([{"status": "LIVE"}, {"status": "STALE"}]) == [{"status": "CACHED"}, {"status": "STALE"}]

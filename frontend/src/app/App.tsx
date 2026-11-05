@@ -9,15 +9,41 @@ const Home = lazy(() => import("@/pages/Home"));
 const DashboardLayout = lazy(() =>
   import("@/components/layout/DashboardLayout").then((m) => ({ default: m.DashboardLayout })),
 );
-const Overview = lazy(() => import("@/pages/Overview"));
-const MatchCentre = lazy(() => import("@/pages/MatchCentre"));
-const PlayerLab = lazy(() => import("@/pages/PlayerLab"));
-const TransferIntelligence = lazy(() => import("@/pages/TransferIntelligence"));
-const SeasonSimulator = lazy(() => import("@/pages/SeasonSimulator"));
-const WhatIfLab = lazy(() => import("@/pages/WhatIfLab"));
-const ModelPerformance = lazy(() => import("@/pages/ModelPerformance"));
-const DataHealth = lazy(() => import("@/pages/DataHealth"));
-const Settings = lazy(() => import("@/pages/Settings"));
+const pages = {
+  overview: () => import("@/pages/Overview"),
+  matches: () => import("@/pages/MatchCentre"),
+  players: () => import("@/pages/PlayerLab"),
+  transfers: () => import("@/pages/TransferIntelligence"),
+  simulator: () => import("@/pages/SeasonSimulator"),
+  whatIf: () => import("@/pages/WhatIfLab"),
+  models: () => import("@/pages/ModelPerformance"),
+  data: () => import("@/pages/DataHealth"),
+  settings: () => import("@/pages/Settings"),
+};
+const Overview = lazy(pages.overview);
+const MatchCentre = lazy(pages.matches);
+const PlayerLab = lazy(pages.players);
+const TransferIntelligence = lazy(pages.transfers);
+const SeasonSimulator = lazy(pages.simulator);
+const WhatIfLab = lazy(pages.whatIf);
+const ModelPerformance = lazy(pages.models);
+const DataHealth = lazy(pages.data);
+const Settings = lazy(pages.settings);
+const Legal = lazy(() => import("@/pages/Legal"));
+
+const PRELOAD_DELAY_MS = 800;
+
+/** Loads the other dashboard pages early, so moving between them shows no skeleton. */
+function PreloadPages() {
+  const { pathname } = useLocation();
+  const inDashboard = pathname.startsWith("/app");
+  useEffect(() => {
+    if (!inDashboard) return;
+    const timer = setTimeout(() => Object.values(pages).forEach((load) => void load()), PRELOAD_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [inDashboard]);
+  return null;
+}
 
 function ScrollReset() {
   const { pathname } = useLocation();
@@ -50,6 +76,7 @@ export function App() {
   return (
     <>
       <ScrollReset />
+      <PreloadPages />
       <Suspense fallback={<Loading />}>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -64,6 +91,9 @@ export function App() {
             <Route path="data" element={<DataHealth />} />
             <Route path="settings" element={<Settings />} />
           </Route>
+          <Route path="/privacy" element={<Legal page="privacy" />} />
+          <Route path="/terms" element={<Legal page="terms" />} />
+          <Route path="/credits" element={<Legal page="credits" />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

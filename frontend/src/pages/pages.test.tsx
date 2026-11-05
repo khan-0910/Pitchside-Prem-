@@ -258,6 +258,18 @@ describe("Navigation and settings", () => {
     await waitFor(() => expect(useUi.getState().navOpen).toBe(false));
   });
 
+  it("keeps model and data pages in the footer, not the menu", async () => {
+    mockApi({ "/data/sources": [] });
+    renderPage(<Routes><Route path="/app" element={<DashboardLayout />}><Route index element={<p>x</p>} /></Route></Routes>, "/app");
+    const menu = await screen.findByRole("navigation", { name: "Dashboard" });
+    const footer = screen.getByRole("navigation", { name: "Footer" });
+    expect(within(menu).queryByRole("link", { name: /data health/i })).toBeNull();
+    expect(within(menu).queryByRole("link", { name: /model performance/i })).toBeNull();
+    for (const name of ["Data health", "Model performance", "Privacy", "Terms", "Data credits"]) {
+      expect(within(footer).getByRole("link", { name })).toBeInTheDocument();
+    }
+  });
+
   it("offers a skip link and marks the current page", async () => {
     mockApi({ "/data/sources": [] });
     renderPage(<Routes><Route path="/app" element={<DashboardLayout />}><Route index element={<p>x</p>} /></Route></Routes>, "/app");

@@ -7,6 +7,7 @@ from app.api.dependencies import get_db
 from app.api.schemas import Page
 from app.core.exceptions import NotFoundError
 from app.database.query import row_dicts, scalar
+from app.services.players import team_news as load_team_news
 from app.services.predictions import PREDICTION_SQL, present
 
 router = APIRouter(tags=["matches"])
@@ -35,6 +36,11 @@ def results(
         [*params, limit, offset],
     )
     return {"items": [present(r) for r in rows], "total": total, "limit": limit, "offset": offset}
+
+
+@router.get("/matches/team-news")
+def team_news(con: duckdb.DuckDBPyConnection = Depends(get_db)) -> dict[str, list[dict[str, Any]]]:
+    return load_team_news(con)
 
 
 @router.get("/matches/teams/{team_id}/form")

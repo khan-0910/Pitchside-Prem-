@@ -1,12 +1,10 @@
 import { ArrowsLeftRight } from "@phosphor-icons/react/dist/csr/ArrowsLeftRight";
-import { Flag } from "@phosphor-icons/react/dist/csr/Flag";
 import { Gear } from "@phosphor-icons/react/dist/csr/Gear";
 import { List } from "@phosphor-icons/react/dist/csr/List";
 import { SneakerMove } from "@phosphor-icons/react/dist/csr/SneakerMove";
 import { SoccerBall } from "@phosphor-icons/react/dist/csr/SoccerBall";
 import { Strategy } from "@phosphor-icons/react/dist/csr/Strategy";
 import { TShirt } from "@phosphor-icons/react/dist/csr/TShirt";
-import { Timer } from "@phosphor-icons/react/dist/csr/Timer";
 import { Trophy } from "@phosphor-icons/react/dist/csr/Trophy";
 import { X } from "@phosphor-icons/react/dist/csr/X";
 import { useQuery } from "@tanstack/react-query";
@@ -18,10 +16,11 @@ import { setScrollLocked } from "@/animations/lenis";
 import { pageTransition } from "@/animations/transitions";
 import { useReducedMotion } from "@/animations/useReducedMotion";
 import { ScoreStrip } from "@/components/football/ScoreStrip";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SkeletonRows } from "@/components/ui/states";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { timeAgo } from "@/lib/format";
-import { api } from "@/services/api";
+import { api, STATIC } from "@/services/api";
 import { useUi } from "@/stores/ui";
 
 const NAV = [
@@ -31,8 +30,6 @@ const NAV = [
   { to: "/app/transfers", label: "Transfer Intelligence", icon: SneakerMove },
   { to: "/app/simulator", label: "Season Simulator", icon: Trophy },
   { to: "/app/what-if", label: "What-If Lab", icon: ArrowsLeftRight },
-  { to: "/app/models", label: "Model Performance", icon: Timer },
-  { to: "/app/data", label: "Data Health", icon: Flag },
   { to: "/app/settings", label: "Settings", icon: Gear },
 ];
 
@@ -143,12 +140,18 @@ export function DashboardLayout() {
       <div className="relative min-h-dvh min-w-0">
         <div className="min-h-[63px]"><ScoreStrip /></div>
         <main id="main" className="mx-auto w-full max-w-[76rem] min-w-0 px-4 py-6 text-[15px] sm:px-6 lg:px-8 lg:py-8">
+          {STATIC && (
+            <p className="mb-4 text-[13px] text-muted">
+              Public snapshot from {import.meta.env.VITE_SNAPSHOT_DATE}. Scores and predictions update when the site is next published.
+            </p>
+          )}
           <Suspense fallback={<SkeletonRows />}>
             <motion.div key={pathname} {...pageTransition}>
               <Outlet />
             </motion.div>
           </Suspense>
         </main>
+        <SiteFooter className="mx-auto mt-6 w-full max-w-[76rem] px-4 pb-6 text-muted sm:px-6 lg:px-8" />
       </div>
     </div>
   );

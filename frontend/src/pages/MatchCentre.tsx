@@ -39,6 +39,32 @@ function Form({ teamId, name }: { teamId: string; name: string }) {
   );
 }
 
+function TeamNewsList({ fixture }: { fixture: Fixture }) {
+  const query = useQuery({ queryKey: ["team-news"], queryFn: api.teamNews });
+  const sides = [
+    { name: fixture.home_short, players: query.data?.[fixture.home_team_id] ?? [] },
+    { name: fixture.away_short, players: query.data?.[fixture.away_team_id] ?? [] },
+  ];
+  return (
+    <div>
+      <h3 className="text-sm">Team news</h3>
+      <DataState query={query} loading={<SkeletonRows rows={2} />}>
+        {() => (
+          <>
+            {sides.map(({ name, players }) => (
+              <p key={name} className="mt-1 text-sm">
+                <span className="font-medium">{name}: </span>
+                {players.length === 0 ? <span className="text-muted">no regulars flagged</span> : players.map((n) => `${n.name} (${n.news || "flagged"})`).join(", ")}
+              </p>
+            ))}
+            <p className="mt-2 text-sm text-muted">From FPL, which can lag club news. Injured and suspended players are already left out of the squad the model reads. Confirmed lineups are not available.</p>
+          </>
+        )}
+      </DataState>
+    </div>
+  );
+}
+
 function Detail({ fixture }: { fixture: Fixture }) {
   const p = fixture.prediction;
   return (
@@ -47,6 +73,7 @@ function Detail({ fixture }: { fixture: Fixture }) {
         <Scoreboard fixture={fixture} />
         <Form teamId={fixture.home_team_id} name={fixture.home_short} />
         <Form teamId={fixture.away_team_id} name={fixture.away_short} />
+        {fixture.home_goals === null && <TeamNewsList fixture={fixture} />}
       </div>
       <div className="space-y-4">
         {p?.score_matrix && <ScoreGrid matrix={p.score_matrix} home={fixture.home_short} away={fixture.away_short} />}

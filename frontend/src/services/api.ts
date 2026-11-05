@@ -15,11 +15,14 @@ import type {
   Standings,
   Team,
   TeamForm,
+  TeamNews,
   Undervalued,
   ValuationDetail,
   ValuationPage,
   WhatIfScenario,
 } from "@/types/api";
+
+import { staticApi } from "./static-api";
 
 export class ApiError extends Error {
   constructor(
@@ -65,12 +68,15 @@ const post = <T>(path: string, body: unknown) =>
   });
 const id = encodeURIComponent;
 
-export const api = {
+export const STATIC = Boolean(import.meta.env.VITE_STATIC);
+
+const liveApi = {
   fixtures: (q: Query) => get<Page<Fixture>>("/fixtures", q),
   upcoming: (limit = 10) => get<Fixture[]>("/fixtures/upcoming", { limit }),
   fixture: (fixtureId: string) => get<Fixture>(`/fixtures/${id(fixtureId)}`),
   results: (q: Query) => get<Page<Fixture>>("/matches/results", q),
   teamForm: (teamId: string) => get<TeamForm>(`/matches/teams/${id(teamId)}/form`),
+  teamNews: () => get<TeamNews>("/matches/team-news"),
   teams: () => get<Team[]>("/teams"),
   standings: () => get<Standings>("/standings"),
   players: (q: Query) => get<Page<PlayerSummary>>("/players", q),
@@ -93,3 +99,6 @@ export const api = {
   dataSources: () => get<DataSource[]>("/data/sources"),
   dataHealth: () => get<DataHealth>("/data/health"),
 };
+
+export type Api = typeof liveApi;
+export const api: Api = STATIC ? staticApi : liveApi;

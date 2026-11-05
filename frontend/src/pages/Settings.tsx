@@ -1,4 +1,5 @@
 import { PageTitle } from "@/components/layout/DashboardLayout";
+import { STATIC } from "@/services/api";
 import { useUi } from "@/stores/ui";
 
 export default function Settings() {
@@ -20,9 +21,11 @@ export default function Settings() {
             {[1000, 5000, 10000, 25000, 50000].map((n) => <option key={n} value={n}>{n.toLocaleString("en-GB")} seasons</option>)}
           </select>
         </label>
-        <p className="text-muted">
-          Developers can read the <a className="underline underline-offset-4" href="/api/docs">API reference</a>.
-        </p>
+        {!STATIC && (
+          <p className="text-muted">
+            Developers can read the <a className="underline underline-offset-4" href="/api/docs">API reference</a>.
+          </p>
+        )}
       </div>
     </>
   );

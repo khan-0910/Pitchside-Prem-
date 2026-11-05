@@ -126,6 +126,16 @@ docker compose up --build
 
 Inside the container, run `python -m scripts.bootstrap` once with the API stopped.
 
+## Public site
+
+GitHub Pages cannot run the Python backend, so the public site is a snapshot. Start the API, then run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\publish.ps1
+```
+
+This copies the API into JSON, marks all of it as cached rather than live, builds the frontend and pushes it to the `gh-pages` branch. Browsing, filters and search work. New simulations and What-If swaps need the full app, so they are switched off there. The snapshot does not refresh itself.
+
 ## Database
 
 `open_connection` applies ordered files in `backend/app/database/migrations/` once each, so setup needs no extra command. DuckDB allows one writer process, so stop the API before running a command below.

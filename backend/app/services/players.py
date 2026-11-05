@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 from typing import Any
 
 import duckdb
@@ -6,6 +7,7 @@ import numpy as np
 
 from app.core.exceptions import NotFoundError
 from app.database.query import row_dicts, scalar
+from app.features.squads import full_squads, likely_squad
 from app.models.similarity.engine import (
     GROUP_NAMES,
     LABELS,
@@ -36,6 +38,25 @@ BASE_SQL = f"""
     LEFT JOIN player_profiles pr ON pr.player_id = p.player_id AND pr.model_version = {ACTIVE}
     WHERE p.current_team_id IS NOT NULL
 """
+def team_news(con: duckdb.DuckDBPyConnection) -> dict[str, list[dict[str, Any]]]:
+    """Likely starters FPL flags as doubtful or out. 'u' means the player has left the club."""
+    regulars = {p.player_id for squad in full_squads(con).values() for p in likely_squad(squad)}
+    rows = row_dicts(
+        con,
+        """SELECT p.current_team_id AS team_id, p.player_id, p.name, p.availability, p.chance_next_round,
+                  (SELECT news FROM injury_records i WHERE i.player_id = p.player_id
+                   ORDER BY news_added DESC NULLS LAST LIMIT 1) AS news
+           FROM players p
+           WHERE p.current_team_id IS NOT NULL AND p.availability NOT IN ('a', 'u')
+           ORDER BY p.name""",
+    )
+    out: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in rows:
+        if row["player_id"] in regulars:
+            out[row.pop("team_id")].append(row)
+    return out
+
+
 SORTS = {"minutes": "l.minutes", "name": "p.name", "age": "age", "xg": "l.xg",
          "value": "v.value_eur", "goals": "l.goals"}
 

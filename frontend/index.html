@@ -13,7 +13,7 @@
     <div id="root"></div>
     <script>
       // The homepage headline is the first thing a person should see, so it paints before the app loads.
-      if (location.pathname === "/") {
+      if (location.pathname === "%BASE_URL%") {
         document.getElementById("root").innerHTML =
           '<div style="min-height:100dvh;background:repeating-linear-gradient(180deg,#0b6738 0 150px,#0e7842 150px 300px);color:#fff;padding:0 max(1.25rem,5.5vw)">' +
           '<div style="height:84px"></div>' +

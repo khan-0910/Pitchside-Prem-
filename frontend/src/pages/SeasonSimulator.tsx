@@ -10,7 +10,7 @@ import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { ClubEmblem } from "@/components/ui/identity";
 import { DataState, EmptyState, ErrorState } from "@/components/ui/states";
 import { day, percent } from "@/lib/format";
-import { api } from "@/services/api";
+import { api, STATIC } from "@/services/api";
 import { useUi } from "@/stores/ui";
 import type { Simulation, SimulationRow } from "@/types/api";
 
@@ -175,10 +175,11 @@ export default function SeasonSimulator() {
         <label className="text-sm text-muted">Random seed
           <input type="number" min={0} className="field mt-0.5 !w-28 text-ink" value={seed} onChange={(e) => setSeed(Number(e.target.value))} />
         </label>
-        <button type="submit" className="btn-primary" disabled={run.isPending || !valid}>
+        <button type="submit" className="btn-primary" disabled={STATIC || run.isPending || !valid}>
           {run.isPending ? "Simulating" : "Run simulation"}
         </button>
         {!valid && <p role="alert" className="w-full text-sm text-alert">Choose between 100 and 50,000 seasons.</p>}
+        {STATIC && <p className="w-full text-sm text-muted">New runs need the full app. This shows the latest published run.</p>}
       </form>
 
       <div className="min-h-2" aria-live="polite">

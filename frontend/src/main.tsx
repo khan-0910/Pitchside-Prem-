@@ -13,7 +13,7 @@ import { Providers } from "./app/providers";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Providers>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <App />
       </BrowserRouter>
     </Providers>
