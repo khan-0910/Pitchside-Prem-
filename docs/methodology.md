@@ -34,10 +34,12 @@ Team xG is not a feature. Only 90 matches have it, all from 2026-27. Bookmaker o
 
 | Forecast | Log loss | Brier | Accuracy |
 |---|---:|---:|---:|
-| Pitchside | 1.043 | 0.629 | 45.1% |
+| Pitchside | 1.039 | 0.626 | 47.0% |
 | Bookmakers, closing | 1.013 | 0.608 | 49.1% |
 | Bookmakers, earlier | 1.016 | 0.610 | 49.1% |
 | Historical frequencies | 1.085 | 0.657 | 42.1% |
+
+Settings were chosen by walk-forward log loss on seasons 2018-19 to 2024-25, before the test window. Elo constants, longer history and blends gave no real gain. Knowing who actually played adds under 0.002, and free sources publish no confirmed lineups before kickoff, so lineups are not a model input. Injured and suspended players are already removed from the live squad the model reads.
 
 It beats naive baselines and does not beat the market. A walk-forward backtest refits before each season from 2020-21 and shows the same pattern every season.
 

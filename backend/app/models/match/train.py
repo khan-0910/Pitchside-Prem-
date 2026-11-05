@@ -36,7 +36,7 @@ def candidates() -> dict[str, Any]:
     return {
         "logistic": make_pipeline(
             SimpleImputer(strategy="median"), StandardScaler(),
-            LogisticRegression(C=0.05, max_iter=2000)),
+            LogisticRegression(C=0.002, max_iter=3000)),
         "random_forest": make_pipeline(
             SimpleImputer(strategy="median"),
             RandomForestClassifier(n_estimators=500, min_samples_leaf=20, max_features="sqrt",
@@ -53,7 +53,7 @@ def candidates() -> dict[str, Any]:
 
 def goals_model() -> Any:
     return make_pipeline(SimpleImputer(strategy="median"), StandardScaler(),
-                         PoissonRegressor(alpha=1.0, max_iter=1000))
+                         PoissonRegressor(alpha=0.1, max_iter=1000))
 
 
 def labels(frame: pd.DataFrame) -> np.ndarray:
