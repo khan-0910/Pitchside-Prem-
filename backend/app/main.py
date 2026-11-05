@@ -9,7 +9,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException
 
-from app.api.routes import data, fixtures, matches, models, players, system
+from app.api.routes import data, fixtures, matches, models, players, system, transfers
 from app.config import get_settings
 from app.core.exceptions import PitchsideError
 from app.core.logging import configure_logging, log
@@ -85,6 +85,7 @@ def create_app() -> FastAPI:
     v1.include_router(matches.router)
     v1.include_router(models.router)
     v1.include_router(players.router)
+    v1.include_router(transfers.router)
     app.include_router(v1)
     return app
 
