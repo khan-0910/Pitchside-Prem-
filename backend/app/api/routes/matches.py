@@ -39,7 +39,7 @@ def results(
 
 
 @router.get("/matches/team-news")
-def team_news(con: duckdb.DuckDBPyConnection = Depends(get_db)) -> dict[str, list[dict[str, Any]]]:
+def team_news(con: duckdb.DuckDBPyConnection = Depends(get_db)) -> dict[str, dict[str, Any]]:
     return load_team_news(con)
 
 

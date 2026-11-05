@@ -7,7 +7,6 @@ import { Strategy } from "@phosphor-icons/react/dist/csr/Strategy";
 import { TShirt } from "@phosphor-icons/react/dist/csr/TShirt";
 import { Trophy } from "@phosphor-icons/react/dist/csr/Trophy";
 import { X } from "@phosphor-icons/react/dist/csr/X";
-import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { Suspense, useEffect } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
@@ -18,9 +17,7 @@ import { useReducedMotion } from "@/animations/useReducedMotion";
 import { ScoreStrip } from "@/components/football/ScoreStrip";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SkeletonRows } from "@/components/ui/states";
-import { StatusPill } from "@/components/ui/StatusPill";
-import { timeAgo } from "@/lib/format";
-import { api, STATIC } from "@/services/api";
+import { STATIC } from "@/services/api";
 import { useUi } from "@/stores/ui";
 
 const NAV = [
@@ -32,18 +29,6 @@ const NAV = [
   { to: "/app/what-if", label: "What-If Lab", icon: ArrowsLeftRight },
   { to: "/app/settings", label: "Settings", icon: Gear },
 ];
-
-function Freshness() {
-  const sources = useQuery({ queryKey: ["sources"], queryFn: api.dataSources });
-  const fpl = sources.data?.find((s) => s.source_id === "fpl");
-  if (!fpl) return null;
-  return (
-    <Link to="/app/data" className="block text-[13px]">
-      <StatusPill status={fpl.status} />
-      <span className="block text-muted">Match data, {timeAgo(fpl.last_success_at).toLowerCase()}</span>
-    </Link>
-  );
-}
 
 function NavList({ onNavigate, layoutId }: { onNavigate?: () => void; layoutId: string }) {
   return (
@@ -102,7 +87,6 @@ export function DashboardLayout() {
       <aside className="grass on-grass sticky top-0 z-20 hidden h-dvh flex-col gap-6 p-3 lg:flex">
         <div className="px-2.5 pt-2"><Logo /></div>
         <div className="flex-1"><NavList layoutId="nav-desktop" /></div>
-        <div className="px-2.5 pb-1"><Freshness /></div>
       </aside>
 
       <header className="grass on-grass sticky top-0 z-30 flex h-14 items-center justify-between px-4 lg:hidden">
@@ -132,7 +116,6 @@ export function DashboardLayout() {
               </button>
             </div>
             <NavList layoutId="nav-mobile" onNavigate={() => setNavOpen(false)} />
-            <Freshness />
           </motion.div>
         )}
       </AnimatePresence>

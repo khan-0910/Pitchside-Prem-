@@ -159,7 +159,7 @@ export interface TeamNewsPlayer {
   news: string | null;
 }
 
-export type TeamNews = Record<string, TeamNewsPlayer[]>;
+export type TeamNews = Record<string, { team: string; missing_share: number; players: TeamNewsPlayer[] }>;
 
 export interface Comparison {
   a: PlayerDetail;

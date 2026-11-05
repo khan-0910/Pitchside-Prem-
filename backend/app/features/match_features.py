@@ -17,6 +17,7 @@ from app.features.squads import (
     HistoricSquads,
     current_rosters,
     likely_squad,
+    live_absence,
     squad_features,
 )
 
@@ -36,7 +37,7 @@ FEATURES = [
     "season_ppg_home", "season_ppg_away", "season_gd_home", "season_gd_away",
     "rest_home", "rest_away",
     "squad_value_home", "squad_value_away", "squad_ga90_home", "squad_ga90_away",
-    "squad_value_diff",
+    "squad_value_diff", "absent_share_home", "absent_share_away",
 ]
 
 
@@ -113,6 +114,7 @@ def build_match_frame(
     matches = load_matches(con)
     squads = HistoricSquads(con)
     live = {t: squad_features(likely_squad(r)) for t, r in current_rosters(con).items()}
+    absence = live_absence(con)
     teams: dict[str, TeamState] = {}
     prior_season_teams: set[str] = set()
     season_seen: set[str] = set()
@@ -156,6 +158,10 @@ def build_match_frame(
         if not played and day <= today:
             sq_h = live.get(m.home_team_id, sq_h)
             sq_a = live.get(m.away_team_id, sq_a)
+        if played and day >= SQUAD_DATA_FROM:
+            out_h, out_a = squads.absent_share(m.home_team_id, day), squads.absent_share(m.away_team_id, day)
+        else:
+            out_h, out_a = absence.get(m.home_team_id, math.nan), absence.get(m.away_team_id, math.nan)
 
         row = {
             "fixture_id": m.fixture_id, "season_id": m.season_id, "date": day,
@@ -166,6 +172,7 @@ def build_match_frame(
             "elo_diff": home.elo + ELO_HOME - away.elo,
             "squad_value_home": sq_h[0], "squad_value_away": sq_a[0],
             "squad_ga90_home": sq_h[1], "squad_ga90_away": sq_a[1],
+            "absent_share_home": out_h, "absent_share_away": out_a,
         }
         for key, value in h.items():
             row[f"{key}_home"] = value

@@ -7,7 +7,6 @@ import {
   HowItWorks,
   MatchSection,
   PlayerSection,
-  Transparency,
   TransferSection,
   WhatIfSection,
 } from "./sections";
@@ -28,7 +27,6 @@ export default function Journey() {
       <TableJourney />
       <WhatIfSection />
       <HowItWorks />
-      <Transparency />
       <GoalFinale />
     </div>
   );

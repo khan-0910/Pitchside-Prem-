@@ -78,14 +78,15 @@ def test_team_news_lists_flagged_regulars_only(con):
     from app.services.players import team_news
 
     con.execute("INSERT INTO teams (team_id, name) VALUES ('ars', 'Arsenal')")
-    for pid, status in (("hurt", "i"), ("gone", "u"), ("fit", "a")):
+    for pid, status in (("hurt", "i"), ("gone", "u"), ("fit", "a"), ("fit2", "a"), ("fit3", "a")):
         con.execute("INSERT INTO players (player_id, name, current_team_id, availability) VALUES (?, ?, 'ars', ?)",
                     [pid, pid, status])
         con.execute(
             """INSERT INTO player_statistics (player_id, source_id, season_id, observation_date, minutes)
                VALUES (?, 'fpl', '2026-27', DATE '2026-11-01', 900)""", [pid])
     news = team_news(con)
-    assert [p["player_id"] for p in news["ars"]] == ["hurt"]
+    assert [p["player_id"] for p in news["ars"]["players"]] == ["hurt"]
+    assert news["ars"]["missing_share"] == pytest.approx(0.25)
 
 
 def test_exported_snapshot_never_claims_to_be_live():

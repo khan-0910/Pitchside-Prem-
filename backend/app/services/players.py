@@ -1,5 +1,4 @@
 import json
-from collections import defaultdict
 from typing import Any
 
 import duckdb
@@ -7,7 +6,7 @@ import numpy as np
 
 from app.core.exceptions import NotFoundError
 from app.database.query import row_dicts, scalar
-from app.features.squads import full_squads, likely_squad
+from app.features.squads import full_squads, missing_share, play_chance, regulars
 from app.models.similarity.engine import (
     GROUP_NAMES,
     LABELS,
@@ -38,22 +37,23 @@ BASE_SQL = f"""
     LEFT JOIN player_profiles pr ON pr.player_id = p.player_id AND pr.model_version = {ACTIVE}
     WHERE p.current_team_id IS NOT NULL
 """
-def team_news(con: duckdb.DuckDBPyConnection) -> dict[str, list[dict[str, Any]]]:
-    """Likely starters FPL flags as doubtful or out. 'u' means the player has left the club."""
-    regulars = {p.player_id for squad in full_squads(con).values() for p in likely_squad(squad)}
-    rows = row_dicts(
-        con,
-        """SELECT p.current_team_id AS team_id, p.player_id, p.name, p.availability, p.chance_next_round,
-                  (SELECT news FROM injury_records i WHERE i.player_id = p.player_id
-                   ORDER BY news_added DESC NULLS LAST LIMIT 1) AS news
-           FROM players p
-           WHERE p.current_team_id IS NOT NULL AND p.availability NOT IN ('a', 'u')
-           ORDER BY p.name""",
-    )
-    out: dict[str, list[dict[str, Any]]] = defaultdict(list)
-    for row in rows:
-        if row["player_id"] in regulars:
-            out[row.pop("team_id")].append(row)
+def team_news(con: duckdb.DuckDBPyConnection) -> dict[str, dict[str, Any]]:
+    """Flagged regulars per club, and the share of squad value the match model counts as missing."""
+    news = dict(con.execute(
+        """SELECT player_id, news FROM injury_records
+           QUALIFY row_number() OVER (PARTITION BY player_id ORDER BY news_added DESC NULLS LAST) = 1"""
+    ).fetchall())
+    names = dict(con.execute("SELECT team_id, coalesce(short_name, name) FROM teams").fetchall())
+    out = {}
+    for team, squad in full_squads(con).items():
+        usual = regulars(squad)
+        flagged = [p for p in usual if play_chance(p) < 1]
+        out[team] = {
+            "team": names.get(team, team),
+            "missing_share": missing_share(usual),
+            "players": [{"player_id": p.player_id, "name": p.name, "availability": p.availability,
+                         "chance_next_round": p.chance, "news": news.get(p.player_id)} for p in flagged],
+        }
     return out
 
 

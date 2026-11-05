@@ -14,7 +14,7 @@ import { Scoreboard } from "@/features/matches/Scoreboard";
 import { ValuationScale } from "@/features/transfers/ValuationScale";
 import { ASSESSMENT, day, euros, percent, signed } from "@/lib/format";
 import { api } from "@/services/api";
-import type { ModelInfo, PlayerDetail, RadarAxis } from "@/types/api";
+import type { PlayerDetail, RadarAxis } from "@/types/api";
 
 /** The one entrance on the page: a team sheet dropped onto the grass, settling flat. */
 export function Sheet({ children, tilt = -1.6 }: { children: ReactNode; tilt?: number }) {
@@ -205,54 +205,6 @@ export function HowItWorks() {
         {PIPELINE[active].body}
       </p>
     </section>
-  );
-}
-
-function metric(model: ModelInfo, candidate: string, name: string) {
-  return model.metrics.test?.[candidate]?.[name];
-}
-
-export function Transparency() {
-  const query = useQuery({ queryKey: ["model-metrics"], queryFn: api.modelMetrics });
-  return (
-    <Band title="How good is it, really?" lead="Measured on matches the model never trained on. Lower is better for both scores." to="/app/models" cta="See Model Performance" tilt={1.2}>
-      <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => !d.match} empty={<EmptyState title="No trained match model yet." />}>
-        {(data) => {
-          const m = data.match!;
-          const rows = [
-            { label: "Pitchside", loss: metric(m, "model", "log_loss"), brier: metric(m, "model", "brier"), strong: true },
-            { label: "Bookmakers, closing prices", loss: metric(m, "bookmaker_closing", "log_loss"), brier: metric(m, "bookmaker_closing", "brier") },
-            { label: "Bookmakers, earlier prices", loss: metric(m, "bookmaker_pre_match", "log_loss"), brier: metric(m, "bookmaker_pre_match", "brier") },
-            { label: "Historical frequencies", loss: metric(m, "baseline_frequency", "log_loss"), brier: metric(m, "baseline_frequency", "brier") },
-          ];
-          return (
-            <div>
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="chalk border-b text-sm text-muted">
-                    <th className="py-2 font-medium">Forecast</th>
-                    <th className="py-2 text-right font-medium">Log loss</th>
-                    <th className="py-2 text-right font-medium">Brier score</th>
-                  </tr>
-                </thead>
-                <tbody className="num">
-                  {rows.map((r) => (
-                    <tr key={r.label} className={`chalk border-b ${r.strong ? "font-semibold text-accent" : ""}`}>
-                      <td className="py-2.5">{r.label}</td>
-                      <td className="py-2.5 text-right">{r.loss?.toFixed(3) ?? "n/a"}</td>
-                      <td className="py-2.5 text-right">{r.brier?.toFixed(3) ?? "n/a"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <p className="mt-4 text-sm text-muted">
-                Tested on {m.n_test} matches from {day(m.test_start)} to {day(m.test_end)}. Last evaluated {day(m.trained_at)}.
-              </p>
-            </div>
-          );
-        }}
-      </DataState>
-    </Band>
   );
 }
 

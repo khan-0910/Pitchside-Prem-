@@ -37,7 +37,7 @@ describe("Match Centre", () => {
   it("filters by club and asks the API for it", async () => {
     const fetchMock = mockApi({ "/teams": teams, "/fixtures": page([fixture]), "/matches": { team: teams[0], matches: [], points: 0 } });
     renderPage(<MatchCentre />);
-    await screen.findByText("Everton", { exact: false });
+    await screen.findAllByText("Everton", { exact: false });
     await userEvent.selectOptions(await screen.findByLabelText("Club"), await screen.findByRole("option", { name: "Arsenal" }));
     await waitFor(() => expect(fetchMock.mock.calls.some(([u]) => String(u).includes("team=arsenal"))).toBe(true));
   });

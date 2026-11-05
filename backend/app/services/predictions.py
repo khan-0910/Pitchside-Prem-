@@ -17,9 +17,9 @@ from app.models.match.inference import MatchModel, load_active, most_likely_scor
 from app.models.match.metrics import score
 
 LIMITATIONS = [
-    "Built from team form, Elo strength and squad data. It has no tactics or confirmed line-ups.",
+    "Built from team form, Elo strength, squad data and expected absences. No tactics or confirmed line-ups.",
     "Squad strength assumes the 14 most-used available players.",
-    "Injury news comes from FPL and can lag behind club announcements.",
+    "Absences come from FPL injury flags, which can lag behind club announcements.",
     "Team xG is only available from 2026-27, so it is not a model input yet.",
 ]
 

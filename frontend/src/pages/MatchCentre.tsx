@@ -42,8 +42,8 @@ function Form({ teamId, name }: { teamId: string; name: string }) {
 function TeamNewsList({ fixture }: { fixture: Fixture }) {
   const query = useQuery({ queryKey: ["team-news"], queryFn: api.teamNews });
   const sides = [
-    { name: fixture.home_short, players: query.data?.[fixture.home_team_id] ?? [] },
-    { name: fixture.away_short, players: query.data?.[fixture.away_team_id] ?? [] },
+    { name: fixture.home_short, players: query.data?.[fixture.home_team_id]?.players ?? [] },
+    { name: fixture.away_short, players: query.data?.[fixture.away_team_id]?.players ?? [] },
   ];
   return (
     <div>
@@ -57,7 +57,7 @@ function TeamNewsList({ fixture }: { fixture: Fixture }) {
                 {players.length === 0 ? <span className="text-muted">no regulars flagged</span> : players.map((n) => `${n.name} (${n.news || "flagged"})`).join(", ")}
               </p>
             ))}
-            <p className="mt-2 text-sm text-muted">From FPL, which can lag club news. Injured and suspended players are already left out of the squad the model reads. Confirmed lineups are not available.</p>
+            <p className="mt-2 text-sm text-muted">From FPL, which can lag club news. These absences feed into the prediction. Confirmed lineups are not available.</p>
           </>
         )}
       </DataState>
@@ -100,6 +100,7 @@ export default function MatchCentre() {
   const [open, setOpen] = useState<string | null>(null);
 
   const teams = useQuery({ queryKey: ["teams"], queryFn: api.teams });
+  const news = useQuery({ queryKey: ["team-news"], queryFn: api.teamNews });
   const query = useQuery({
     queryKey: ["fixtures", view, team, from, to, count],
     queryFn: () => api.fixtures({
@@ -162,6 +163,11 @@ export default function MatchCentre() {
                       <span className="text-sm text-muted">{f.home_goals !== null ? "Played before predictions were stored" : "No prediction stored"}</span>
                     )}
                   </button>
+                  {f.home_goals === null && news.data && (
+                    <p className="pb-2 text-[13px] text-muted">
+                      Injury doubts: {f.home_short} {news.data[f.home_team_id]?.players.length ?? 0}, {f.away_short} {news.data[f.away_team_id]?.players.length ?? 0}
+                    </p>
+                  )}
                   {open === f.fixture_id && <Detail fixture={f} />}
                 </li>
               ))}

@@ -4,9 +4,8 @@ import { Link } from "react-router-dom";
 import { PageTitle } from "@/components/layout/DashboardLayout";
 import { ClubEmblem, PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState } from "@/components/ui/states";
-import { StatusPill } from "@/components/ui/StatusPill";
 import { FixtureRail } from "@/features/matches/FixtureRail";
-import { ASSESSMENT, day, euros, signed, timeAgo } from "@/lib/format";
+import { ASSESSMENT, euros, signed } from "@/lib/format";
 import { api } from "@/services/api";
 
 function Heading({ title, to }: { title: string; to?: string }) {
@@ -17,6 +16,8 @@ function Heading({ title, to }: { title: string; to?: string }) {
     </div>
   );
 }
+
+const INJURY_ROWS = 6;
 
 const zone = (position: number) =>
   position <= 4 ? "zone-top" : position <= 6 ? "zone-europe" : position >= 18 ? "zone-drop" : "";
@@ -130,16 +131,19 @@ function Scorers() {
   );
 }
 
-function Freshness() {
-  const query = useQuery({ queryKey: ["sources"], queryFn: api.dataSources });
+function Injuries() {
+  const query = useQuery({ queryKey: ["team-news"], queryFn: api.teamNews });
   return (
-    <DataState query={query}>
-      {(sources) => (
-        <ul className="grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
-          {sources.map((s) => (
-            <li key={s.source_id} className="flex flex-wrap justify-between gap-2 py-1">
-              <span>{s.name}</span>
-              <span className="text-sm"><StatusPill status={s.status} /> <span className="text-muted">{s.data_as_of ? `to ${day(s.data_as_of)}` : timeAgo(s.last_success_at)}</span></span>
+    <DataState query={query} isEmpty={(d) => !Object.values(d).some((t) => t.players.length)} empty={<EmptyState title="No regulars are flagged." />}>
+      {(data) => (
+        <ul>
+          {Object.values(data).sort((a, b) => b.missing_share - a.missing_share).slice(0, INJURY_ROWS).map((t) => (
+            <li key={t.team} className="chalk flex justify-between gap-4 border-b py-1.5">
+              <span className="min-w-0">
+                <span className="font-medium">{t.team}</span>
+                <span className="block truncate text-sm text-muted">{t.players.map((p) => p.name).join(", ") || "None flagged"}</span>
+              </span>
+              <span className="num shrink-0 text-sm" title="Share of the usual squad's value expected to miss the next match">{Math.round(t.missing_share * 100)}% out</span>
             </li>
           ))}
         </ul>
@@ -156,12 +160,12 @@ export default function Overview() {
         <section className="board min-w-0 lg:col-span-2 xl:col-span-2"><Heading title="Next up" to="/app/matches" /><FixtureRail /></section>
         <section aria-labelledby="table-h" className="board min-w-0"><div id="table-h"><Heading title="League table" /></div><LeagueTable /></section>
         <div className="min-w-0 space-y-10">
+          <section className="board"><Heading title="Injuries" to="/app/matches" /><Injuries /></section>
           <section className="board"><Heading title="Latest results" to="/app/matches" /><Results /></section>
           <section className="board"><Heading title="Top expected goals" to="/app/players" /><Scorers /></section>
           <section className="board"><Heading title="Biggest value gaps" to="/app/transfers" /><ValueWatch /></section>
         </div>
       </div>
-      <section className="board mt-10"><Heading title="Data freshness" to="/app/data" /><Freshness /></section>
     </>
   );
 }

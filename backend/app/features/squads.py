@@ -8,7 +8,7 @@ A what-if swap edits this roster, so it really changes the model's inputs.
 import math
 from bisect import bisect_left
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, timedelta
 
 import duckdb
@@ -30,6 +30,8 @@ class SquadPlayer:
     minutes: float
     position: str | None = None
     season_minutes: float = 0.0
+    availability: str | None = None
+    chance: int | None = None
 
 
 def ga_per_90(goal_involvements: float, minutes: float) -> float:
@@ -44,6 +46,25 @@ def squad_features(roster: list[SquadPlayer]) -> tuple[float, float]:
     fallback = float(np.median(known)) if known else 0.0
     total = sum(p.value_eur or fallback for p in roster)
     return math.log1p(total), float(np.mean([ga_per_90(p.ga_total, p.minutes) for p in roster]))
+
+
+def play_chance(player: SquadPlayer) -> float:
+    """How likely a player is to be fit. FPL's own number wins where it gave one."""
+    if player.availability in UNAVAILABLE:
+        return 0.0
+    if player.chance is not None:
+        return player.chance / 100
+    return 0.5 if player.availability == "d" else 1.0
+
+
+def missing_share(roster: list[SquadPlayer]) -> float:
+    """Share of the likely squad's market value expected to miss the match."""
+    if not roster:
+        return math.nan
+    known = [p.value_eur for p in roster if p.value_eur]
+    fallback = float(np.median(known)) if known else 1.0
+    values = [p.value_eur or fallback for p in roster]
+    return sum(v * (1 - play_chance(p)) for v, p in zip(values, roster, strict=True)) / sum(values)
 
 
 class HistoricSquads:
@@ -113,6 +134,15 @@ class HistoricSquads:
     def features(self, team: str, day: date) -> tuple[float, float]:
         return squad_features(self.roster(team, day))
 
+    def absent_share(self, team: str, day: date) -> float:
+        """Who missed this match, standing in for the team news known at kickoff."""
+        played = self.team_games.get(team, {}).get(day)
+        if not played:
+            return math.nan
+        who = {player for player, _ in played}
+        return missing_share([p if p.player_id in who else replace(p, availability="i")
+                              for p in self.roster(team, day)])
+
 
 def current_rosters(con: duckdb.DuckDBPyConnection) -> dict[str, list[SquadPlayer]]:
     """Every current player by team, best-used first. Unavailable players are excluded."""
@@ -145,7 +175,7 @@ def _load_current(
             QUALIFY row_number() OVER (PARTITION BY player_id ORDER BY valuation_date DESC) = 1
         )
         SELECT p.current_team_id, p.player_id, p.name, v.value_eur, r.ga, r.mins, p.position,
-               l.minutes, p.availability
+               l.minutes, p.availability, p.chance_next_round
         FROM players p
         JOIN latest l USING (player_id)
         LEFT JOIN recent r USING (player_id)
@@ -155,13 +185,22 @@ def _load_current(
         """
     ).fetchall()
     squads: dict[str, list[SquadPlayer]] = defaultdict(list)
-    for team, pid, name, value, ga, mins, pos, season_minutes, availability in rows:
+    for team, pid, name, value, ga, mins, pos, season_minutes, availability, chance in rows:
         if not include_unavailable and availability in UNAVAILABLE:
             continue
         squads[team].append(SquadPlayer(pid, name, value, ga or 0.0, mins or 0.0, pos,
-                                        season_minutes or 0.0))
+                                        season_minutes or 0.0, availability, chance))
     return squads
 
 
 def likely_squad(players: list[SquadPlayer]) -> list[SquadPlayer]:
     return players[:SQUAD_SIZE]
+
+
+def regulars(players: list[SquadPlayer]) -> list[SquadPlayer]:
+    """The usual 14, fit or not. 'u' means the player has left the club."""
+    return likely_squad([p for p in players if p.availability != "u"])
+
+
+def live_absence(con: duckdb.DuckDBPyConnection) -> dict[str, float]:
+    return {team: missing_share(regulars(squad)) for team, squad in full_squads(con).items()}

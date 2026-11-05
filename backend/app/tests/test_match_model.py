@@ -254,3 +254,14 @@ def test_admin_retrain_rejects_wrong_token(client, monkeypatch):
     get_settings.cache_clear()
     r = client.post("/api/v1/admin/models/retrain", headers={"X-Admin-Token": "wrong"})
     assert r.status_code == 401
+
+
+def test_missing_share_weighs_value_and_chance():
+    from app.features.squads import SquadPlayer, missing_share
+
+    def player(value, availability=None, chance=None):
+        return SquadPlayer("p", "p", value, 0, 0, availability=availability, chance=chance)
+
+    assert missing_share([player(30, "i"), player(10)]) == 0.75
+    assert missing_share([player(10, "d", 75), player(10)]) == 0.125
+    assert missing_share([player(10, "d"), player(10)]) == 0.25
