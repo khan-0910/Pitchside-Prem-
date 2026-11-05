@@ -62,3 +62,10 @@ export const AVAILABILITY: Record<string, string> = {
   u: "Unavailable",
   n: "Not in squad",
 };
+
+export const ASSESSMENT: Record<string, string> = {
+  model_undervalued: "Clear signal: undervalued",
+  model_overvalued: "Clear signal: overvalued",
+  within_uncertainty: "Inside the model's range",
+  small_sample: "Too few minutes to judge",
+};

@@ -8,6 +8,7 @@ from app.database.query import row_dicts, scalar
 
 STALE_DAYS = 120
 MIN_MINUTES_FOR_FLAG = 450
+MAX_RANKED_AGE_DAYS = 365
 NOTE = ("Model estimate of the next recorded market value. It is not a real transfer fee, and values come "
         "from a third-party Transfermarkt dataset.")
 ACTIVE = "(SELECT model_version FROM model_registry WHERE model_type = 'transfer' AND is_active LIMIT 1)"
@@ -102,10 +103,17 @@ def undervalued(
     require_model(con)
     clause, params = _filters(None, group, team, age_max, min_minutes, None)
     rows = row_dicts(
-        con, f"{BASE}{clause} AND t.low_eur > t.actual_eur ORDER BY gap_pct DESC LIMIT ?", [*params, limit],
+        con,
+        f"""{BASE}{clause} AND t.predicted_eur > t.actual_eur
+            AND date_diff('day', t.valuation_date, current_date) <= {MAX_RANKED_AGE_DAYS}
+            ORDER BY gap_pct DESC LIMIT ?""",
+        [*params, limit],
     )
-    return {"items": [_decorate(r) for r in rows], "note": NOTE,
-            "rule": "Listed only when the low end of the model's range is above the recorded value.",
+    items = [_decorate(r) for r in rows]
+    clear = sum(r["assessment"] == "model_undervalued" for r in items)
+    return {"items": items, "note": NOTE, "clear_signals": clear,
+            "rule": "Ranked by positive gap. A clear signal needs the low end of the model's range above the "
+                    "recorded value. Valuations older than a year are left out.",
             "as_of": datetime.now(UTC)}
 
 

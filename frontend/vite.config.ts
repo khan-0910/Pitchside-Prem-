@@ -9,6 +9,8 @@ export default defineConfig({
   resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
   server: {
     port: 5173,
+    // node_modules is a junction outside the project on this machine.
+    fs: { strict: false },
     proxy: { "/api": "http://127.0.0.1:8000" },
   },
   build: {

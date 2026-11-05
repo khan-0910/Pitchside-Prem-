@@ -76,7 +76,9 @@ def played_results(con: duckdb.DuckDBPyConnection, season: str) -> list[tuple[st
     ).fetchall()]
 
 
-def run_simulation(con: duckdb.DuckDBPyConnection, iterations: int | None = None, seed: int = 2026) -> dict[str, Any]:
+def run_simulation(
+    con: duckdb.DuckDBPyConnection, iterations: int | None = None, seed: int = 2026
+) -> dict[str, Any]:
     settings = get_settings()
     iterations = iterations or settings.simulation_default_iterations
     if iterations > settings.simulation_max_iterations:

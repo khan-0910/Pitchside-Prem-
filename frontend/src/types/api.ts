@@ -198,6 +198,7 @@ export interface Undervalued {
   items: Valuation[];
   note: string;
   rule: string;
+  clear_signals: number;
 }
 
 export interface ValuationDetail {

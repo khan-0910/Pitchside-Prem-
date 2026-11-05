@@ -86,3 +86,27 @@ def test_future_transfer_values_cannot_reach_training_features(con):
            VALUES ('p', DATE '2024-01-01', 't', 90e6, '11')""")
     after = build_training_frame(con)
     pd.testing.assert_frame_equal(before, after[after["valuation_date"] <= date(2023, 6, 1)])
+
+
+def seed_valuation(con, pid, actual, predicted, low, minutes=1200, age_days=30):
+    con.execute("INSERT INTO players (player_id, name, date_of_birth, current_team_id) VALUES (?, ?, DATE '2000-01-01', 'arsenal')", [pid, pid])
+    con.execute(
+        """INSERT INTO player_statistics (player_id, season_id, source_id, observation_date, minutes)
+           VALUES (?, '2026-27', 'fpl', current_date, ?)""", [pid, minutes])
+    con.execute(
+        """INSERT INTO transfer_predictions VALUES ('t', ?, current_date - CAST(? AS INTEGER), ?, ?, ?, ?, now())""",
+        [pid, age_days, actual, predicted, low, predicted * 1.3])
+
+
+def test_undervalued_ranks_positive_gaps_and_marks_clear_signals(con):
+    from app.services.transfers import undervalued
+    con.execute("INSERT INTO model_registry (model_version, model_type, is_active) VALUES ('t', 'transfer', TRUE)")
+    seed_valuation(con, "clear", 10e6, 20e6, 15e6)
+    seed_valuation(con, "weak", 10e6, 11e6, 9e6)
+    seed_valuation(con, "negative", 10e6, 8e6, 6e6)
+    seed_valuation(con, "stale", 10e6, 30e6, 25e6, age_days=900)
+    seed_valuation(con, "short", 10e6, 30e6, 25e6, minutes=100)
+    out = undervalued(con)
+    assert [r["player_id"] for r in out["items"]] == ["clear", "weak"]
+    assert out["clear_signals"] == 1
+    assert out["items"][1]["assessment"] == "within_uncertainty"

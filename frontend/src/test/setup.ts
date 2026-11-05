@@ -13,8 +13,9 @@ class Observer {
   unobserve() {}
   disconnect() {}
 }
-vi.stubGlobal("ResizeObserver", Observer);
-vi.stubGlobal("IntersectionObserver", Observer);
+globalThis.ResizeObserver = Observer as unknown as typeof ResizeObserver;
+window.innerWidth = 800; // the phone layout has no SVG path maths, which jsdom lacks
+globalThis.IntersectionObserver = Observer as unknown as typeof IntersectionObserver;
 
 export function setReducedMotion(value: boolean) {
   window.matchMedia = ((query: string) => ({
