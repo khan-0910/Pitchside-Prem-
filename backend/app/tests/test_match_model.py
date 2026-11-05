@@ -275,26 +275,3 @@ def test_expected_return_reads_fpl_news():
     assert expected_return("Calf injury - 50% chance of playing", 50) == "50% chance of playing"
     assert expected_return("Thigh injury - Unknown return date", 0) == "Unknown"
     assert expected_return(None, None) == "Unknown"
-
-
-def test_daily_job_reads_fpl_without_a_database():
-    from datetime import UTC, datetime
-
-    from scripts.daily_injuries import CLUBS, build
-
-    boot = {
-        "teams": [{"id": i, "short_name": f"T{i}"} for i in range(CLUBS)],
-        "elements": [
-            {"code": 1, "team": 0, "minutes": 900, "first_name": "Bukayo", "second_name": "Saka",
-             "status": "i", "chance_of_playing_next_round": 0, "news": "Thigh injury - Expected back 21 Nov"},
-            {"code": 2, "team": 0, "minutes": 800, "first_name": "Fit", "second_name": "Player",
-             "status": "a", "chance_of_playing_next_round": None, "news": ""},
-        ],
-    }
-    keys = {"teams": {f"T{i}": {"team_id": f"t{i}", "name": f"Team {i}", "tla": f"T{i}"} for i in range(CLUBS)},
-            "players": {"1": "p1"}, "values": {"1": 30.0, "2": 10.0}}
-    club = build(boot, keys, datetime(2026, 11, 6, tzinfo=UTC))["teams"]["t0"]
-    assert club["missing_share"] == 0.75
-    assert club["players"][0]["name"] == "Bukayo Saka"
-    assert club["players"][0]["reason"] == "Thigh injury"
-    assert club["players"][0]["expected_return"] == "21 Nov"

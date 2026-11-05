@@ -1,0 +1,81 @@
+name: Refresh site
+
+on:
+  schedule:
+    - cron: "15 */3 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/refresh-site.yml
+      - backend/scripts/refresh.py
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-site
+
+env:
+  PITCHSIDE_DATA_DIR: ${{ github.workspace }}/data
+  SCHEDULER_ENABLED: "false"
+  FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      # The database lives in the Actions cache. A new key each run keeps the newest copy.
+      - uses: actions/cache@v4
+        with:
+          path: data
+          key: pitchside-data-${{ github.run_id }}
+          restore-keys: pitchside-data-
+      - run: pip install -r backend/requirements.txt
+      - run: npm ci
+        working-directory: frontend
+      - name: Fetch data and predict
+        run: python -m scripts.refresh
+        working-directory: backend
+      - name: Export the API to files
+        working-directory: backend
+        run: |
+          python -m uvicorn app.main:app --port 8000 &
+          server=$!
+          until curl -sf http://127.0.0.1:8000/api/v1/ready; do sleep 2; done
+          python -m scripts.export_static ../frontend/public/snapshot
+          kill "$server"
+          wait "$server" || true
+      - name: Build
+        working-directory: frontend
+        run: |
+          export VITE_SNAPSHOT_DATE="$(date -u '+%-d %B %Y, %H:%M UTC')"
+          npx vite build
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
+        env:
+          VITE_STATIC: "1"
+          VITE_BASE: /Pitchside-Prem-/
+      - name: Publish
+        working-directory: frontend/dist
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Refresh site"
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages

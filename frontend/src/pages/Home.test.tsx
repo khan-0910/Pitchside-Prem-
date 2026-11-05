@@ -10,7 +10,6 @@ const routes = {
   "/data/sources": [{ source_id: "fpl", status: "CACHED", last_success_at: "2026-11-05T09:00:00Z" }],
   "/players": { items: [], total: 0, limit: 1, offset: 0 },
   "/transfers/undervalued": { items: [], note: "n", rule: "r", clear_signals: 0 },
-  "/simulation/latest": { simulation_id: "s", iterations: 10000, fixtures_remaining: 290, results: [] },
   "/standings": { table: [] },
   "/what-if/demo-latest": { team: "Arsenal", matches: [], squad_value: { before: 1, after: 2 }, player_in: { name: "In" }, player_out: { name: "Out" } },
   "/models/metrics": { match: null },

@@ -266,7 +266,6 @@ const LIMITS = [
   "The match model has no tactics, confirmed line-ups or manager changes.",
   "Team xG is only available from 2026-27, so it is not yet a training feature.",
   "Squad strength for live fixtures uses FPL minutes and availability. History uses Transfermarkt appearances.",
-  "Simulations hold team strength fixed across a run, so the true spread is probably wider.",
   "Valuations come from a third-party dump that lags the live site.",
 ];
 

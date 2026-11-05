@@ -60,8 +60,7 @@ def export(out: Path) -> dict[str, int]:
         ("teams", "/teams", {}), ("standings", "/standings", {}),
         ("upcoming", "/fixtures/upcoming", {"limit": 100}),
         ("undervalued", "/transfers/undervalued", {"limit": 100}),
-        ("simulation-latest", "/simulation/latest", {}), ("team-news", "/matches/team-news", {}),
-        ("injury-keys", "/matches/team-news/keys", {}),
+        ("team-news", "/matches/team-news", {}),
         ("model-metrics", "/models/metrics", {}), ("models", "/models", {}),
         ("scenario/demo-latest", "/what-if/demo-latest", {}),
     ):
@@ -72,10 +71,6 @@ def export(out: Path) -> dict[str, int]:
     job.write("results", job.get("/matches/results", limit=30)["items"])
     values = job.get("/transfers/values", limit=1)
     job.write("values", {**values, "items": job.rows("/transfers/values", 200)})
-    history = job.get("/simulation/history")
-    job.write("simulation-history", history)
-    for run in history:
-        job.copy(f"simulation/{run['simulation_id']}", f"/simulation/{run['simulation_id']}")
 
     teams = [t["team_id"] for t in job.get("/teams")]
     players = job.rows("/players", 100)

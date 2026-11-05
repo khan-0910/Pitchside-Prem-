@@ -11,7 +11,6 @@ test("homepage shows real data and reaches the dashboard", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByText("Most likely score").first()).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByText(/simulated runs of the \d+ fixtures left/)).toBeVisible();
   await noSideScroll(page);
   await page.getByRole("link", { name: "Explore Pitchside" }).click();
   await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
@@ -23,7 +22,7 @@ test("every dashboard page loads with no side scroll", async ({ page }) => {
   page.on("pageerror", (e) => errors.push(e.message));
   const pages: [string, string][] = [
     ["/app", "Overview"], ["/app/matches", "Match Centre"], ["/app/players", "Player Lab"],
-    ["/app/transfers", "Transfer Intelligence"], ["/app/simulator", "Season Simulator"], ["/app/what-if", "What-If Lab"],
+    ["/app/transfers", "Transfer Intelligence"], ["/app/what-if", "What-If Lab"],
     ["/app/models", "Model Performance"], ["/app/data", "Data Health"], ["/app/settings", "Settings"],
   ];
   for (const [path, title] of pages) {
@@ -48,16 +47,6 @@ test("a person can find a player and compare them", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /Saka/, level: 2 })).toBeVisible();
   await page.getByRole("button", { name: /^Compare with/ }).first().click();
   await expect(page.getByText("Main differences")).toBeVisible();
-});
-
-test("a person can run a simulation", async ({ page }) => {
-  await page.goto("/app/simulator");
-  await page.getByLabel("Random seed").fill(String(Date.now() % 100000));
-  await page.getByLabel("Seasons to simulate").fill("2000");
-  await page.getByRole("button", { name: "Run simulation" }).click();
-  await expect(page.getByText("Simulated seasons", { exact: true })).toBeVisible();
-  await expect(page.getByRole("cell", { name: /Arsenal/ }).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: "Run simulation" })).toBeEnabled();
 });
 
 test("a person can build a what-if scenario with the keyboard path", async ({ page }) => {

@@ -14,7 +14,6 @@ const pages = {
   matches: () => import("@/pages/MatchCentre"),
   players: () => import("@/pages/PlayerLab"),
   transfers: () => import("@/pages/TransferIntelligence"),
-  simulator: () => import("@/pages/SeasonSimulator"),
   whatIf: () => import("@/pages/WhatIfLab"),
   models: () => import("@/pages/ModelPerformance"),
   data: () => import("@/pages/DataHealth"),
@@ -24,7 +23,6 @@ const Overview = lazy(pages.overview);
 const MatchCentre = lazy(pages.matches);
 const PlayerLab = lazy(pages.players);
 const TransferIntelligence = lazy(pages.transfers);
-const SeasonSimulator = lazy(pages.simulator);
 const WhatIfLab = lazy(pages.whatIf);
 const ModelPerformance = lazy(pages.models);
 const DataHealth = lazy(pages.data);
@@ -85,7 +83,6 @@ export function App() {
             <Route path="matches" element={<MatchCentre />} />
             <Route path="players" element={<PlayerLab />} />
             <Route path="transfers" element={<TransferIntelligence />} />
-            <Route path="simulator" element={<SeasonSimulator />} />
             <Route path="what-if" element={<WhatIfLab />} />
             <Route path="models" element={<ModelPerformance />} />
             <Route path="data" element={<DataHealth />} />

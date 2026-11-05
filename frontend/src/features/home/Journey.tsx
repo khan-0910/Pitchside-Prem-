@@ -10,7 +10,6 @@ import {
   TransferSection,
   WhatIfSection,
 } from "./sections";
-import { TableJourney } from "./TableJourney";
 
 /** Everything below the hero, one unbroken stretch of grass. Loaded separately to keep first paint light. */
 export default function Journey() {
@@ -24,7 +23,6 @@ export default function Journey() {
       <FixturesSection />
       <PlayerSection />
       <TransferSection />
-      <TableJourney />
       <WhatIfSection />
       <HowItWorks />
       <GoalFinale />

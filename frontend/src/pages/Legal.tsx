@@ -29,8 +29,8 @@ const PAGES = {
         </Section>
         <Section title="What stays in your browser">
           <p>
-            Your settings, such as reduced motion and simulation size, are saved in your browser's local storage under
-            the name pitchside.settings. They are never sent to us. Clearing your site data removes them.
+            Your reduced motion setting is saved in your browser's local storage under
+            the name pitchside.settings. It is never sent to us. Clearing your site data removes it.
           </p>
         </Section>
         <Section title="Hosting">
@@ -60,14 +60,14 @@ const PAGES = {
         </Section>
         <Section title="Not advice">
           <p>
-            Predictions, valuations and simulations are statistical estimates and can be wrong. They are not betting,
+            Predictions and valuations are statistical estimates and can be wrong. They are not betting,
             financial or transfer advice. If gambling is causing you harm, <Out href="https://www.begambleaware.org">BeGambleAware</Out> offers free support.
           </p>
         </Section>
         <Section title="Accuracy">
           <p>
-            Data comes from third parties and can be late, incomplete or wrong. The public site is a snapshot and does not
-            update live. Pitchside is provided as it is, with no promise that it is accurate or always available.
+            Data comes from third parties and can be late, incomplete or wrong. The public site updates every few hours, not
+            live. Pitchside is provided as it is, with no promise that it is accurate or always available.
           </p>
         </Section>
         <Section title="Liability">

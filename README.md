@@ -10,7 +10,7 @@ A Premier League intelligence platform with live data, three machine learning mo
 - **Match Centre**: win, draw and loss chances, expected goals, scoreline grids and team form.
 - **Player Lab**: per-90 profiles, role labels, similar-player search and radar comparison.
 - **Transfer Intelligence**: recorded value against a model estimate with a measured range.
-- **Season Simulator**: Monte Carlo over the remaining fixtures with full league tie-breaks.
+- **Season Simulator** (API only, off the site for now): Monte Carlo over the remaining fixtures with full league tie-breaks.
 - **What-If Lab**: swap a player and the real match model predicts again.
 - **Model Performance** and **Data Health**: measured results, limits and live source status.
 
@@ -128,13 +128,9 @@ Inside the container, run `python -m scripts.bootstrap` once with the API stoppe
 
 ## Public site
 
-GitHub Pages cannot run the Python backend, so the public site is a snapshot. Start the API, then run:
+GitHub Pages cannot run the Python backend, so `.github/workflows/refresh-site.yml` does the work every 3 hours. It restores the database from the Actions cache, fetches scores and injuries, stores new predictions, exports the API to JSON, builds the frontend and pushes it to `gh-pages`. Slower sources and the match model refresh weekly. An empty cache triggers a full rebuild.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\publish.ps1
-```
-
-This copies the API into JSON, marks all of it as cached rather than live, builds the frontend and pushes it to the `gh-pages` branch. Browsing, filters and search work. New simulations and What-If swaps need the full app, so they are switched off there. A GitHub Action refreshes the injury list on that branch every morning from the Fantasy Premier League feed. Everything else stays as published.
+Everything it exports is labelled cached, never live. New What-If swaps need the full app, so they are off there. To use football-data.org in that job, add `FOOTBALL_DATA_API_KEY` as a repository secret. Without it, scores and the table come from FPL.
 
 ## Database
 
@@ -245,7 +241,7 @@ npm --prefix frontend run e2e
 |---|---|
 | ![Overview](docs/screenshots/overview.png) | ![Match Centre](docs/screenshots/match-centre.png) |
 | ![Player Lab](docs/screenshots/player-lab.png) | ![Transfer Intelligence](docs/screenshots/transfers.png) |
-| ![Season Simulator](docs/screenshots/simulator.png) | ![Model Performance](docs/screenshots/models.png) |
+| ![Model Performance](docs/screenshots/models.png) |
 
 ## Known issues
 

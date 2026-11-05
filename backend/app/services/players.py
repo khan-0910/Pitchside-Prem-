@@ -49,23 +49,6 @@ def team_news(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
             "teams": club_news(full_squads(con), news, clubs)}
 
 
-def injury_keys(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
-    """What the public site's daily job needs to read FPL without the database."""
-    clubs = con.execute(
-        "SELECT tla, team_id, coalesce(short_name, name) FROM teams WHERE tla IS NOT NULL"
-    ).fetchall()
-    players = con.execute(
-        """SELECT s.external_id, s.player_id, v.value_eur FROM player_source_ids s
-           LEFT JOIN (SELECT player_id, value_eur FROM player_market_values
-                      QUALIFY row_number() OVER (PARTITION BY player_id ORDER BY valuation_date DESC) = 1) v
-             USING (player_id)
-           WHERE s.source_id = 'fpl'"""
-    ).fetchall()
-    return {"teams": {tla: {"team_id": t, "name": name, "tla": tla} for tla, t, name in clubs},
-            "players": {code: pid for code, pid, _ in players},
-            "values": {code: value for code, _, value in players if value}}
-
-
 SORTS = {"minutes": "l.minutes", "name": "p.name", "age": "age", "xg": "l.xg",
          "value": "v.value_eur", "goals": "l.goals"}
 

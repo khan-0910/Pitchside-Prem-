@@ -5,7 +5,6 @@ import { SneakerMove } from "@phosphor-icons/react/dist/csr/SneakerMove";
 import { SoccerBall } from "@phosphor-icons/react/dist/csr/SoccerBall";
 import { Strategy } from "@phosphor-icons/react/dist/csr/Strategy";
 import { TShirt } from "@phosphor-icons/react/dist/csr/TShirt";
-import { Trophy } from "@phosphor-icons/react/dist/csr/Trophy";
 import { X } from "@phosphor-icons/react/dist/csr/X";
 import { AnimatePresence, motion } from "framer-motion";
 import { Suspense, useEffect } from "react";
@@ -25,7 +24,6 @@ const NAV = [
   { to: "/app/matches", label: "Match Centre", icon: SoccerBall },
   { to: "/app/players", label: "Player Lab", icon: TShirt },
   { to: "/app/transfers", label: "Transfer Intelligence", icon: SneakerMove },
-  { to: "/app/simulator", label: "Season Simulator", icon: Trophy },
   { to: "/app/what-if", label: "What-If Lab", icon: ArrowsLeftRight },
   { to: "/app/settings", label: "Settings", icon: Gear },
 ];
@@ -70,7 +68,6 @@ const TINTS: Record<string, string> = {
   "/app/matches": "tint-peach",
   "/app/players": "tint-lilac",
   "/app/transfers": "tint-butter",
-  "/app/simulator": "tint-sky",
   "/app/what-if": "tint-rose",
   "/app/models": "tint-sage",
   "/app/data": "tint-periwinkle",
@@ -137,7 +134,7 @@ export function DashboardLayout() {
         <main id="main" className="mx-auto w-full max-w-[76rem] min-w-0 px-4 py-6 text-[15px] sm:px-6 lg:px-8 lg:py-8">
           {STATIC && (
             <p className="mb-4 text-[13px] text-muted">
-              Public snapshot from {import.meta.env.VITE_SNAPSHOT_DATE}. Injuries update daily. Scores and predictions update when the site is next published.
+              Scores, injuries and predictions update every 3 hours. Last update: {import.meta.env.VITE_SNAPSHOT_DATE}.
             </p>
           )}
           <Suspense fallback={<SkeletonRows />}>

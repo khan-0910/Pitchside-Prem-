@@ -8,7 +8,6 @@ import MatchCentre from "@/pages/MatchCentre";
 import ModelPerformance from "@/pages/ModelPerformance";
 import Overview from "@/pages/Overview";
 import PlayerLab from "@/pages/PlayerLab";
-import SeasonSimulator from "@/pages/SeasonSimulator";
 import Settings from "@/pages/Settings";
 import TransferIntelligence from "@/pages/TransferIntelligence";
 import WhatIfLab from "@/pages/WhatIfLab";
@@ -16,7 +15,7 @@ import { fixture, mockApi } from "@/test/fixtures";
 import { renderPage } from "@/test/render";
 import { useUi } from "@/stores/ui";
 import { prefersReducedMotion } from "@/animations/useReducedMotion";
-import type { PlayerSummary, Simulation, Valuation, WhatIfScenario } from "@/types/api";
+import type { PlayerSummary, Valuation, WhatIfScenario } from "@/types/api";
 
 const teams = [{ team_id: "arsenal", name: "Arsenal", short_name: "Arsenal", tla: "ARS" }];
 const page = <T,>(items: T[]) => ({ items, total: items.length, limit: 50, offset: 0 });
@@ -116,41 +115,6 @@ describe("Transfer Intelligence", () => {
     await userEvent.click(screen.getByRole("button", { name: "Age" }));
     await waitFor(() => expect(fetchMock.mock.calls.some(([u]) => /sort=age&direction=asc/.test(String(u)))).toBe(true));
     expect(screen.getByRole("columnheader", { name: "Age" })).toHaveAttribute("aria-sort", "ascending");
-  });
-});
-
-const simulation: Simulation = {
-  simulation_id: "s1", created_at: "2026-11-05T10:00:00Z", iterations: 10000, seed: 2026, model_version: "m", season_id: "2026-27",
-  fixtures_remaining: 290, max_standard_error: 0.005, note: "Probabilities only.",
-  results: [{
-    ...teams[0], simulation_id: "s1", current_points: 24, expected_points: 80, expected_position: 1.7, p_title: 0.47, p_top4: 0.98,
-    p_top6: 1, p_relegation: 0, points_p10: 72, points_p90: 88, position_distribution: [0.47, 0.53],
-  }],
-};
-
-describe("Season Simulator", () => {
-  it("runs a simulation with the chosen settings", async () => {
-    const fetchMock = mockApi({ "/simulation/latest": simulation, "/simulation/history": [], "/simulation/season": () => ({ ...simulation, seed: 7 }) });
-    renderPage(<SeasonSimulator />);
-    await screen.findByText("Probabilities only.", { exact: false });
-    const seed = screen.getByLabelText("Random seed");
-    await userEvent.clear(seed);
-    await userEvent.type(seed, "7");
-    await userEvent.click(screen.getByRole("button", { name: "Run simulation" }));
-    await waitFor(() => {
-      const call = fetchMock.mock.calls.find(([u]) => String(u).endsWith("/simulation/season"));
-      expect(JSON.parse(String(call?.[1]?.body))).toEqual({ iterations: 10000, seed: 7 });
-    });
-  });
-
-  it("blocks an oversized run in the browser", async () => {
-    mockApi({ "/simulation/latest": simulation, "/simulation/history": [] });
-    renderPage(<SeasonSimulator />);
-    const size = screen.getByLabelText("Seasons to simulate");
-    await userEvent.clear(size);
-    await userEvent.type(size, "999999");
-    expect(screen.getByRole("button", { name: "Run simulation" })).toBeDisabled();
-    expect(screen.getByRole("alert")).toHaveTextContent("between 100 and 50,000");
   });
 });
 
