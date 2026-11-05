@@ -63,8 +63,8 @@ export function Hero() {
         return;
       }
       timeline.current
-        .fromTo(q(".word"), { yPercent: 110 }, { yPercent: 0, duration: 0.8, stagger: 0.09, ease: "power4.out" }, 1.75)
-        .fromTo(q(".intro"), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 2.35);
+        .fromTo(q(".word"), { yPercent: 110 }, { yPercent: 0, duration: 0.8, stagger: 0.09, ease: "power4.out" }, 0.7)
+        .fromTo(q(".intro"), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.12 }, 1.25);
     },
     { scope: root },
   );
@@ -98,7 +98,7 @@ export function Hero() {
             Explore the Intelligence
           </button>
         </div>
-        <div className="intro mt-6">
+        <div className="intro mt-6 min-h-6">
           <LiveMark />
         </div>
       </div>

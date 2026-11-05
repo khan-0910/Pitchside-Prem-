@@ -37,3 +37,22 @@ def test_data_health_shape(client):
 def test_unknown_route_uses_error_envelope(client):
     r = client.get("/api/v1/nope")
     assert r.status_code == 404 and r.json()["error"]["code"] == "http_error"
+
+
+def test_site_serves_files_and_routes_but_never_escapes_its_folder(tmp_path, con, monkeypatch):
+    monkeypatch.setenv("SCHEDULER_ENABLED", "false")
+    get_settings.cache_clear()
+    from app.main import create_app
+    dist = tmp_path / "dist"
+    (dist / "assets").mkdir(parents=True)
+    (dist / "index.html").write_text("<html>site</html>")
+    (dist / "favicon.svg").write_text("<svg/>")
+    (tmp_path / "secret.txt").write_text("private")
+    with TestClient(create_app(dist)) as c:
+        assert "site" in c.get("/").text
+        assert "site" in c.get("/app/players").text  # client-side route
+        assert c.get("/favicon.svg").text == "<svg/>"
+        assert "private" not in c.get("/..%2fsecret.txt").text
+        assert c.get("/api/v1/nope").status_code == 404
+        assert c.get("/api/v1/health").json()["status"] == "ok"
+    get_settings.cache_clear()

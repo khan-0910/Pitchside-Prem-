@@ -40,17 +40,17 @@ export function PitchScene({ timeline }: { timeline: RefObject<gsap.core.Timelin
       gsap.set(move, { strokeDasharray: moveLength, strokeDashoffset: moveLength, opacity: 1 });
 
       tl.to(scene.current, { opacity: 1, duration: 0.6 })
-        .to(q(".outer"), { strokeDashoffset: 0, duration: 1.1, ease: "power2.inOut" }, 0.15)
-        .to(q(".box"), { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut", stagger: 0.1 }, 0.5)
-        .to(q(".halfway"), { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut" }, 0.9)
-        .to(q(".circle"), { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }, 1.1)
-        .to(glow.current, { opacity: 1, duration: 0.9, ease: "power2.out" }, 1.5);
+        .to(q(".outer"), { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }, 0.1)
+        .to(q(".box"), { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut", stagger: 0.1 }, 0.3)
+        .to(q(".halfway"), { strokeDashoffset: 0, duration: 0.5, ease: "power2.inOut" }, 0.5)
+        .to(q(".circle"), { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut" }, 0.65)
+        .to(glow.current, { opacity: 1, duration: 0.8, ease: "power2.out" }, 1);
 
       timeline.current = tl;
 
       // The one ambient thing: a passing move that repeats with long rests.
       const dots = q(".dot");
-      const play = gsap.timeline({ repeat: -1, repeatDelay: 5, delay: 2.3 });
+      const play = gsap.timeline({ repeat: -1, repeatDelay: 5, delay: 2 });
       play
         .to(dots, { opacity: 1, duration: 0.3, stagger: 0.28 }, 0)
         .to(move, { strokeDashoffset: 0, duration: 2.2, ease: "power1.inOut" }, 0)

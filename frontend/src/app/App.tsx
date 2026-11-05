@@ -4,9 +4,11 @@ import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { ScrollTrigger } from "@/animations/gsap";
 import { scrollToTop } from "@/animations/lenis";
 import { SkeletonRows } from "@/components/ui/states";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
 
 const Home = lazy(() => import("@/pages/Home"));
+const DashboardLayout = lazy(() =>
+  import("@/components/layout/DashboardLayout").then((m) => ({ default: m.DashboardLayout })),
+);
 const Overview = lazy(() => import("@/pages/Overview"));
 const MatchCentre = lazy(() => import("@/pages/MatchCentre"));
 const PlayerLab = lazy(() => import("@/pages/PlayerLab"));

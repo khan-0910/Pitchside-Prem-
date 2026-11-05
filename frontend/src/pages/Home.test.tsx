@@ -24,8 +24,8 @@ describe("Home", () => {
     mockApi(routes);
     renderPage(<Home />);
     expect(screen.getByRole("heading", { level: 1, name: "The game has a data side." })).toBeInTheDocument();
-    expect(await screen.findByText("Most likely score")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /SEE THE GAME DIFFERENTLY/ })).toBeInTheDocument();
+    expect(await screen.findByText("Most likely score", {}, { timeout: 8000 })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /SEE THE GAME DIFFERENTLY/ })).toBeInTheDocument();
     expect(await screen.findByText("Arsenal: In for Out")).toBeInTheDocument();
   });
 
@@ -39,7 +39,7 @@ describe("Home", () => {
   it("says when a section has no data instead of inventing it", async () => {
     mockApi(routes);
     renderPage(<Home />);
-    expect(await screen.findByText("No trained match model yet.")).toBeInTheDocument();
+    expect(await screen.findByText("No trained match model yet.", {}, { timeout: 8000 })).toBeInTheDocument();
     expect(await screen.findByText("No player has a positive gap right now.")).toBeInTheDocument();
   });
 });

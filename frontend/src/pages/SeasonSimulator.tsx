@@ -79,10 +79,10 @@ function FinalTable({ sim, previous }: { sim: Simulation; previous: Map<string, 
       <thead>
         <tr className="chalk border-b text-sm text-muted">
           <th scope="col" className="py-1.5 font-normal">Club</th>
-          <th scope="col" className="py-1.5 text-right font-normal">Now</th>
-          <th scope="col" className="py-1.5 text-right font-normal">Expected points</th>
+          <th scope="col" className="py-1.5 text-right font-normal max-sm:hidden">Now</th>
+          <th scope="col" className="py-1.5 text-right font-normal">Points</th>
           <th scope="col" className="py-1.5 text-right font-normal max-md:hidden">10-90% range</th>
-          <th scope="col" className="py-1.5 text-right font-normal">Position</th>
+          <th scope="col" className="py-1.5 text-right font-normal max-sm:hidden">Position</th>
           <th scope="col" className="py-1.5 text-right font-normal">Title</th>
           <th scope="col" className="py-1.5 text-right font-normal max-sm:hidden">Top 4</th>
           <th scope="col" className="py-1.5 text-right font-normal max-lg:hidden">Top 6</th>
@@ -107,14 +107,14 @@ function FinalTable({ sim, previous }: { sim: Simulation; previous: Map<string, 
                   <span className="flex items-center gap-2">
                     <span className="w-5 text-muted">{i + 1}</span>
                     <ClubEmblem tla={r.tla} size={22} />
-                    <span className="truncate">{r.short_name}</span>
-                    {moved !== 0 && <span className={`text-sm ${moved > 0 ? "text-volt" : "text-muted"}`}>{moved > 0 ? `up ${moved}` : `down ${-moved}`}</span>}
+                    <span className="min-w-0 max-w-28 truncate">{r.short_name}</span>
+                    {moved !== 0 && <span className={`text-sm max-sm:hidden ${moved > 0 ? "text-volt" : "text-muted"}`}>{moved > 0 ? `up ${moved}` : `down ${-moved}`}</span>}
                   </span>
                 </td>
-                <td className="py-1.5 text-right text-muted">{r.current_points}</td>
+                <td className="py-1.5 text-right text-muted max-sm:hidden">{r.current_points}</td>
                 <td className="py-1.5 text-right">{r.expected_points.toFixed(1)}</td>
                 <td className="py-1.5 text-right text-muted max-md:hidden">{r.points_p10.toFixed(0)} to {r.points_p90.toFixed(0)}</td>
-                <td className="py-1.5 text-right">{r.expected_position.toFixed(1)}</td>
+                <td className="py-1.5 text-right max-sm:hidden">{r.expected_position.toFixed(1)}</td>
                 <td className={`py-1.5 text-right ${r.p_title >= 0.1 ? "text-gold" : ""}`}>{percent(r.p_title, 1)}</td>
                 <td className="py-1.5 text-right max-sm:hidden">{percent(r.p_top4)}</td>
                 <td className="py-1.5 text-right max-lg:hidden">{percent(r.p_top6)}</td>

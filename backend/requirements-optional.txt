@@ -1,0 +1,2 @@
+# Only needed once understat.com is back. The app runs without it.
+soccerdata

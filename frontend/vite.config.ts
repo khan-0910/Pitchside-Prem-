@@ -13,17 +13,7 @@ export default defineConfig({
     fs: { strict: false },
     proxy: { "/api": "http://127.0.0.1:8000" },
   },
-  build: {
-    chunkSizeWarningLimit: 700,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (/node_modules.(gsap|@gsap|lenis|framer-motion|motion-)/.test(id)) return "motion";
-          if (/node_modules.(recharts|d3-|victory-)/.test(id)) return "charts";
-        },
-      },
-    },
-  },
+  build: { chunkSizeWarningLimit: 700 },
   test: {
     environment: "jsdom",
     globals: true,

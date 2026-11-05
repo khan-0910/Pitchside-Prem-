@@ -1,16 +1,18 @@
 import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
 
 from app.api.routes import data, fixtures, matches, models, players, simulation, system, transfers
-from app.config import get_settings
+from app.config import ROOT_DIR, get_settings
 from app.core.exceptions import PitchsideError
 from app.core.logging import configure_logging, log
 from app.core.scheduler import build_scheduler
@@ -41,7 +43,22 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         scheduler.shutdown(wait=False)
 
 
-def create_app() -> FastAPI:
+def mount_frontend(app: FastAPI, dist: Path) -> None:
+    """Serve the built site from this process, with client-side routes falling back to index."""
+    root = dist.resolve()
+    app.mount("/assets", StaticFiles(directory=root / "assets"), name="assets")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def site(path: str) -> FileResponse:
+        if path.startswith("api/"):
+            raise HTTPException(404, "Not found")
+        candidate = (root / path).resolve()
+        if path and candidate.is_file() and candidate.is_relative_to(root):
+            return FileResponse(candidate)
+        return FileResponse(root / "index.html")
+
+
+def create_app(dist: Path = ROOT_DIR / "frontend" / "dist") -> FastAPI:
     settings = get_settings()
     app = FastAPI(title="Pitchside API", version="1.0.0", lifespan=lifespan,
                   docs_url="/api/docs", openapi_url="/api/openapi.json")
@@ -54,7 +71,10 @@ def create_app() -> FastAPI:
     @app.middleware("http")
     async def request_timeout(request: Request, call_next):
         try:
-            return await asyncio.wait_for(call_next(request), REQUEST_TIMEOUT_SECONDS)
+            response = await asyncio.wait_for(call_next(request), REQUEST_TIMEOUT_SECONDS)
+            if request.url.path.startswith("/assets/"):  # file names carry a content hash
+                response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+            return response
         except TimeoutError:
             log.warning("request_timeout", path=request.url.path)
             return _error(504, "timeout", "The request took too long")
@@ -88,6 +108,8 @@ def create_app() -> FastAPI:
     v1.include_router(transfers.router)
     v1.include_router(simulation.router)
     app.include_router(v1)
+    if (dist / "index.html").exists():
+        mount_frontend(app, dist)
     return app
 
 
