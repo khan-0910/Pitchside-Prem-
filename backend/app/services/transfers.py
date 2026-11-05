@@ -6,7 +6,7 @@ import duckdb
 from app.core.exceptions import NotFoundError, ServiceUnavailableError
 from app.database.query import row_dicts, scalar
 
-STALE_DAYS = 120
+STALE_DAYS = 180
 MIN_MINUTES_FOR_FLAG = 450
 MAX_RANKED_AGE_DAYS = 365
 NOTE = ("Model estimate of the next recorded market value. It is not a real transfer fee, and values come "

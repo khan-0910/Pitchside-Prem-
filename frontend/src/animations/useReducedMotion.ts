@@ -1,15 +1,21 @@
 import { useSyncExternalStore } from "react";
 
+import { useUi } from "@/stores/ui";
+
 const QUERY = "(prefers-reduced-motion: reduce)";
 
 function subscribe(onChange: () => void): () => void {
   const media = window.matchMedia?.(QUERY);
   media?.addEventListener("change", onChange);
-  return () => media?.removeEventListener("change", onChange);
+  const stopStore = useUi.subscribe(onChange);
+  return () => {
+    media?.removeEventListener("change", onChange);
+    stopStore();
+  };
 }
 
 export function prefersReducedMotion(): boolean {
-  return window.matchMedia?.(QUERY).matches ?? false;
+  return useUi.getState().reduceMotion || (window.matchMedia?.(QUERY).matches ?? false);
 }
 
 export function useReducedMotion(): boolean {

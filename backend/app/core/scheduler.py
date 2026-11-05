@@ -55,5 +55,7 @@ def build_scheduler(extra_jobs: Sequence[tuple[str, float, Callable[[], object]]
             jitter=120, next_run_time=max(due, now + timedelta(seconds=45)),
         )
     for name, hours, fn in extra_jobs or []:
-        scheduler.add_job(_safely(name, fn), "interval", hours=hours, id=name, jitter=120)
+        # Catch up shortly after startup, so a server that was off is not stale for hours.
+        first: dict = {"next_run_time": now + timedelta(minutes=2)} if name == "predictions" else {}
+        scheduler.add_job(_safely(name, fn), "interval", hours=hours, id=name, jitter=120, **first)
     return scheduler

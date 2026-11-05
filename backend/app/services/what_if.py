@@ -262,9 +262,12 @@ def squad_view(con: duckdb.DuckDBPyConnection, team: str) -> dict[str, Any]:
         "role": profiles.get(p.player_id, (None, None, None))[1],
         "availability": profiles.get(p.player_id, (None, None, None))[2],
     } for p in squads[team]]
-    fixtures = _upcoming(con)
-    upcoming = _team_fixtures(fixtures, team, [])
     names = dict(con.execute("SELECT team_id, name FROM teams").fetchall())
+    upcoming = con.execute(
+        """SELECT fixture_id, match_date, home_team_id, away_team_id FROM fixtures
+           WHERE status = 'SCHEDULED' AND (home_team_id = ? OR away_team_id = ?)
+           ORDER BY match_date LIMIT 5""", [team, team]
+    ).fetchall()
     return {"team_id": team, "team": names[team], "players": players, "fixtures": [
-        {"fixture_id": r.fixture_id, "date": r.date, "home_team": names[r.home_team_id],
-         "away_team": names[r.away_team_id]} for r in upcoming.itertuples()]}
+        {"fixture_id": r[0], "date": r[1], "home_team": names[r[2]], "away_team": names[r[3]]}
+        for r in upcoming]}
