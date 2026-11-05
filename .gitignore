@@ -10,7 +10,7 @@ backend/data/
 backend/artifacts/
 *.duckdb
 *.duckdb.wal
-node_modules/
+node_modules
 dist/
 frontend/test-results/
 frontend/playwright-report/

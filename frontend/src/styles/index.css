@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@theme {
+  --color-stadium: #071511;
+  --color-deep: #0b2018;
+  --color-raised: #10291f;
+  --color-pitch: #174d35;
+  --color-volt: #b8ff54;
+  --color-flood: #f3f5ef;
+  --color-muted: #929b95;
+  --color-gold: #d6ad56;
+  --color-amber: #e9a23b;
+  --color-alert: #e45b5b;
+  --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --font-sans: "Barlow", system-ui, sans-serif;
+  --ease-athletic: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-stadium);
+    color: var(--color-flood);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    color-scheme: dark;
+  }
+  body {
+    min-height: 100dvh;
+    overflow-x: hidden;
+    background: var(--color-stadium);
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: 0.005em;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-volt);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  button, select, input { font: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+}
+
+@layer components {
+  .num { font-variant-numeric: tabular-nums lining-nums; }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    min-height: 2.75rem; padding: 0.5rem 1.25rem; border-radius: 3px;
+    background: var(--color-volt); color: var(--color-stadium); font-weight: 600;
+    transition: background-color 150ms, transform 150ms var(--ease-athletic);
+  }
+  .btn-primary:hover { background: #cdff85; }
+  .btn-primary:active { transform: translateY(1px); }
+  .btn-primary:disabled { background: var(--color-pitch); color: var(--color-muted); }
+
+  .btn-ghost {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    min-height: 2.75rem; padding: 0.5rem 1.25rem; border-radius: 3px;
+    border: 1px solid color-mix(in srgb, var(--color-flood) 28%, transparent);
+    color: var(--color-flood); font-weight: 500; transition: border-color 150ms;
+  }
+  .btn-ghost:hover { border-color: var(--color-flood); }
+
+  .field {
+    min-height: 2.75rem; width: 100%; padding: 0.4rem 0.75rem; border-radius: 3px;
+    background: var(--color-deep); color: var(--color-flood);
+    border: 1px solid color-mix(in srgb, var(--color-flood) 16%, transparent);
+  }
+  .field::placeholder { color: var(--color-muted); }
+
+  /* A touchline, not a box: data sits on the pitch, separated by chalk. */
+  .chalk { border-color: color-mix(in srgb, var(--color-flood) 12%, transparent); }
+
+  .skeleton {
+    position: relative; overflow: hidden; border-radius: 2px;
+    background: color-mix(in srgb, var(--color-pitch) 40%, transparent);
+  }
+  .skeleton::after {
+    content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgb(243 245 239 / 0.07), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+  @keyframes shimmer { to { transform: translateX(100%); } }
+
+  .spotlight { position: relative; }
+  .spotlight::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+    background: radial-gradient(420px circle at var(--x, 50%) var(--y, 50%), rgb(184 255 84 / 0.07), transparent 70%);
+    transition: opacity 250ms;
+  }
+  .spotlight:hover::before { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
