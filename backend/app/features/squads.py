@@ -6,6 +6,7 @@ A what-if swap edits this roster, so it really changes the model's inputs.
 """
 
 import math
+import re
 from bisect import bisect_left
 from collections import defaultdict
 from dataclasses import dataclass, replace
@@ -65,6 +66,37 @@ def missing_share(roster: list[SquadPlayer]) -> float:
     fallback = float(np.median(known)) if known else 1.0
     values = [p.value_eur or fallback for p in roster]
     return sum(v * (1 - play_chance(p)) for v, p in zip(values, roster, strict=True)) / sum(values)
+
+
+def expected_return(news: str | None, chance: int | None) -> str:
+    """Pull FPL's return date out of its news line, for example 'Knee injury - Expected back 21 Nov'."""
+    found = re.search(r"(?:Expected back|until)\s+(\d{1,2} \w{3})", news or "")
+    if found:
+        return found[1]
+    if chance not in (None, 0):
+        return f"{chance}% chance of playing"
+    return "Unknown"
+
+
+def club_news(
+    squads: dict[str, list[SquadPlayer]], news: dict[str, str], clubs: dict[str, dict[str, str]]
+) -> dict[str, dict]:
+    """Every flagged player per club, and the share of the usual squad expected to miss out."""
+    out = {}
+    for team, squad in squads.items():
+        usual = regulars(squad)
+        ids = {p.player_id for p in usual}
+        players = [
+            {"player_id": p.player_id, "name": p.name, "availability": p.availability,
+             "chance_next_round": p.chance, "regular": p.player_id in ids,
+             "reason": re.split(r" - |\.", news.get(p.player_id) or "Flagged")[0],
+             "expected_return": expected_return(news.get(p.player_id), p.chance)}
+            for p in squad if p.availability != "u" and play_chance(p) < 1
+        ]
+        club = clubs.get(team, {})
+        out[team] = {"team": club.get("name", team), "tla": club.get("tla"),
+                     "missing_share": missing_share(usual), "players": players}
+    return out
 
 
 class HistoricSquads:

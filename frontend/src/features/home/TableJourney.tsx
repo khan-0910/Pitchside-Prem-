@@ -47,7 +47,7 @@ function Moving({ simulation, standings }: { simulation: Simulation; standings: 
           <li
             key={row.team_id}
             data-team={row.team_id}
-            className="chalk absolute inset-x-0 flex items-center gap-2 border-b bg-white"
+            className="chalk absolute inset-x-0 flex items-center gap-2 border-b bg-surface"
             style={{ top: i * ROW, height: ROW }}
           >
             <span className="num w-7 text-muted">{i + 1}</span>
@@ -77,7 +77,7 @@ export function TableJourney() {
         </p>
         <Link to="/app/simulator" className="btn-ghost mt-5 hover:bg-white hover:!text-[#0f1512]">Open Season Simulator</Link>
       </div>
-      <div className="sheet min-w-0">
+      <div className="sheet tint-sky min-w-0">
         <DataState query={simulation} loading={<Skeleton className="h-96 w-full" />}>
           {(sim) => (standings.data ? <Moving simulation={sim} standings={standings.data} /> : <Skeleton className="h-96 w-full" />)}
         </DataState>

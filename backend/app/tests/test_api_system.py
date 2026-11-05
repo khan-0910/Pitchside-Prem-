@@ -85,8 +85,8 @@ def test_team_news_lists_flagged_regulars_only(con):
             """INSERT INTO player_statistics (player_id, source_id, season_id, observation_date, minutes)
                VALUES (?, 'fpl', '2026-27', DATE '2026-11-01', 900)""", [pid])
     news = team_news(con)
-    assert [p["player_id"] for p in news["ars"]["players"]] == ["hurt"]
-    assert news["ars"]["missing_share"] == pytest.approx(0.25)
+    assert [p["player_id"] for p in news["teams"]["ars"]["players"]] == ["hurt"]
+    assert news["teams"]["ars"]["missing_share"] == pytest.approx(0.25)
 
 
 def test_exported_snapshot_never_claims_to_be_live():

@@ -134,7 +134,7 @@ GitHub Pages cannot run the Python backend, so the public site is a snapshot. St
 powershell -ExecutionPolicy Bypass -File scripts\publish.ps1
 ```
 
-This copies the API into JSON, marks all of it as cached rather than live, builds the frontend and pushes it to the `gh-pages` branch. Browsing, filters and search work. New simulations and What-If swaps need the full app, so they are switched off there. The snapshot does not refresh itself.
+This copies the API into JSON, marks all of it as cached rather than live, builds the frontend and pushes it to the `gh-pages` branch. Browsing, filters and search work. New simulations and What-If swaps need the full app, so they are switched off there. A GitHub Action refreshes the injury list on that branch every morning from the Fantasy Premier League feed. Everything else stays as published.
 
 ## Database
 

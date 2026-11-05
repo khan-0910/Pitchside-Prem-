@@ -42,8 +42,8 @@ function Form({ teamId, name }: { teamId: string; name: string }) {
 function TeamNewsList({ fixture }: { fixture: Fixture }) {
   const query = useQuery({ queryKey: ["team-news"], queryFn: api.teamNews });
   const sides = [
-    { name: fixture.home_short, players: query.data?.[fixture.home_team_id]?.players ?? [] },
-    { name: fixture.away_short, players: query.data?.[fixture.away_team_id]?.players ?? [] },
+    { name: fixture.home_short, players: query.data?.teams[fixture.home_team_id]?.players ?? [] },
+    { name: fixture.away_short, players: query.data?.teams[fixture.away_team_id]?.players ?? [] },
   ];
   return (
     <div>
@@ -54,10 +54,10 @@ function TeamNewsList({ fixture }: { fixture: Fixture }) {
             {sides.map(({ name, players }) => (
               <p key={name} className="mt-1 text-sm">
                 <span className="font-medium">{name}: </span>
-                {players.length === 0 ? <span className="text-muted">no regulars flagged</span> : players.map((n) => `${n.name} (${n.news || "flagged"})`).join(", ")}
+                {players.length === 0 ? <span className="text-muted">no regulars flagged</span> : players.map((n) => `${n.name} (${n.reason}, back: ${n.expected_return})`).join(", ")}
               </p>
             ))}
-            <p className="mt-2 text-sm text-muted">From FPL, which can lag club news. These absences feed into the prediction. Confirmed lineups are not available.</p>
+            <p className="mt-2 text-sm text-muted">From the Premier League's Fantasy data, which can lag club news. These absences feed into the prediction. Confirmed lineups are not available.</p>
           </>
         )}
       </DataState>
@@ -165,7 +165,7 @@ export default function MatchCentre() {
                   </button>
                   {f.home_goals === null && news.data && (
                     <p className="pb-2 text-[13px] text-muted">
-                      Injury doubts: {f.home_short} {news.data[f.home_team_id]?.players.length ?? 0}, {f.away_short} {news.data[f.away_team_id]?.players.length ?? 0}
+                      Injury doubts: {f.home_short} {news.data.teams[f.home_team_id]?.players.length ?? 0}, {f.away_short} {news.data.teams[f.away_team_id]?.players.length ?? 0}
                     </p>
                   )}
                   {open === f.fixture_id && <Detail fixture={f} />}

@@ -1,3 +1,4 @@
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
@@ -5,8 +6,10 @@ import { PageTitle } from "@/components/layout/DashboardLayout";
 import { ClubEmblem, PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState } from "@/components/ui/states";
 import { FixtureRail } from "@/features/matches/FixtureRail";
-import { ASSESSMENT, euros, signed } from "@/lib/format";
+import { ASSESSMENT, euros, signed, timeAgo } from "@/lib/format";
+import { RACES, raceFor, raceLabel } from "@/lib/tableRace";
 import { api } from "@/services/api";
+import type { ClubNews } from "@/types/api";
 
 function Heading({ title, to }: { title: string; to?: string }) {
   return (
@@ -16,11 +19,6 @@ function Heading({ title, to }: { title: string; to?: string }) {
     </div>
   );
 }
-
-const INJURY_ROWS = 6;
-
-const zone = (position: number) =>
-  position <= 4 ? "zone-top" : position <= 6 ? "zone-europe" : position >= 18 ? "zone-drop" : "";
 
 function LeagueTable() {
   const query = useQuery({ queryKey: ["standings"], queryFn: api.standings });
@@ -40,27 +38,30 @@ function LeagueTable() {
               </tr>
             </thead>
             <tbody className="num">
-              {data.table.map((row) => (
-                <tr key={row.team_id} className={`chalk border-b ${zone(row.position)}`}>
-                  <td className="py-1.5 pl-2 text-muted">{row.position}</td>
+              {data.table.map((row) => {
+                const race = raceFor(row, data.table);
+                return (
+                <tr key={row.team_id} className={`chalk border-b ${race ? `race-${race}` : ""}`} title={raceLabel(race)}>
+                  <td className="py-1.5 pl-2">{row.position}</td>
                   <td className="py-1.5">
-                    <span className="flex items-center gap-2"><ClubEmblem tla={row.tla} size={22} />{row.short_name}</span>
+                    <span className="flex items-center gap-2"><ClubEmblem tla={row.tla} size={22} />{row.short_name}{race && <span className="sr-only"> ({raceLabel(race)})</span>}</span>
                   </td>
                   <td className="py-1.5 text-right">{row.played}</td>
                   <td className="py-1.5 text-right">{signed(row.goal_difference, 0)}</td>
-                  <td className="py-1.5 text-right font-semibold">{row.points}</td>
+                  <td className="py-1.5 pr-2 text-right font-semibold">{row.points}</td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
           {data.derived && (
             <p className="mt-2 text-sm text-muted">Worked out from results, so any points deduction is not included.</p>
           )}
-          <p className="mt-2 flex flex-wrap gap-x-4 text-sm text-muted">
-            <span><span aria-hidden className="mr-1 inline-block size-2 bg-accent" />Top four</span>
-            <span><span aria-hidden className="mr-1 inline-block size-2 bg-gold" />Top six</span>
-            <span><span aria-hidden className="mr-1 inline-block size-2 bg-alert" />Relegation zone</span>
-          </p>
+          <ul className="mt-3 grid gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
+            {RACES.map(({ race, label }) => (
+              <li key={race} className="flex items-center gap-2"><span aria-hidden className={`race-key race-${race}`} />{label}</li>
+            ))}
+          </ul>
         </>
       )}
     </DataState>
@@ -131,22 +132,57 @@ function Scorers() {
   );
 }
 
+function ClubInjuries({ club }: { club: ClubNews }) {
+  const count = club.players.length;
+  return (
+    <details className="club-news">
+      <summary>
+        <ClubEmblem tla={club.tla} size={22} />
+        <span className="min-w-0 flex-1 truncate font-medium">{club.team}</span>
+        <span className="text-sm text-muted">{count === 0 ? "All fit" : count === 1 ? "1 player" : `${count} players`}</span>
+        <span className="num w-16 text-right text-sm" title="Share of the usual squad's market value expected to miss the next match">{Math.round(club.missing_share * 100)}% out</span>
+        <CaretDown aria-hidden size={16} className="club-news-caret shrink-0" />
+      </summary>
+      {count === 0 ? <p className="px-3 pb-3 text-sm text-muted">Nobody at this club is flagged.</p> : (
+        <table className="mb-2 w-full text-left text-sm">
+          <caption className="sr-only">{club.team} injuries and expected returns</caption>
+          <thead>
+            <tr className="text-muted">
+              <th scope="col" className="px-3 py-1 font-normal">Player</th>
+              <th scope="col" className="py-1 font-normal">Issue</th>
+              <th scope="col" className="px-3 py-1 text-right font-normal">Expected back</th>
+            </tr>
+          </thead>
+          <tbody>
+            {club.players.map((p) => (
+              <tr key={p.player_id} className="chalk border-t">
+                <td className={`px-3 py-1.5 ${p.regular ? "font-bold" : ""}`}>{p.name}</td>
+                <td className="py-1.5">{p.reason}</td>
+                <td className="px-3 py-1.5 text-right">{p.expected_return}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </details>
+  );
+}
+
 function Injuries() {
   const query = useQuery({ queryKey: ["team-news"], queryFn: api.teamNews });
   return (
-    <DataState query={query} isEmpty={(d) => !Object.values(d).some((t) => t.players.length)} empty={<EmptyState title="No regulars are flagged." />}>
+    <DataState query={query} isEmpty={(d) => Object.keys(d.teams).length === 0} empty={<EmptyState title="No injury data yet." />}>
       {(data) => (
-        <ul>
-          {Object.values(data).sort((a, b) => b.missing_share - a.missing_share).slice(0, INJURY_ROWS).map((t) => (
-            <li key={t.team} className="chalk flex justify-between gap-4 border-b py-1.5">
-              <span className="min-w-0">
-                <span className="font-medium">{t.team}</span>
-                <span className="block truncate text-sm text-muted">{t.players.map((p) => p.name).join(", ") || "None flagged"}</span>
-              </span>
-              <span className="num shrink-0 text-sm" title="Share of the usual squad's value expected to miss the next match">{Math.round(t.missing_share * 100)}% out</span>
-            </li>
-          ))}
-        </ul>
+        <>
+          <div className="grid gap-x-5 gap-y-2 lg:grid-cols-2">
+            {Object.values(data.teams).sort((a, b) => b.missing_share - a.missing_share || a.team.localeCompare(b.team)).map((club) => (
+              <ClubInjuries key={club.team} club={club} />
+            ))}
+          </div>
+          <p className="mt-3 text-sm text-muted">
+            From the Premier League's Fantasy data. Updated {data.updated_at ? timeAgo(data.updated_at).toLowerCase() : "time unknown"}. Bold names are regular starters.
+          </p>
+        </>
       )}
     </DataState>
   );
@@ -160,12 +196,12 @@ export default function Overview() {
         <section className="board min-w-0 lg:col-span-2 xl:col-span-2"><Heading title="Next up" to="/app/matches" /><FixtureRail /></section>
         <section aria-labelledby="table-h" className="board min-w-0"><div id="table-h"><Heading title="League table" /></div><LeagueTable /></section>
         <div className="min-w-0 space-y-10">
-          <section className="board"><Heading title="Injuries" to="/app/matches" /><Injuries /></section>
           <section className="board"><Heading title="Latest results" to="/app/matches" /><Results /></section>
           <section className="board"><Heading title="Top expected goals" to="/app/players" /><Scorers /></section>
           <section className="board"><Heading title="Biggest value gaps" to="/app/transfers" /><ValueWatch /></section>
         </div>
       </div>
+      <section className="board mt-10"><Heading title="Injuries by club" /><Injuries /></section>
     </>
   );
 }

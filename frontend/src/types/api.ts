@@ -156,10 +156,22 @@ export interface TeamNewsPlayer {
   name: string;
   availability: string;
   chance_next_round: number | null;
-  news: string | null;
+  regular: boolean;
+  reason: string;
+  expected_return: string;
 }
 
-export type TeamNews = Record<string, { team: string; missing_share: number; players: TeamNewsPlayer[] }>;
+export interface ClubNews {
+  team: string;
+  tla: string;
+  missing_share: number;
+  players: TeamNewsPlayer[];
+}
+
+export interface TeamNews {
+  updated_at: string | null;
+  teams: Record<string, ClubNews>;
+}
 
 export interface Comparison {
   a: PlayerDetail;

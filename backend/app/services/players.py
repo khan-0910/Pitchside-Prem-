@@ -6,7 +6,7 @@ import numpy as np
 
 from app.core.exceptions import NotFoundError
 from app.database.query import row_dicts, scalar
-from app.features.squads import full_squads, missing_share, play_chance, regulars
+from app.features.squads import club_news, full_squads
 from app.models.similarity.engine import (
     GROUP_NAMES,
     LABELS,
@@ -37,24 +37,33 @@ BASE_SQL = f"""
     LEFT JOIN player_profiles pr ON pr.player_id = p.player_id AND pr.model_version = {ACTIVE}
     WHERE p.current_team_id IS NOT NULL
 """
-def team_news(con: duckdb.DuckDBPyConnection) -> dict[str, dict[str, Any]]:
-    """Flagged regulars per club, and the share of squad value the match model counts as missing."""
+def team_news(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     news = dict(con.execute(
         """SELECT player_id, news FROM injury_records
            QUALIFY row_number() OVER (PARTITION BY player_id ORDER BY news_added DESC NULLS LAST) = 1"""
     ).fetchall())
-    names = dict(con.execute("SELECT team_id, coalesce(short_name, name) FROM teams").fetchall())
-    out = {}
-    for team, squad in full_squads(con).items():
-        usual = regulars(squad)
-        flagged = [p for p in usual if play_chance(p) < 1]
-        out[team] = {
-            "team": names.get(team, team),
-            "missing_share": missing_share(usual),
-            "players": [{"player_id": p.player_id, "name": p.name, "availability": p.availability,
-                         "chance_next_round": p.chance, "news": news.get(p.player_id)} for p in flagged],
-        }
-    return out
+    clubs = {t: {"team_id": t, "name": name, "tla": tla} for t, name, tla in con.execute(
+        "SELECT team_id, coalesce(short_name, name), tla FROM teams").fetchall()}
+    updated = con.execute("SELECT last_success_at FROM source_registry WHERE source_id = 'fpl'").fetchone()
+    return {"updated_at": updated[0] if updated else None,
+            "teams": club_news(full_squads(con), news, clubs)}
+
+
+def injury_keys(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
+    """What the public site's daily job needs to read FPL without the database."""
+    clubs = con.execute(
+        "SELECT tla, team_id, coalesce(short_name, name) FROM teams WHERE tla IS NOT NULL"
+    ).fetchall()
+    players = con.execute(
+        """SELECT s.external_id, s.player_id, v.value_eur FROM player_source_ids s
+           LEFT JOIN (SELECT player_id, value_eur FROM player_market_values
+                      QUALIFY row_number() OVER (PARTITION BY player_id ORDER BY valuation_date DESC) = 1) v
+             USING (player_id)
+           WHERE s.source_id = 'fpl'"""
+    ).fetchall()
+    return {"teams": {tla: {"team_id": t, "name": name, "tla": tla} for tla, t, name in clubs},
+            "players": {code: pid for code, pid, _ in players},
+            "values": {code: value for code, _, value in players if value}}
 
 
 SORTS = {"minutes": "l.minutes", "name": "p.name", "age": "age", "xg": "l.xg",

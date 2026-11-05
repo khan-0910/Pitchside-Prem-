@@ -35,7 +35,7 @@ const detail = (id: string, name: string) => ({
 
 describe("Match Centre", () => {
   it("filters by club and asks the API for it", async () => {
-    const fetchMock = mockApi({ "/teams": teams, "/fixtures": page([fixture]), "/matches": { team: teams[0], matches: [], points: 0 } });
+    const fetchMock = mockApi({ "/teams": teams, "/fixtures": page([fixture]), "/matches/team-news": { updated_at: null, teams: {} }, "/matches": { team: teams[0], matches: [], points: 0 } });
     renderPage(<MatchCentre />);
     await screen.findAllByText("Everton", { exact: false });
     await userEvent.selectOptions(await screen.findByLabelText("Club"), await screen.findByRole("option", { name: "Arsenal" }));
@@ -51,7 +51,7 @@ describe("Match Centre", () => {
   });
 
   it("opens the detail panel with scoreline chances", async () => {
-    mockApi({ "/teams": teams, "/fixtures": page([fixture]), "/matches": { team: teams[0], matches: [], points: 0 } });
+    mockApi({ "/teams": teams, "/fixtures": page([fixture]), "/matches/team-news": { updated_at: null, teams: {} }, "/matches": { team: teams[0], matches: [], points: 0 } });
     renderPage(<MatchCentre />);
     await userEvent.click(await screen.findByRole("button", { expanded: false }));
     expect(await screen.findByText(/Scoreline chances/)).toBeInTheDocument();

@@ -7,6 +7,7 @@ from app.api.dependencies import get_db
 from app.api.schemas import Page
 from app.core.exceptions import NotFoundError
 from app.database.query import row_dicts, scalar
+from app.services.players import injury_keys as load_injury_keys
 from app.services.players import team_news as load_team_news
 from app.services.predictions import PREDICTION_SQL, present
 
@@ -39,8 +40,13 @@ def results(
 
 
 @router.get("/matches/team-news")
-def team_news(con: duckdb.DuckDBPyConnection = Depends(get_db)) -> dict[str, dict[str, Any]]:
+def team_news(con: duckdb.DuckDBPyConnection = Depends(get_db)) -> dict[str, Any]:
     return load_team_news(con)
+
+
+@router.get("/matches/team-news/keys", include_in_schema=False)
+def injury_keys(con: duckdb.DuckDBPyConnection = Depends(get_db)) -> dict[str, Any]:
+    return load_injury_keys(con)
 
 
 @router.get("/matches/teams/{team_id}/form")

@@ -65,6 +65,18 @@ const Logo = () => (
   <Link to="/" className="display text-lg normal-case">Pitchside</Link>
 );
 
+const TINTS: Record<string, string> = {
+  "/app": "tint-mint",
+  "/app/matches": "tint-peach",
+  "/app/players": "tint-lilac",
+  "/app/transfers": "tint-butter",
+  "/app/simulator": "tint-sky",
+  "/app/what-if": "tint-rose",
+  "/app/models": "tint-sage",
+  "/app/data": "tint-periwinkle",
+  "/app/settings": "tint-sand",
+};
+
 export function DashboardLayout() {
   const { navOpen, setNavOpen } = useUi();
   const { pathname } = useLocation();
@@ -120,12 +132,12 @@ export function DashboardLayout() {
         )}
       </AnimatePresence>
 
-      <div className="relative min-h-dvh min-w-0">
+      <div className={`relative min-h-dvh min-w-0 bg-page transition-colors duration-200 ${TINTS[pathname] ?? "tint-mint"}`}>
         <div className="min-h-[63px]"><ScoreStrip /></div>
         <main id="main" className="mx-auto w-full max-w-[76rem] min-w-0 px-4 py-6 text-[15px] sm:px-6 lg:px-8 lg:py-8">
           {STATIC && (
             <p className="mb-4 text-[13px] text-muted">
-              Public snapshot from {import.meta.env.VITE_SNAPSHOT_DATE}. Scores and predictions update when the site is next published.
+              Public snapshot from {import.meta.env.VITE_SNAPSHOT_DATE}. Injuries update daily. Scores and predictions update when the site is next published.
             </p>
           )}
           <Suspense fallback={<SkeletonRows />}>

@@ -17,7 +17,7 @@ import { api } from "@/services/api";
 import type { PlayerDetail, RadarAxis } from "@/types/api";
 
 /** The one entrance on the page: a team sheet dropped onto the grass, settling flat. */
-export function Sheet({ children, tilt = -1.6 }: { children: ReactNode; tilt?: number }) {
+export function Sheet({ children, tilt = -1.6, tint = "tint-mint" }: { children: ReactNode; tilt?: number; tint?: string }) {
   const root = useRef<HTMLDivElement>(null);
   useGSAP(
     () => {
@@ -29,10 +29,10 @@ export function Sheet({ children, tilt = -1.6 }: { children: ReactNode; tilt?: n
     },
     { scope: root },
   );
-  return <div ref={root} className="sheet min-w-0">{children}</div>;
+  return <div ref={root} className={`sheet min-w-0 ${tint}`}>{children}</div>;
 }
 
-export function Band({ id, title, lead, children, to, cta, kit, tilt }: {
+export function Band({ id, title, lead, children, to, cta, kit, tilt, tint }: {
   id?: string;
   title: string;
   lead: string;
@@ -41,6 +41,7 @@ export function Band({ id, title, lead, children, to, cta, kit, tilt }: {
   cta: string;
   kit?: Item[];
   tilt?: number;
+  tint?: string;
 }) {
   return (
     <section id={id} className="relative z-10">
@@ -51,7 +52,7 @@ export function Band({ id, title, lead, children, to, cta, kit, tilt }: {
           <p className="mt-3 text-[1.05rem] leading-snug text-muted">{lead}</p>
           <Link to={to} className="btn-ghost mt-5 hover:bg-white hover:!text-[#0f1512]">{cta}</Link>
         </div>
-        <Sheet tilt={tilt}>{children}</Sheet>
+        <Sheet tilt={tilt} tint={tint}>{children}</Sheet>
       </div>
     </section>
   );
@@ -62,7 +63,7 @@ const HomeSkeleton = () => <Skeleton className="h-64 w-full" />;
 export function MatchSection() {
   const query = useQuery({ queryKey: ["upcoming", 1], queryFn: () => api.upcoming(1) });
   return (
-    <Band id="intelligence" title="Who is likely to win the next match?" lead="Win, draw and loss chances from form, Elo strength and squad data, scored against bookmaker prices." to="/app/matches" cta="Open Match Centre" kit={[{ kind: "yellow", left: "1.5%", top: "62%", depth: 0.8, tilt: -14 }]}>
+    <Band tint="tint-peach" id="intelligence" title="Who is likely to win the next match?" lead="Win, draw and loss chances from form, Elo strength and squad data, scored against bookmaker prices." to="/app/matches" cta="Open Match Centre" kit={[{ kind: "yellow", left: "1.5%", top: "62%", depth: 0.8, tilt: -14 }]}>
       <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => d.length === 0} empty={<EmptyState title="No upcoming fixtures are loaded." />}>
         {(data) => <Scoreboard fixture={data[0]} />}
       </DataState>
@@ -102,7 +103,7 @@ function usePlayerPair() {
 export function PlayerSection() {
   const query = usePlayerPair();
   return (
-    <Band title="Which players play alike?" lead="Per-90 profiles compared within sensible positions, so a score means two players do similar work." to="/app/players" cta="Open Player Lab" tilt={1.4} kit={[{ kind: "cone", left: "92%", top: "20%", depth: 0.5, tilt: 0 }, { kind: "cone", left: "94%", top: "58%", depth: 0.7, tilt: 0 }]}>
+    <Band tint="tint-lilac" title="Which players play alike?" lead="Per-90 profiles compared within sensible positions, so a score means two players do similar work." to="/app/players" cta="Open Player Lab" tilt={1.4} kit={[{ kind: "cone", left: "92%", top: "20%", depth: 0.5, tilt: 0 }, { kind: "cone", left: "94%", top: "58%", depth: 0.7, tilt: 0 }]}>
       <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => !d} empty={<EmptyState title="Player profiles are not ready yet." />}>
         {(pair) => {
           const { a, b, score } = pair!;
@@ -140,7 +141,7 @@ export function PlayerSection() {
 export function TransferSection() {
   const query = useQuery({ queryKey: ["undervalued", "home"], queryFn: () => api.undervalued({ limit: 1 }) });
   return (
-    <Band title="Who is undervalued?" lead="An estimate of each player's next recorded value, always shown with its range so a small gap is not oversold." to="/app/transfers" cta="Open Transfer Intelligence" kit={[{ kind: "red", left: "2%", top: "24%", depth: 0.7, tilt: 16 }]}>
+    <Band tint="tint-butter" title="Who is undervalued?" lead="An estimate of each player's next recorded value, always shown with its range so a small gap is not oversold." to="/app/transfers" cta="Open Transfer Intelligence" kit={[{ kind: "red", left: "2%", top: "24%", depth: 0.7, tilt: 16 }]}>
       <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No player has a positive gap right now." />}>
         {(data) => {
           const v = data.items[0];
@@ -211,7 +212,7 @@ export function HowItWorks() {
 export function WhatIfSection() {
   const query = useQuery({ queryKey: ["scenario", "demo-latest"], queryFn: () => api.scenario("demo-latest") });
   return (
-    <Band title="What if a club swapped a player?" lead="A swap changes the squad numbers the match model reads, then the real model predicts again." to="/app/what-if" cta="Open What-If Lab" kit={[{ kind: "ball", left: "93%", top: "30%", depth: 0.9, tilt: 0 }]}>
+    <Band tint="tint-rose" title="What if a club swapped a player?" lead="A swap changes the squad numbers the match model reads, then the real model predicts again." to="/app/what-if" cta="Open What-If Lab" kit={[{ kind: "ball", left: "93%", top: "30%", depth: 0.9, tilt: 0 }]}>
       <DataState query={query} loading={<HomeSkeleton />}>
         {(s) => {
           const m = s.matches[0];

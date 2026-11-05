@@ -61,6 +61,7 @@ def export(out: Path) -> dict[str, int]:
         ("upcoming", "/fixtures/upcoming", {"limit": 100}),
         ("undervalued", "/transfers/undervalued", {"limit": 100}),
         ("simulation-latest", "/simulation/latest", {}), ("team-news", "/matches/team-news", {}),
+        ("injury-keys", "/matches/team-news/keys", {}),
         ("model-metrics", "/models/metrics", {}), ("models", "/models", {}),
         ("scenario/demo-latest", "/what-if/demo-latest", {}),
     ):

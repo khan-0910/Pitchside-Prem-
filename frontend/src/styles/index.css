@@ -5,17 +5,17 @@
   Colour names describe jobs, so any block can flip its meaning with one scope class.
 */
 @theme {
-  --color-page: #f2f4f1;
-  --color-surface: #ffffff;
-  --color-sunken: #e7ebe7;
-  --color-line: #d9ded9;
+  --color-page: #dff2e6;
+  --color-surface: #eef9f1;
+  --color-sunken: #cfe9d8;
+  --color-line: #b9dcc6;
   --color-ink: #0f1512;
-  --color-muted: #5b655f;
-  --color-accent: #0b7a43;
+  --color-muted: #48524c;
+  --color-accent: #09663a;
   --color-accent-ink: #ffffff;
-  --color-gold: #8f6b00;
-  --color-amber: #a85f00;
-  --color-alert: #cf2a24;
+  --color-gold: #6f5300;
+  --color-amber: #7f4800;
+  --color-alert: #ad1f1a;
   --color-grass: #0c6e3c;
   --color-card-yellow: #ffd400;
   --color-card-red: #e0262b;
@@ -70,23 +70,51 @@
   /* A team sheet lying on the grass flips back to ink on paper. */
   .sheet, .on-paper {
     --color-ink: #0f1512;
-    --color-muted: #5b655f;
-    --color-accent: #0b7a43;
+    --color-muted: #48524c;
+    --color-accent: #09663a;
     --color-accent-ink: #ffffff;
-    --color-line: #d9ded9;
-    --color-surface: #ffffff;
-    --color-sunken: #e7ebe7;
+    --color-page: #e4f0dc;
+    --color-line: #c8dcc2;
+    --color-surface: #f1f7ea;
+    --color-sunken: #d8e9d0;
     color: var(--color-ink);
   }
   .sheet {
     position: relative;
     padding: clamp(1.1rem, 2vw, 1.75rem);
-    border-radius: 6px;
-    background: #fff;
+    border-radius: 14px;
+    background: var(--color-surface);
     box-shadow: 0 1px 1px rgb(0 40 20 / 0.25), 0 26px 50px -22px rgb(0 30 15 / 0.65);
   }
 
-  .board { position: relative; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--color-line); background: var(--color-surface); }
+  .board { position: relative; padding: 1.35rem; border-radius: 16px; background: var(--color-surface); }
+
+  /* Each section of the product wears its own pastel. Later than .sheet so a tint wins on it. */
+  .tint-mint { --color-page: #dff2e6; --color-surface: #eef9f1; --color-sunken: #cfe9d8; --color-line: #b9dcc6; }
+  .tint-peach { --color-page: #fde4d6; --color-surface: #fff1e8; --color-sunken: #f9d5c1; --color-line: #eebfa6; }
+  .tint-lilac { --color-page: #e8e0f8; --color-surface: #f3eefc; --color-sunken: #dacff2; --color-line: #c7b8e6; }
+  .tint-butter { --color-page: #fbefc4; --color-surface: #fdf6dc; --color-sunken: #f4e4a8; --color-line: #e5d28a; }
+  .tint-sky { --color-page: #d8eafa; --color-surface: #e9f4fd; --color-sunken: #c5dff5; --color-line: #aed0ec; }
+  .tint-rose { --color-page: #fbdde7; --color-surface: #fdecf2; --color-sunken: #f6cbd9; --color-line: #ebb4c7; }
+  .tint-sage { --color-page: #e1ebd2; --color-surface: #eff5e4; --color-sunken: #d3e1bf; --color-line: #bfd1a6; }
+  .tint-periwinkle { --color-page: #dce2fa; --color-surface: #ebeffd; --color-sunken: #ccd4f6; --color-line: #b6c1ec; }
+  .tint-sand { --color-page: #f3ead9; --color-surface: #f9f3e7; --color-sunken: #e9dcc4; --color-line: #dac9aa; }
+
+  /* League table rows: places are solid colour, fights a different one. */
+  .race-ucl { --race: #a9e3b9; }
+  .race-uel { --race: #b4d8f7; }
+  .race-title { --race: #fbdd8c; }
+  .race-europe { --race: #d6cbf6; }
+  .race-survival { --race: #fdd2b8; }
+  .race-drop { --race: #f6aeb0; }
+  tr[class*="race-"] td { background: var(--race); color: #0f1512; }
+  .race-key { width: 0.9rem; height: 0.9rem; flex: none; border-radius: 4px; background: var(--race); }
+
+  .club-news { border-radius: 10px; background: var(--color-page); align-self: start; }
+  .club-news summary { display: flex; align-items: center; gap: 0.6rem; min-height: 2.9rem; padding: 0.35rem 0.75rem; cursor: pointer; list-style: none; }
+  .club-news summary::-webkit-details-marker { display: none; }
+  .club-news-caret { transition: transform 160ms var(--ease-athletic); }
+  .club-news[open] .club-news-caret { transform: rotate(180deg); }
 
   .chalk { border-color: var(--color-line); }
 
@@ -137,7 +165,7 @@
   }
   .ticket:hover { transform: translateY(-3px); }
   .ticket-stub { margin-top: 0.8rem; padding-top: 0.7rem; border-top: 1.5px dashed var(--color-line); }
-  .ticket-white { background: #fff; }
+  .ticket-white { background: var(--color-surface); }
 
   .shirt-card {
     display: flex; flex-direction: column; align-items: center; padding: 0.8rem 0.6rem;
@@ -176,10 +204,6 @@
       repeating-linear-gradient(45deg, rgb(255 255 255 / 0.55) 0 1.2px, transparent 1.2px 15px),
       repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.55) 0 1.2px, transparent 1.2px 15px);
   }
-
-  .zone-top { box-shadow: inset 3px 0 0 #0b7a43; }
-  .zone-europe { box-shadow: inset 3px 0 0 #f0b400; }
-  .zone-drop { box-shadow: inset 3px 0 0 #e0262b; }
 
   /* Product tables: small header, firm rows, a quiet hover. */
   main tbody tr { transition: background-color 120ms; }

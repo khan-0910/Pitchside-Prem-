@@ -86,7 +86,7 @@ const PAGES = {
         <Section title="Data sources">
           <ul className="list-disc space-y-1 pl-5">
             <li>Football data provided by the <Out href="https://www.football-data.org">Football-Data.org API</Out>.</li>
-            <li><Out href="https://fantasy.premierleague.com">Fantasy Premier League</Out> public data: players, match statistics and availability. Unofficial use.</li>
+            <li><Out href="https://fantasy.premierleague.com">Fantasy Premier League</Out> public data: players, match statistics, injuries and expected returns. Unofficial use.</li>
             <li><Out href="https://www.football-data.co.uk">football-data.co.uk</Out>: historical results, match statistics and bookmaker odds.</li>
             <li><Out href="https://github.com/dcaribou/transfermarkt-datasets">transfermarkt-datasets</Out>: a third-party dataset of market values and appearances. It is not an official Transfermarkt feed.</li>
           </ul>
@@ -105,6 +105,7 @@ const PAGES = {
 export default function Legal({ page }: { page: keyof typeof PAGES }) {
   const { title, body } = PAGES[page];
   return (
+    <div className="tint-sand min-h-dvh bg-page">
     <div className="mx-auto flex min-h-dvh max-w-2xl flex-col px-4 py-8 sm:px-6">
       <Link to="/" className="display text-lg normal-case">Pitchside</Link>
       <main className="mt-8 flex-1">
@@ -113,6 +114,7 @@ export default function Legal({ page }: { page: keyof typeof PAGES }) {
         {body}
       </main>
       <SiteFooter className="mt-12 text-muted" />
+    </div>
     </div>
   );
 }
