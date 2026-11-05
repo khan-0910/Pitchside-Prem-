@@ -9,7 +9,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException
 
-from app.api.routes import data, system
+from app.api.routes import data, fixtures, matches, models, system
 from app.config import get_settings
 from app.core.exceptions import PitchsideError
 from app.core.logging import configure_logging, log
@@ -17,6 +17,7 @@ from app.core.scheduler import build_scheduler
 from app.data.matching.teams import seed_teams
 from app.data.runner import build_loaders, register_sources
 from app.database.connection import db_cursor, write_lock
+from app.services import model_ops
 
 REQUEST_TIMEOUT_SECONDS = 60
 
@@ -30,7 +31,9 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         seed_teams(cursor)
         register_sources(cursor, build_loaders())
         cursor.close()
-    scheduler = build_scheduler() if settings.scheduler_enabled else None
+    jobs = [("predictions", settings.predictions_refresh_hours, model_ops.refresh_outputs),
+            ("retrain_match", settings.model_retrain_hours, model_ops.retrain)]
+    scheduler = build_scheduler(jobs) if settings.scheduler_enabled else None
     if scheduler:
         scheduler.start()
     yield
@@ -78,6 +81,9 @@ def create_app() -> FastAPI:
     v1 = APIRouter(prefix="/api/v1")
     v1.include_router(system.router)
     v1.include_router(data.router)
+    v1.include_router(fixtures.router)
+    v1.include_router(matches.router)
+    v1.include_router(models.router)
     app.include_router(v1)
     return app
 

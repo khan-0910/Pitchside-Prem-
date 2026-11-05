@@ -1,6 +1,6 @@
 """In-process refresh jobs. Page views never trigger a refresh; only these jobs do."""
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from datetime import UTC, datetime, timedelta
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -20,7 +20,7 @@ def _safely(name: str, job: Callable[[], object]) -> Callable[[], None]:
     return wrapped
 
 
-def build_scheduler(extra_jobs: list[tuple[str, float, Callable[[], object]]] | None = None):
+def build_scheduler(extra_jobs: Sequence[tuple[str, float, Callable[[], object]]] | None = None):
     settings = get_settings()
     scheduler = BackgroundScheduler(
         timezone="UTC",

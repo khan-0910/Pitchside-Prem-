@@ -127,6 +127,8 @@ class FplLoader(Loader):
                 "date_of_birth": e.get("birth_date"),
                 "position": POSITIONS.get(e["element_type"]),
                 "current_team_id": team_of.get(e["team"]),
+                "availability": e.get("status"),
+                "chance_next_round": e.get("chance_of_playing_next_round"),
             })
             ids.append({"source_id": SOURCE, "external_id": code, "player_id": pid,
                         "source_name": display, "confidence": 1.0, "method": "source_id"})
@@ -145,12 +147,16 @@ class FplLoader(Loader):
         df = pd.DataFrame(players)
         con.register("_p", df)
         con.execute(
-            """INSERT INTO players (player_id, name, date_of_birth, position, current_team_id)
-               SELECT player_id, name, CAST(date_of_birth AS DATE), position, current_team_id
+            """INSERT INTO players (player_id, name, date_of_birth, position, current_team_id,
+                                  availability, chance_next_round)
+               SELECT player_id, name, CAST(date_of_birth AS DATE), position, current_team_id,
+                      availability, CAST(chance_next_round AS INTEGER)
                FROM _p
                ON CONFLICT (player_id) DO UPDATE SET
                  name = excluded.name, position = excluded.position,
                  current_team_id = excluded.current_team_id,
+                 availability = excluded.availability,
+                 chance_next_round = excluded.chance_next_round,
                  date_of_birth = coalesce(excluded.date_of_birth, players.date_of_birth),
                  updated_at = now()"""
         )
