@@ -97,3 +97,18 @@ test("missing routes end somewhere useful", async ({ page }) => {
   await page.goto("/no-such-page");
   await expect(page.getByRole("heading", { name: "Out of play" })).toBeVisible();
 });
+
+test("the ball rolls in from the homepage and follows the menu", async ({ page }, info) => {
+  test.skip(info.project.name === "phone", "the side menu is desktop only");
+  const centre = async (selector: string) => {
+    const box = await page.locator(selector).first().boundingBox();
+    return box ? box.y + box.height / 2 : NaN;
+  };
+  const ball = '[data-testid="nav-ball"]';
+  await page.goto("/");
+  await page.getByRole("link", { name: "Open the dashboard" }).first().click();
+  await expect(page.locator(ball)).toBeVisible();
+  await expect.poll(async () => Math.abs((await centre(ball)) - (await centre('nav[aria-label="Dashboard"] a[href$="/app"]')))).toBeLessThan(2);
+  await page.getByRole("link", { name: "What-If Lab" }).click();
+  await expect.poll(async () => Math.abs((await centre(ball)) - (await centre('nav[aria-label="Dashboard"] a[href$="/what-if"]')))).toBeLessThan(2);
+});
