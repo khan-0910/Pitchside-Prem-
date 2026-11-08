@@ -41,6 +41,7 @@ class Prediction(BaseModel):
     predicted_at: datetime
     data_timestamp: datetime
     limitations: list[str]
+    explanation: list[dict[str, Any]] | None = None
 
 
 class SimulationRequest(BaseModel):

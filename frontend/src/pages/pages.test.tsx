@@ -56,6 +56,22 @@ describe("Match Centre", () => {
     expect(await screen.findByText(/Scoreline chances/)).toBeInTheDocument();
   });
 
+  it("replays how the model built the prediction", async () => {
+    const odds = (home_win: number, draw: number, away_win: number) => ({ home_win, draw, away_win });
+    const explained = { ...fixture, prediction: { ...fixture.prediction!, explanation: [
+      { key: "start", title: "A typical match", note: "How league matches usually end.", facts: [], probabilities: odds(0.45, 0.26, 0.29) },
+      { key: "strength", title: "Team strength", note: "Ratings and squads.", facts: [{ label: "Elo rating", home: "1,610", away: "1,480", edge: "home" as const }], probabilities: odds(0.58, 0.24, 0.18) },
+    ] } };
+    mockApi({ "/teams": teams, "/fixtures": page([explained]), "/matches/team-news": { updated_at: null, teams: {} }, "/matches": { team: teams[0], matches: [], points: 0 } });
+    renderPage(<MatchCentre />);
+    await userEvent.click(await screen.findByRole("button", { expanded: false }));
+    expect(await screen.findByRole("heading", { name: "How the model got here" })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: /Team strength/ }));
+    expect(screen.getByRole("button", { name: /Team strength/ })).toHaveAttribute("aria-current", "step");
+    expect(screen.getByRole("rowheader", { name: "Elo rating" })).toBeInTheDocument();
+    expect(screen.getByText("Arsenal +13, draw −2, Everton −11")).toBeInTheDocument();
+  });
+
   it("shows an API failure with a retry", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ error: { code: "x", message: "Database is busy" } }), { status: 503 })));
     renderPage(<MatchCentre />);

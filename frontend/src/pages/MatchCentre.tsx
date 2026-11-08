@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PageTitle } from "@/components/layout/DashboardLayout";
 import { ProbabilityBar } from "@/components/ui/ProbabilityBar";
 import { DataState, EmptyState, SkeletonRows } from "@/components/ui/states";
+import { BuildUp } from "@/features/matches/BuildUp";
 import { ScoreGrid } from "@/features/matches/ScoreGrid";
 import { Scoreboard } from "@/features/matches/Scoreboard";
 import { kickoff } from "@/lib/format";
@@ -87,6 +88,7 @@ function Detail({ fixture }: { fixture: Fixture }) {
           </details>
         )}
       </div>
+      {p?.explanation && <BuildUp prediction={p} home={fixture.home_short} away={fixture.away_short} />}
     </div>
   );
 }

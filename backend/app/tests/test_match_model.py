@@ -230,7 +230,7 @@ def test_prediction_route_returns_stored_values(client, con):
     fid = con.execute("SELECT fixture_id FROM fixtures WHERE status='SCHEDULED' LIMIT 1").fetchone()[0]
     con.execute(
         """INSERT INTO match_predictions VALUES (?, 'match-test', now(), now(), .5, .3, .2,
-           1.5, 1.0, '1-0', '[[0.1]]')""", [fid])
+           1.5, 1.0, '1-0', '[[0.1]]', NULL)""", [fid])
     body = client.get(f"/api/v1/fixtures/{fid}/prediction").json()
     assert body["probabilities"]["home_win"] == 0.5
     assert body["expected_goals"]["total"] == 2.5

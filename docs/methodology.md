@@ -43,6 +43,8 @@ Settings were chosen by walk-forward log loss on seasons 2018-19 to 2024-25, bef
 
 It beats naive baselines and does not beat the market. A walk-forward backtest refits before each season from 2020-21 and shows the same pattern every season.
 
+Each stored prediction carries its build-up, which Match Centre plays step by step. The logistic model scores each outcome as a base value plus one weight times each scaled input, then applies the temperature. The build-up starts from the base value alone, with every input at its training average, which gives a typical match. It then adds the inputs a group at a time: strength, season, form, home and away record, rest, absences. Because the scores add up, the last step equals the stored prediction, and the code checks this before saving. The order is fixed. A different order changes how big each step looks, not where it ends. If the chosen model is not logistic, no build-up is stored.
+
 ## Player similarity
 
 **Data.** Per-90 values from FPL: this season plus half of last season, with at least 450 weighted minutes. That gives 352 players.

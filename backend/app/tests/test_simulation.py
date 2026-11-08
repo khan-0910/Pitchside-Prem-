@@ -198,7 +198,7 @@ def test_simulation_is_stored_and_deduplicated(con):
     seed_league(con)
     con.execute("""INSERT INTO model_registry (model_version, model_type, is_active) VALUES ('m', 'match', TRUE)""")
     con.execute("""INSERT INTO match_predictions VALUES ('2026-27:arsenal:chelsea', 'm', now(), now(),
-                   .5, .3, .2, 1.5, 1.0, '1-0', '[]')""")
+                   .5, .3, .2, 1.5, 1.0, '1-0', '[]', NULL)""")
     first = simulations.run_simulation(con, 500, 3)
     second = simulations.run_simulation(con, 500, 3)
     assert first["simulation_id"] == second["simulation_id"]

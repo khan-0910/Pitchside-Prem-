@@ -13,6 +13,7 @@ from app.core.exceptions import ServiceUnavailableError
 from app.database.connection import write_lock
 from app.database.query import row_dicts, scalar
 from app.features.match_features import build_match_frame
+from app.models.match.explain import explain
 from app.models.match.inference import MatchModel, load_active, most_likely_score, score_matrix
 from app.models.match.metrics import score
 
@@ -39,6 +40,7 @@ def upcoming_frame(con: duckdb.DuckDBPyConnection) -> pd.DataFrame:
 def predict_rows(model: MatchModel, frame: pd.DataFrame) -> list[dict[str, Any]]:
     proba = model.predict_proba(frame)
     xg_h, xg_a = model.predict_goals(frame)
+    steps = explain(model, frame)
     out = []
     for i, fixture_id in enumerate(frame["fixture_id"]):
         grid = score_matrix(float(xg_h[i]), float(xg_a[i]), proba[i])
@@ -47,6 +49,7 @@ def predict_rows(model: MatchModel, frame: pd.DataFrame) -> list[dict[str, Any]]
             "p_away": float(proba[i, 2]), "xg_home": float(xg_h[i]), "xg_away": float(xg_a[i]),
             "most_likely_score": most_likely_score(grid),
             "score_matrix": json.dumps(np.round(grid[:6, :6], 5).tolist()),
+            "explanation": json.dumps(steps[i]) if steps[i] else None,
         })
     return out
 
@@ -62,10 +65,16 @@ def refresh_predictions(con: duckdb.DuckDBPyConnection) -> int:
     as_of = scalar(con, "SELECT max(last_success_at) FROM source_registry") or now
     rows = predict_rows(model, frame)
     with write_lock:
+        # Older rows drop their steps, so the history stays small.
+        con.execute("UPDATE match_predictions SET explanation = NULL WHERE list_contains(?, fixture_id)",
+                    [[r["fixture_id"] for r in rows]])
         con.executemany(
-            """INSERT OR REPLACE INTO match_predictions VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            """INSERT OR REPLACE INTO match_predictions (fixture_id, model_version, predicted_at,
+               data_timestamp, p_home, p_draw, p_away, xg_home, xg_away, most_likely_score, score_matrix,
+               explanation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             [[r["fixture_id"], model.version, now, as_of, r["p_home"], r["p_draw"], r["p_away"],
-              r["xg_home"], r["xg_away"], r["most_likely_score"], r["score_matrix"]] for r in rows],
+              r["xg_home"], r["xg_away"], r["most_likely_score"], r["score_matrix"], r["explanation"]]
+             for r in rows],
         )
     return len(rows)
 
@@ -107,7 +116,8 @@ PREDICTION_SQL = """
            f.home_team_id, h.name AS home_team, h.short_name AS home_short, h.tla AS home_tla,
            f.away_team_id, a.name AS away_team, a.short_name AS away_short, a.tla AS away_tla,
            r.home_goals, r.away_goals, p.p_home, p.p_draw, p.p_away, p.xg_home, p.xg_away,
-           p.most_likely_score, p.score_matrix, p.model_version, p.predicted_at, p.data_timestamp
+           p.most_likely_score, p.score_matrix, p.model_version, p.predicted_at, p.data_timestamp,
+           p.explanation
     FROM fixtures f
     JOIN teams h ON h.team_id = f.home_team_id
     JOIN teams a ON a.team_id = f.away_team_id
@@ -140,6 +150,7 @@ def present(row: dict[str, Any]) -> dict[str, Any]:
             "predicted_at": row["predicted_at"],
             "data_timestamp": row["data_timestamp"],
             "limitations": LIMITATIONS,
+            "explanation": json.loads(row["explanation"]) if row.get("explanation") else None,
         }
     return out
 

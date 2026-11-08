@@ -7,6 +7,15 @@ export interface Page<T> {
   offset: number;
 }
 
+/** One step of the model's arithmetic, from a typical match to this prediction. */
+export interface BuildStep {
+  key: string;
+  title: string;
+  note: string;
+  facts: { label: string; home: string | null; away: string | null; edge: "home" | "away" | null }[];
+  probabilities: { home_win: number; draw: number; away_win: number };
+}
+
 export interface Prediction {
   probabilities: { home_win: number; draw: number; away_win: number };
   expected_goals: { home: number; away: number; total: number };
@@ -17,6 +26,7 @@ export interface Prediction {
   predicted_at: string;
   data_timestamp: string;
   limitations: string[];
+  explanation?: BuildStep[] | null;
 }
 
 export interface Fixture {

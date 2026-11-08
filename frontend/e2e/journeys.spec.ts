@@ -38,6 +38,10 @@ test("a person can read a match prediction", async ({ page }) => {
   await page.goto("/app/matches");
   await page.locator("main li button").first().click();
   await expect(page.getByText(/Scoreline chances/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "How the model got here" })).toBeVisible();
+  await page.getByRole("button", { name: /^Team strength/ }).click();
+  await expect(page.getByRole("rowheader", { name: "Elo rating" })).toBeVisible();
+  await expect(page.getByText(/^Step 2 of 7/)).toBeVisible();
 });
 
 test("a person can find a player and compare them", async ({ page }) => {
@@ -59,10 +63,10 @@ test("a person can build a what-if scenario with the keyboard path", async ({ pa
   await expect(page.getByText(/Match predictions, before and after/)).toBeVisible();
 });
 
-test("reduced motion keeps all the content", async ({ browser }) => {
-  const context = await browser.newContext({ reducedMotion: "reduce" });
+test("reduced motion keeps all the content", async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ reducedMotion: "reduce", baseURL });
   const page = await context.newPage();
-  await page.goto("http://127.0.0.1:8000/");
+  await page.goto("/");
   await expect(page.getByText("Understand the Premier League beyond the scoreline.")).toBeVisible();
   await expect(page.getByRole("heading", { name: /SEE THE GAME DIFFERENTLY/ })).toBeAttached();
   await expect(page.getByText("THE GAME HAS", { exact: true })).toBeVisible();
