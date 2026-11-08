@@ -8,12 +8,17 @@ interface Props {
   value: number;
   format?: (value: number) => string;
   className?: string;
+  /** false shows the first value as it is, and only counts later changes. */
+  countIn?: boolean;
 }
 
+// Module level, so the default keeps one identity and a re-render never restarts the count.
+const whole = (v: number) => v.toFixed(0);
+
 /** Counts from its previous value, writing to the DOM directly so React never re-renders per frame. */
-export function AnimatedNumber({ value, format = (v) => v.toFixed(0), className = "" }: Props) {
+export function AnimatedNumber({ value, format = whole, className = "", countIn = true }: Props) {
   const node = useRef<HTMLSpanElement>(null);
-  const previous = useRef(0);
+  const previous = useRef(countIn ? 0 : value);
   const reduced = useReducedMotion();
 
   useEffect(() => {

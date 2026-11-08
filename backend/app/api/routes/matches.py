@@ -7,6 +7,7 @@ from app.api.dependencies import get_db
 from app.api.schemas import Page
 from app.core.exceptions import NotFoundError
 from app.database.query import row_dicts, scalar
+from app.database.repositories.football import table_before_latest_round
 from app.services.players import team_news as load_team_news
 from app.services.predictions import PREDICTION_SQL, present
 
@@ -94,5 +95,9 @@ def standings(con: duckdb.DuckDBPyConnection = Depends(get_db)) -> dict[str, Any
            ORDER BY s.position""",
     )
     source = rows[0]["source_id"] if rows else None
-    return {"season_id": rows[0]["season_id"] if rows else None, "source": source,
-            "derived": source == "derived", "table": rows}
+    season = rows[0]["season_id"] if rows else None
+    since, before = table_before_latest_round(con, season, rows) if season else (None, {})
+    for row in rows:
+        row["before"] = before.get(row["team_id"])
+    return {"season_id": season, "source": source, "derived": source == "derived",
+            "moves_since": since, "table": rows}

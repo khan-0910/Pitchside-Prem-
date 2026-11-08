@@ -6,6 +6,7 @@ import { useReducedMotion } from "@/animations/useReducedMotion";
 import { Radar } from "@/components/charts/Radar";
 import { PageTitle } from "@/components/layout/DashboardLayout";
 import { ShirtGraphic } from "@/components/football/ShirtCard";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState, SkeletonRows } from "@/components/ui/states";
 import { AVAILABILITY, GROUPS, euros, initials } from "@/lib/format";
@@ -114,6 +115,11 @@ function Similar({ player, onCompare, compared }: { player: PlayerDetail; onComp
   );
 }
 
+const oneDecimal = (v: number) => v.toFixed(1);
+/** Counts up when a profile opens. Missing figures say so instead of showing a zero. */
+const stat = (value: number | null, format?: (v: number) => string) =>
+  value === null ? <span className="text-muted">No data</span> : <AnimatedNumber value={value} format={format} />;
+
 function Profile({ id }: { id: string }) {
   const [compareId, setCompareId] = useState<string | null>(null);
   const query = useQuery({ queryKey: ["player", id], queryFn: () => api.player(id) });
@@ -134,12 +140,12 @@ function Profile({ id }: { id: string }) {
             </div>
           </header>
           <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {[
-              ["Minutes", p.minutes?.toFixed(0)],
-              ["Goals, assists", `${p.goals}, ${p.assists}`],
-              ["xG, xA", `${p.xg?.toFixed(1)}, ${p.xa?.toFixed(1)}`],
-              ["Recorded value", euros(p.market_value_eur)],
-            ].map(([label, value]) => (
+            {([
+              ["Minutes", stat(p.minutes)],
+              ["Goals, assists", <>{stat(p.goals)}, {stat(p.assists)}</>],
+              ["xG, xA", <>{stat(p.xg, oneDecimal)}, {stat(p.xa, oneDecimal)}</>],
+              ["Recorded value", stat(p.market_value_eur, euros)],
+            ] as const).map(([label, value]) => (
               <div key={label}>
                 <dt className="text-sm text-muted">{label}</dt>
                 <dd className="num text-xl">{value}</dd>

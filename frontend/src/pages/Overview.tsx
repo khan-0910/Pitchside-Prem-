@@ -6,8 +6,8 @@ import { PageTitle } from "@/components/layout/DashboardLayout";
 import { ClubEmblem, PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState } from "@/components/ui/states";
 import { FixtureRail } from "@/features/matches/FixtureRail";
+import { LeagueTable } from "@/features/table/LeagueTable";
 import { ASSESSMENT, euros, signed, timeAgo } from "@/lib/format";
-import { RACES, raceFor, raceLabel } from "@/lib/tableRace";
 import { api } from "@/services/api";
 import type { ClubNews } from "@/types/api";
 
@@ -17,54 +17,6 @@ function Heading({ title, to }: { title: string; to?: string }) {
       <h2 className="text-lg">{title}</h2>
       {to && <Link to={to} className="text-sm text-muted underline underline-offset-4 hover:text-ink">See all</Link>}
     </div>
-  );
-}
-
-function LeagueTable() {
-  const query = useQuery({ queryKey: ["standings"], queryFn: api.standings });
-  return (
-    <DataState query={query} isEmpty={(d) => d.table.length === 0}>
-      {(data) => (
-        <>
-          <table className="w-full text-left">
-            <caption className="sr-only">League table, season {data.season_id}</caption>
-            <thead>
-              <tr className="chalk border-b text-sm text-muted">
-                <th scope="col" className="w-8 py-1.5 pl-2 font-normal">#</th>
-                <th scope="col" className="py-1.5 font-normal">Club</th>
-                <th scope="col" className="py-1.5 text-right font-normal">P</th>
-                <th scope="col" className="py-1.5 text-right font-normal">GD</th>
-                <th scope="col" className="py-1.5 text-right font-normal">Pts</th>
-              </tr>
-            </thead>
-            <tbody className="num">
-              {data.table.map((row) => {
-                const race = raceFor(row, data.table);
-                return (
-                <tr key={row.team_id} className={`chalk border-b ${race ? `race-${race}` : ""}`} title={raceLabel(race)}>
-                  <td className="py-1.5 pl-2">{row.position}</td>
-                  <td className="py-1.5">
-                    <span className="flex items-center gap-2"><ClubEmblem tla={row.tla} size={22} />{row.short_name}{race && <span className="sr-only"> ({raceLabel(race)})</span>}</span>
-                  </td>
-                  <td className="py-1.5 text-right">{row.played}</td>
-                  <td className="py-1.5 text-right">{signed(row.goal_difference, 0)}</td>
-                  <td className="py-1.5 pr-2 text-right font-semibold">{row.points}</td>
-                </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          {data.derived && (
-            <p className="mt-2 text-sm text-muted">Worked out from results, so any points deduction is not included.</p>
-          )}
-          <ul className="mt-3 grid gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
-            {RACES.map(({ race, label }) => (
-              <li key={race} className="flex items-center gap-2"><span aria-hidden className={`race-key race-${race}`} />{label}</li>
-            ))}
-          </ul>
-        </>
-      )}
-    </DataState>
   );
 }
 

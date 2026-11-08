@@ -66,12 +66,15 @@ export interface StandingRow extends Team {
   goals_against: number;
   goal_difference: number;
   points: number;
+  /** This club's line before the latest matchweek began, when there was one. */
+  before?: { position: number; played: number; goal_difference: number; points: number } | null;
 }
 
 export interface Standings {
   season_id: string | null;
   source: string | null;
   derived: boolean;
+  moves_since?: string | null;
   table: StandingRow[];
 }
 

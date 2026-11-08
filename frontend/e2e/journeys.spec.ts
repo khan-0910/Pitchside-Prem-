@@ -112,3 +112,25 @@ test("the ball rolls in from the homepage and follows the menu", async ({ page }
   await page.getByRole("link", { name: "What-If Lab" }).click();
   await expect.poll(async () => Math.abs((await centre(ball)) - (await centre('nav[aria-label="Dashboard"] a[href$="/what-if"]')))).toBeLessThan(2);
 });
+
+test("the table settles from last matchweek's order into today's", async ({ page }) => {
+  await page.goto("/app");
+  await expect(page.getByText(/Arrows show moves since/)).toBeVisible();
+  const table = page.getByRole("table", { name: /League table/ });
+  await table.scrollIntoViewIfNeeded(); // it plays once a reader reaches it
+  await expect(table.getByText(/\d+ (up|down)$/).first()).toBeAttached();
+  const positions = table.locator("tbody tr td:first-child");
+  expect((await positions.allTextContents()).map(Number)).toEqual(Array.from({ length: await positions.count() }, (_, i) => i + 1));
+});
+
+test("on narrower screens the homepage ball runs down the touchline", async ({ page }, info) => {
+  test.skip(info.project.name === "desktop", "wide screens use the passing line");
+  await page.goto("/");
+  const ball = page.getByTestId("touch-ball");
+  await expect(ball).toBeAttached();
+  const top = async () => (await ball.boundingBox())?.y ?? NaN;
+  await page.evaluate(() => window.scrollTo(0, 3000));
+  await expect.poll(async () => Math.abs((await top()) - 0.7 * 740)).toBeLessThan(80);
+  await page.evaluate(() => window.scrollTo(0, 6000));
+  await expect.poll(async () => Math.abs((await top()) - 0.7 * 740)).toBeLessThan(80);
+});

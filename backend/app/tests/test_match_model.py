@@ -275,3 +275,28 @@ def test_expected_return_reads_fpl_news():
     assert expected_return("Calf injury - 50% chance of playing", 50) == "50% chance of playing"
     assert expected_return("Thigh injury - Unknown return date", 0) == "Unknown"
     assert expected_return(None, None) == "Unknown"
+
+
+def test_table_remembers_positions_before_the_latest_matchweek(client, con):
+    from app.database.repositories.football import derive_standings, results_table, table_before_latest_round
+
+    seed_matches(con, season="2026-27", start=date(2026, 8, 15))
+    derive_standings(con, "2026-27", date(2026, 9, 20))
+    body = client.get("/api/v1/standings").json()
+    assert body["moves_since"] == "2026-09-12"  # matchweek 5, the latest played
+    earlier = results_table(con, "2026-27", date(2026, 9, 12))
+    leader = next(row["before"] for row in body["table"] if row["team_id"] == earlier[0][0])
+    assert leader == {"position": 1, "played": earlier[0][1], "goal_difference": earlier[0][7], "points": earlier[0][8]}
+    assert sorted(row["before"]["position"] for row in body["table"]) == list(range(1, len(body["table"]) + 1))
+
+    # A deduction in the table is carried back, so it does not read as a fall.
+    table = [{"team_id": r[0], "points": r[8] - (50 if i == 0 else 0)} for i, r in enumerate(results_table(con, "2026-27"))]
+    _, before = table_before_latest_round(con, "2026-27", table)
+    assert before[table[0]["team_id"]]["position"] == len(table)
+
+
+def test_first_matchweek_has_no_earlier_table(con):
+    from app.database.repositories.football import table_before_latest_round
+
+    seed_matches(con, season="2026-27", start=date(2026, 8, 15), played_rounds=1)
+    assert table_before_latest_round(con, "2026-27", []) == (None, {})

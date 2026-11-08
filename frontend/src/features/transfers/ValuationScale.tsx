@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { DURATION, EASE } from "@/animations/presets";
 import { useReducedMotion } from "@/animations/useReducedMotion";
 import { Ball } from "@/components/football/icons";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { euros } from "@/lib/format";
 
 interface Props {
@@ -46,8 +47,8 @@ export function ValuationScale({ actual, predicted, low, high, highlight, animat
         </motion.span>
       </div>
       <div aria-hidden className="flex flex-wrap justify-between gap-x-6 text-sm">
-        <span>Recorded <strong className="num font-semibold">{euros(actual)}</strong></span>
-        <span className={highlight ? "text-accent" : ""}>Model <strong className="num font-semibold">{euros(predicted)}</strong></span>
+        <span>Recorded <strong className="font-semibold"><AnimatedNumber value={actual} format={euros} /></strong></span>
+        <span className={highlight ? "text-accent" : ""}>Model <strong className="font-semibold"><AnimatedNumber value={predicted} format={euros} /></strong></span>
         <span className="text-muted">Range <span className="num">{euros(low)} to {euros(high)}</span></span>
       </div>
     </div>

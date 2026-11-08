@@ -184,6 +184,26 @@ describe("Overview, Data Health and Model Performance", () => {
     expect(await screen.findByText(/any points deduction is not included/)).toBeInTheDocument();
   });
 
+  it("marks who moved since the latest matchweek", async () => {
+    const row = (team_id: string, short_name: string, position: number, before: number, points: number) => ({
+      team_id, name: short_name, short_name, tla: short_name.slice(0, 3).toUpperCase(), position,
+      before: { position: before, played: 8, goal_difference: 0, points: points - 3 },
+      played: 9, won: 0, drawn: 0, lost: 0, goals_for: 0, goals_against: 0, goal_difference: 0, points,
+    });
+    mockApi({
+      "/standings": { season_id: "2026-27", derived: false, source: "football_data_org", moves_since: "2026-10-31", table: [row("ars", "Arsenal", 1, 2, 24), row("mci", "Man City", 2, 1, 21), row("bha", "Brighton", 3, 3, 19)] },
+      "/fixtures/upcoming": [fixture], "/matches/results": page([]), "/players": page([]), "/transfers/undervalued": { items: [], note: "", rule: "", clear_signals: 0 }, "/matches/team-news": { updated_at: null, teams: {} },
+    });
+    useUi.getState().setReduceMotion(true);
+    renderPage(<Overview />);
+    expect(await screen.findByText(/Arrows show moves since/)).toBeInTheDocument();
+    const rows = screen.getAllByRole("row").slice(1);
+    expect(within(rows[0]).getByText(/up/)).toBeInTheDocument();
+    expect(within(rows[1]).getByText(/down/)).toBeInTheDocument();
+    expect(within(rows[2]).getByText("Same place")).toBeInTheDocument();
+    useUi.getState().setReduceMotion(false);
+  });
+
   it("shows why a source is down", async () => {
     mockApi({
       "/data/health": {
