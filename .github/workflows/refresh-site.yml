@@ -2,13 +2,15 @@ name: Refresh site
 
 on:
   schedule:
-    - cron: "15 */3 * * *"
+    # GitHub Pages allows about 10 builds an hour, so 15 minutes is the safe floor.
+    - cron: "*/15 * * * *"
   workflow_dispatch:
   push:
     branches: [main]
     paths:
       - .github/workflows/refresh-site.yml
-      - backend/scripts/refresh.py
+      - backend/**
+      - frontend/**
 
 permissions:
   contents: write

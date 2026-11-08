@@ -147,7 +147,7 @@ export function DashboardLayout() {
         <main id="main" className="mx-auto w-full max-w-[76rem] min-w-0 px-4 py-6 text-[15px] sm:px-6 lg:px-8 lg:py-8">
           {STATIC && (
             <p className="mb-4 text-[13px] text-muted">
-              Scores, injuries and predictions update every 3 hours. Last update: {import.meta.env.VITE_SNAPSHOT_DATE}.
+              Scores, injuries and predictions update about every 15 minutes. Last update: {import.meta.env.VITE_SNAPSHOT_DATE}.
             </p>
           )}
           <Suspense fallback={<SkeletonRows />}>

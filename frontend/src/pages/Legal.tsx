@@ -66,7 +66,7 @@ const PAGES = {
         </Section>
         <Section title="Accuracy">
           <p>
-            Data comes from third parties and can be late, incomplete or wrong. The public site updates every few hours, not
+            Data comes from third parties and can be late, incomplete or wrong. The public site updates about every 15 minutes, not
             live. Pitchside is provided as it is, with no promise that it is accurate or always available.
           </p>
         </Section>

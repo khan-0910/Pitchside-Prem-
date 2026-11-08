@@ -128,7 +128,7 @@ Inside the container, run `python -m scripts.bootstrap` once with the API stoppe
 
 ## Public site
 
-GitHub Pages cannot run the Python backend, so `.github/workflows/refresh-site.yml` does the work every 3 hours. It restores the database from the Actions cache, fetches scores and injuries, stores new predictions, exports the API to JSON, builds the frontend and pushes it to `gh-pages`. Slower sources and the match model refresh weekly. An empty cache triggers a full rebuild.
+GitHub Pages cannot run the Python backend, so `.github/workflows/refresh-site.yml` does the work every 15 minutes, and again on any push that changes the app. It restores the database from the Actions cache, fetches scores and injuries, stores new predictions, exports the API to JSON, builds the frontend and pushes it to `gh-pages`. Slower sources and the match model refresh weekly. An empty cache triggers a full rebuild.
 
 Everything it exports is labelled cached, never live. New What-If swaps need the full app, so they are off there. To use football-data.org in that job, add `FOOTBALL_DATA_API_KEY` as a repository secret. Without it, scores and the table come from FPL.
 
