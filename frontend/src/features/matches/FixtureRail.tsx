@@ -19,7 +19,7 @@ export function Ticket({ fixture, white }: { fixture: Fixture; white?: boolean }
           <span className="flex justify-center"><ShirtGraphic tla={fixture.home_tla} label={fixture.home_tla} size={46} /></span>
           <p className="mt-1 truncate text-sm font-semibold">{fixture.home_short}</p>
         </div>
-        <span className="num font-display text-3xl font-extrabold">{fixture.prediction?.most_likely_score ?? "v"}</span>
+        <span className="font-display text-2xl font-extrabold text-muted">v</span>
         <div className="min-w-0 text-center">
           <span className="flex justify-center"><ShirtGraphic tla={fixture.away_tla} label={fixture.away_tla} size={46} /></span>
           <p className="mt-1 truncate text-sm font-semibold">{fixture.away_short}</p>
@@ -27,7 +27,13 @@ export function Ticket({ fixture, white }: { fixture: Fixture; white?: boolean }
       </div>
       <div className="ticket-stub">
         {fixture.prediction ? (
+          <>
+          <p className="mb-1.5 flex justify-between text-sm text-muted">
+            <span>Prediction</span>
+            <span>Likely score <span className="num font-semibold text-ink">{fixture.prediction.most_likely_score}</span></span>
+          </p>
           <ProbabilityBar compact prediction={fixture.prediction} homeLabel={fixture.home_short} awayLabel={fixture.away_short} />
+          </>
         ) : (
           <p className="text-sm text-muted">No prediction stored.</p>
         )}
