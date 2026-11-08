@@ -1,4 +1,3 @@
-import { ArrowsLeftRight } from "@phosphor-icons/react/dist/csr/ArrowsLeftRight";
 import { Gear } from "@phosphor-icons/react/dist/csr/Gear";
 import { List } from "@phosphor-icons/react/dist/csr/List";
 import { SneakerMove } from "@phosphor-icons/react/dist/csr/SneakerMove";
@@ -25,7 +24,6 @@ const NAV = [
   { to: "/app/matches", label: "Match Centre", icon: SoccerBall },
   { to: "/app/players", label: "Player Lab", icon: TShirt },
   { to: "/app/transfers", label: "Transfer Intelligence", icon: SneakerMove },
-  { to: "/app/what-if", label: "What-If Lab", icon: ArrowsLeftRight },
   { to: "/app/settings", label: "Settings", icon: Gear },
 ];
 
@@ -77,7 +75,6 @@ const TINTS: Record<string, string> = {
   "/app/matches": "tint-peach",
   "/app/players": "tint-lilac",
   "/app/transfers": "tint-butter",
-  "/app/what-if": "tint-rose",
   "/app/models": "tint-sage",
   "/app/data": "tint-periwinkle",
   "/app/settings": "tint-sand",

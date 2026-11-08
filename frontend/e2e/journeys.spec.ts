@@ -22,7 +22,7 @@ test("every dashboard page loads with no side scroll", async ({ page }) => {
   page.on("pageerror", (e) => errors.push(e.message));
   const pages: [string, string][] = [
     ["/app", "Overview"], ["/app/matches", "Match Centre"], ["/app/players", "Player Lab"],
-    ["/app/transfers", "Transfer Intelligence"], ["/app/what-if", "What-If Lab"],
+    ["/app/transfers", "Transfer Intelligence"],
     ["/app/models", "Model Performance"], ["/app/data", "Data Health"], ["/app/settings", "Settings"],
   ];
   for (const [path, title] of pages) {
@@ -53,15 +53,6 @@ test("a person can find a player and compare them", async ({ page }) => {
   await expect(page.getByText("Main differences")).toBeVisible();
 });
 
-test("a person can build a what-if scenario with the keyboard path", async ({ page }) => {
-  await page.goto("/app/what-if");
-  await page.getByLabel("Club").selectOption("liverpool");
-  await page.getByRole("button", { name: /^Replace / }).first().click();
-  await page.getByRole("button", { name: /^Bring in / }).first().click();
-  await page.getByRole("button", { name: "Apply replacement" }).click();
-  await expect(page.getByText(/Hypothetical scenario/)).toBeVisible({ timeout: 20_000 });
-  await expect(page.getByText(/Match predictions, before and after/)).toBeVisible();
-});
 
 test("reduced motion keeps all the content", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ reducedMotion: "reduce", baseURL });
@@ -109,8 +100,8 @@ test("the ball rolls in from the homepage and follows the menu", async ({ page }
   await page.getByRole("link", { name: "Open the dashboard" }).first().click();
   await expect(page.locator(ball)).toBeVisible();
   await expect.poll(async () => Math.abs((await centre(ball)) - (await centre('nav[aria-label="Dashboard"] a[href$="/app"]')))).toBeLessThan(2);
-  await page.getByRole("link", { name: "What-If Lab" }).click();
-  await expect.poll(async () => Math.abs((await centre(ball)) - (await centre('nav[aria-label="Dashboard"] a[href$="/what-if"]')))).toBeLessThan(2);
+  await page.getByRole("link", { name: "Transfer Intelligence" }).click();
+  await expect.poll(async () => Math.abs((await centre(ball)) - (await centre('nav[aria-label="Dashboard"] a[href$="/transfers"]')))).toBeLessThan(2);
 });
 
 test("the table settles from last matchweek's order into today's", async ({ page }) => {

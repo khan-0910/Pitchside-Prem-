@@ -10,7 +10,6 @@ import type {
   PlayerDetail,
   PlayerSummary,
   SimilarResponse,
-  SquadView,
   Standings,
   Team,
   TeamForm,
@@ -19,13 +18,11 @@ import type {
   Valuation,
   ValuationDetail,
   ValuationPage,
-  WhatIfScenario,
 } from "@/types/api";
 
 /** The public site has no server, so it reads files that the API wrote at publish time. */
 type Query = Record<string, string | number | boolean | null | undefined>;
 
-const NEEDS_SERVER = "This needs the full app. The public site is a snapshot and cannot run new calculations.";
 const files = new Map<string, Promise<unknown>>();
 
 function file<T>(name: string): Promise<T> {
@@ -135,8 +132,6 @@ async function compare(a: string, b: string): Promise<Comparison> {
   };
 }
 
-const needsServer = (): Promise<never> => Promise.reject(new ApiError(NEEDS_SERVER, 0, "static"));
-
 export const staticApi: Api = {
   fixtures: async (q) => filterFixtures(await file<Fixture[]>("fixtures"), q),
   upcoming: async (limit = 10) => (await file<Fixture[]>("upcoming")).slice(0, limit),
@@ -163,9 +158,6 @@ export const staticApi: Api = {
     return { ...data, items: data.items.slice(0, num(q.limit) ?? 25) };
   },
   valuation: (playerId) => file<ValuationDetail>(`valuation/${playerId}`),
-  squad: (teamId) => file<SquadView>(`squad/${teamId}`),
-  replacement: needsServer,
-  scenario: (scenarioId) => file<WhatIfScenario>(`scenario/${scenarioId}`),
   modelMetrics: () => file<ModelMetrics>("model-metrics"),
   models: () => file<ModelInfo[]>("models"),
   dataSources: () => file<DataSource[]>("data-sources"),

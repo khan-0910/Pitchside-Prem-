@@ -8,7 +8,6 @@ import {
   MatchSection,
   PlayerSection,
   TransferSection,
-  WhatIfSection,
 } from "./sections";
 
 /** Everything below the hero, one unbroken stretch of grass. Loaded separately to keep first paint light. */
@@ -23,7 +22,6 @@ export default function Journey() {
       <FixturesSection />
       <PlayerSection />
       <TransferSection />
-      <WhatIfSection />
       <HowItWorks />
       <GoalFinale />
     </div>

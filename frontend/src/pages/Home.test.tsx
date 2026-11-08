@@ -11,7 +11,6 @@ const routes = {
   "/players": { items: [], total: 0, limit: 1, offset: 0 },
   "/transfers/undervalued": { items: [], note: "n", rule: "r", clear_signals: 0 },
   "/standings": { table: [] },
-  "/what-if/demo-latest": { team: "Arsenal", matches: [], squad_value: { before: 1, after: 2 }, player_in: { name: "In" }, player_out: { name: "Out" } },
   "/models/metrics": { match: null },
 };
 
@@ -25,7 +24,7 @@ describe("Home", { timeout: 20_000 }, () => {
     expect(screen.getByRole("heading", { level: 1, name: "The game has a data side." })).toBeInTheDocument();
     expect(await screen.findByText("Most likely score", {}, { timeout: 8000 })).toBeInTheDocument();
     expect(await screen.findByRole("heading", { name: /SEE THE GAME DIFFERENTLY/ })).toBeInTheDocument();
-    expect(await screen.findByText("Arsenal: In for Out")).toBeInTheDocument();
+    expect(screen.queryByText(/What-If/)).not.toBeInTheDocument();
   });
 
   it("shows cached data as cached, never live", async () => {

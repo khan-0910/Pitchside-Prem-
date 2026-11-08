@@ -62,7 +62,6 @@ def export(out: Path) -> dict[str, int]:
         ("undervalued", "/transfers/undervalued", {"limit": 100}),
         ("team-news", "/matches/team-news", {}),
         ("model-metrics", "/models/metrics", {}), ("models", "/models", {}),
-        ("scenario/demo-latest", "/what-if/demo-latest", {}),
     ):
         job.copy(name, path, **query)
     job.write("data-sources", not_live(job.get("/data/sources")))
@@ -76,7 +75,6 @@ def export(out: Path) -> dict[str, int]:
     players = job.rows("/players", 100)
     job.write("players", players)
     tasks = [(f"form/{t}", f"/matches/teams/{t}/form", {}) for t in teams]
-    tasks += [(f"squad/{t}", f"/what-if/teams/{t}/squad", {}) for t in teams]
     for player in players:
         pid = player["player_id"]
         tasks += [(f"player/{pid}", f"/players/{pid}", {}),

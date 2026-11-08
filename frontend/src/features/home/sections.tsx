@@ -12,7 +12,7 @@ import { DataState, EmptyState, Skeleton } from "@/components/ui/states";
 import { PinnedFixtures } from "@/features/matches/FixtureRail";
 import { Scoreboard } from "@/features/matches/Scoreboard";
 import { ValuationScale } from "@/features/transfers/ValuationScale";
-import { ASSESSMENT, day, euros, percent, signed } from "@/lib/format";
+import { ASSESSMENT, day, signed } from "@/lib/format";
 import { api } from "@/services/api";
 import type { PlayerDetail, RadarAxis } from "@/types/api";
 
@@ -206,38 +206,5 @@ export function HowItWorks() {
         {PIPELINE[active].body}
       </p>
     </section>
-  );
-}
-
-export function WhatIfSection() {
-  const query = useQuery({ queryKey: ["scenario", "demo-latest"], queryFn: () => api.scenario("demo-latest") });
-  return (
-    <Band tint="tint-rose" title="What if a club swapped a player?" lead="A swap changes the squad numbers the match model reads, then the real model predicts again." to="/app/what-if" cta="Open What-If Lab" kit={[{ kind: "ball", left: "93%", top: "30%", depth: 0.9, tilt: 0 }]}>
-      <DataState query={query} loading={<HomeSkeleton />}>
-        {(s) => {
-          const m = s.matches[0];
-          return (
-            <div>
-              <p className="text-sm font-medium text-amber">Hypothetical scenario</p>
-              <p className="mt-1 text-2xl font-extrabold tracking-tight">{s.team}: {s.player_in.name} for {s.player_out.name}</p>
-              <dl className="mt-5 grid gap-4 sm:grid-cols-2">
-                <div>
-                  <dt className="text-sm text-muted">Squad value</dt>
-                  <dd className="num font-display text-2xl font-bold">{euros(s.squad_value.before)} to {euros(s.squad_value.after)}</dd>
-                </div>
-                {m && (
-                  <div>
-                    <dt className="text-sm text-muted">{m.home_team} v {m.away_team}, {s.team} win chance</dt>
-                    <dd className="num font-display text-2xl font-bold">
-                      {percent(m.is_home ? m.before.home_win : m.before.away_win, 1)} to {percent(m.is_home ? m.after.home_win : m.after.away_win, 1)}
-                    </dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-          );
-        }}
-      </DataState>
-    </Band>
   );
 }

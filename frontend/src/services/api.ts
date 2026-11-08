@@ -9,7 +9,6 @@ import type {
   PlayerDetail,
   PlayerSummary,
   SimilarResponse,
-  SquadView,
   Standings,
   Team,
   TeamForm,
@@ -17,7 +16,6 @@ import type {
   Undervalued,
   ValuationDetail,
   ValuationPage,
-  WhatIfScenario,
 } from "@/types/api";
 
 import { staticApi } from "./static-api";
@@ -58,12 +56,6 @@ async function request<T>(input: string, init?: RequestInit): Promise<T> {
 }
 
 const get = <T>(path: string, query?: Query) => request<T>(url(path, query));
-const post = <T>(path: string, body: unknown) =>
-  request<T>(url(path), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
 const id = encodeURIComponent;
 
 export const STATIC = Boolean(import.meta.env.VITE_STATIC);
@@ -84,10 +76,6 @@ const liveApi = {
   values: (q: Query) => get<ValuationPage>("/transfers/values", q),
   undervalued: (q: Query) => get<Undervalued>("/transfers/undervalued", q),
   valuation: (playerId: string) => get<ValuationDetail>(`/transfers/${id(playerId)}/valuation`),
-  squad: (teamId: string) => get<SquadView>(`/what-if/teams/${id(teamId)}/squad`),
-  replacement: (body: { team_id: string; player_out_id: string; player_in_id: string; fixture_ids: string[] }) =>
-    post<WhatIfScenario>("/what-if/player-replacement", body),
-  scenario: (scenarioId: string) => get<WhatIfScenario>(`/what-if/${id(scenarioId)}`),
   modelMetrics: () => get<ModelMetrics>("/models/metrics"),
   models: () => get<ModelInfo[]>("/models"),
   dataSources: () => get<DataSource[]>("/data/sources"),

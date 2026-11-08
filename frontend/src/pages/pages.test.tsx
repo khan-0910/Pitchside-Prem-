@@ -10,12 +10,11 @@ import Overview from "@/pages/Overview";
 import PlayerLab from "@/pages/PlayerLab";
 import Settings from "@/pages/Settings";
 import TransferIntelligence from "@/pages/TransferIntelligence";
-import WhatIfLab from "@/pages/WhatIfLab";
 import { fixture, mockApi } from "@/test/fixtures";
 import { renderPage } from "@/test/render";
 import { useUi } from "@/stores/ui";
 import { prefersReducedMotion } from "@/animations/useReducedMotion";
-import type { PlayerSummary, Valuation, WhatIfScenario } from "@/types/api";
+import type { PlayerSummary, Valuation } from "@/types/api";
 
 const teams = [{ team_id: "arsenal", name: "Arsenal", short_name: "Arsenal", tla: "ARS" }];
 const page = <T,>(items: T[]) => ({ items, total: items.length, limit: 50, offset: 0 });
@@ -134,45 +133,6 @@ describe("Transfer Intelligence", () => {
   });
 });
 
-describe("What-If Lab", () => {
-  const scenario = {
-    scenario_id: "abc", hypothetical: true, team: "Arsenal", team_id: "arsenal", model_version: "m", created_at: "",
-    player_in: { name: "Bo Sample" }, player_out: { name: "Ada Test" }, model_inputs_changed: true,
-    model_inputs: { squad_value_log: { before: 1, after: 2 }, squad_goal_output_per_90: { before: 0.2, after: 0.3 }, features_changed: [] },
-    squad_value: { before: 1e9, after: 1.1e9, change: 1e8, unvalued_players: 0 },
-    positional_balance: { before: {}, after: {}, note: "" }, matches: [], position_warning: null,
-    trade_offs: { advantages: ["xG per 90: 0.50 vs 0.40"], disadvantages: [] }, assumptions: ["Same minutes."], notes: [],
-  } as unknown as WhatIfScenario;
-  const squad = {
-    team_id: "arsenal", team: "Arsenal", fixtures: [],
-    players: [{ player_id: "p1", name: "Ada Test", position: "Forward", market_value_eur: 40e6, minutes: 900, in_likely_14: true, position_group: "ST", role: "r", availability: "a" }],
-  };
-
-  it("works from the keyboard with no drag, and labels the result hypothetical", async () => {
-    const fetchMock = mockApi({
-      "/teams": teams, "/what-if/teams/arsenal/squad": squad, "/players": page([person("p2", "Bo Sample", "chelsea")]),
-      "/what-if/player-replacement": () => scenario,
-    });
-    renderPage(<WhatIfLab />);
-    await userEvent.selectOptions(screen.getByLabelText("Club"), await screen.findByRole("option", { name: "Arsenal" }));
-    await userEvent.click(await screen.findByRole("button", { name: "Replace Ada Test" }));
-    await userEvent.click(await screen.findByRole("button", { name: "Bring in Bo Sample" }));
-    await userEvent.click(screen.getByRole("button", { name: "Apply replacement" }));
-    expect(await screen.findByText(/Hypothetical scenario/)).toBeInTheDocument();
-    expect(screen.getByText("xG per 90: 0.50 vs 0.40")).toBeInTheDocument();
-    const call = fetchMock.mock.calls.find(([u]) => String(u).endsWith("/what-if/player-replacement"));
-    expect(JSON.parse(String(call?.[1]?.body))).toMatchObject({ team_id: "arsenal", player_out_id: "p1", player_in_id: "p2" });
-    await userEvent.click(screen.getByRole("button", { name: /Reset/ }));
-    expect(screen.queryByText(/Hypothetical scenario/)).not.toBeInTheDocument();
-  });
-
-  it("will not run until both players are chosen", async () => {
-    mockApi({ "/teams": teams, "/what-if/teams/arsenal/squad": squad, "/players": page([]) });
-    renderPage(<WhatIfLab />);
-    await userEvent.selectOptions(screen.getByLabelText("Club"), await screen.findByRole("option", { name: "Arsenal" }));
-    expect(await screen.findByRole("button", { name: "Apply replacement" })).toBeDisabled();
-  });
-});
 
 describe("Overview, Data Health and Model Performance", () => {
   it("labels a table worked out from results", async () => {

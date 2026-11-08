@@ -11,7 +11,6 @@ A Premier League intelligence platform with live data, three machine learning mo
 - **Player Lab**: per-90 profiles, role labels, similar-player search and radar comparison.
 - **Transfer Intelligence**: recorded value against a model estimate with a measured range.
 - **Season Simulator** (API only, off the site for now): Monte Carlo over the remaining fixtures with full league tie-breaks.
-- **What-If Lab**: swap a player and the real match model predicts again.
 - **Model Performance** and **Data Health**: measured results, limits and live source status.
 
 Pitchside provides statistical analysis and predictive estimates for informational purposes only. It is not betting advice, and predictions are inherently uncertain.
@@ -130,7 +129,7 @@ Inside the container, run `python -m scripts.bootstrap` once with the API stoppe
 
 GitHub Pages cannot run the Python backend, so `.github/workflows/refresh-site.yml` does the work every 15 minutes, and again on any push that changes the app. It restores the database from the Actions cache, fetches scores and injuries, stores new predictions, exports the API to JSON, builds the frontend and pushes it to `gh-pages`. Slower sources and the match model refresh weekly. An empty cache triggers a full rebuild.
 
-Everything it exports is labelled cached, never live. New What-If swaps need the full app, so they are off there. To use football-data.org in that job, add `FOOTBALL_DATA_API_KEY` as a repository secret. Without it, scores and the table come from FPL.
+Everything it exports is labelled cached, never live. To use football-data.org in that job, add `FOOTBALL_DATA_API_KEY` as a repository secret. Without it, scores and the table come from FPL.
 
 ## Database
 
