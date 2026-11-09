@@ -5,11 +5,11 @@ import { useDeferredValue, useState } from "react";
 import { useReducedMotion } from "@/animations/useReducedMotion";
 import { Radar } from "@/components/charts/Radar";
 import { PageTitle } from "@/components/layout/DashboardLayout";
-import { ShirtGraphic } from "@/components/football/ShirtCard";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState, SkeletonRows } from "@/components/ui/states";
-import { AVAILABILITY, GROUPS, euros, initials } from "@/lib/format";
+import { AVAILABILITY, GROUPS, euros } from "@/lib/format";
+import { PlayerCard } from "@/features/players/PlayerCard";
 import { api } from "@/services/api";
 import type { PlayerDetail, RadarAxis, SimilarPlayer } from "@/types/api";
 
@@ -130,9 +130,9 @@ function Profile({ id }: { id: string }) {
     <DataState query={query}>
       {(p) => (
         <article className="board">
-          <header className="flex items-center gap-4">
-            <motion.div initial={reduced ? false : { scale: 0.7, opacity: 0, rotate: -8 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}>
-              <ShirtGraphic tla={p.tla} label={initials(p.name)} size={84} />
+          <header className="flex flex-wrap items-end gap-x-6 gap-y-4">
+            <motion.div initial={reduced ? false : { y: 40, opacity: 0, rotate: -6 }} animate={{ y: 0, opacity: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 260, damping: 22 }}>
+              <PlayerCard player={p} />
             </motion.div>
             <div className="min-w-0">
               <h2 className="truncate text-2xl">{p.name}</h2>

@@ -43,7 +43,7 @@ describe("Match Centre", () => {
   it("switches to results and sorts newest first", async () => {
     const fetchMock = mockApi({ "/teams": teams, "/fixtures": page([]) });
     renderPage(<MatchCentre />);
-    await userEvent.click(screen.getByRole("tab", { name: "Results" }));
+    await userEvent.click(screen.getByRole("radio", { name: "Results" }));
     await waitFor(() => expect(fetchMock.mock.calls.some(([u]) => /status=FINISHED.*sort=desc/.test(String(u)))).toBe(true));
     expect(await screen.findByText("No matches fit these filters.")).toBeInTheDocument();
   });

@@ -3,14 +3,12 @@ import { motion } from "framer-motion";
 import { DURATION, EASE } from "@/animations/presets";
 import { useReducedMotion } from "@/animations/useReducedMotion";
 import { ClubEmblem } from "@/components/ui/identity";
-import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
+import { RollingNumber } from "@/components/ui/RollingNumber";
 import { ProbabilityBar } from "@/components/ui/ProbabilityBar";
 import { kickoff } from "@/lib/format";
 import type { Fixture } from "@/types/api";
 
 import { PitchMeter } from "./PitchMeter";
-
-const two = (v: number) => v.toFixed(2);
 
 /** The broadcast graphic: scoreline first, then the strip, then expected goals. */
 export function Scoreboard({ fixture }: { fixture: Fixture }) {
@@ -49,11 +47,11 @@ export function Scoreboard({ fixture }: { fixture: Fixture }) {
           <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
             <div>
               <dt className="text-muted">Expected goals, {fixture.home_short}</dt>
-              <dd className="font-display text-2xl font-extrabold"><AnimatedNumber value={p.expected_goals.home} format={two} /></dd>
+              <dd className="font-display text-2xl font-extrabold"><RollingNumber value={p.expected_goals.home} decimals={2} /></dd>
             </div>
             <div>
               <dt className="text-muted">Expected goals, {fixture.away_short}</dt>
-              <dd className="font-display text-2xl font-extrabold"><AnimatedNumber value={p.expected_goals.away} format={two} /></dd>
+              <dd className="font-display text-2xl font-extrabold"><RollingNumber value={p.expected_goals.away} decimals={2} /></dd>
             </div>
             <div>
               <dt className="text-muted">Decisiveness</dt>

@@ -1,8 +1,9 @@
 import { lazy, Suspense } from "react";
 
-import { ScoreStrip } from "@/components/football/ScoreStrip";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Hero } from "@/features/home/Hero";
+import { LedBoards } from "@/features/home/LedBoards";
+import { Tunnel } from "@/features/home/Tunnel";
 
 const Journey = lazy(() => import("@/features/home/Journey"));
 
@@ -10,7 +11,8 @@ export default function Home() {
   return (
     <main>
       <Hero />
-      <ScoreStrip auto />
+      <Tunnel />
+      <LedBoards />
       <Suspense fallback={<div className="min-h-dvh" />}>
         <Journey />
       </Suspense>

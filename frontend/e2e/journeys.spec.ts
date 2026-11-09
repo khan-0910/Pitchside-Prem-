@@ -125,3 +125,20 @@ test("on narrower screens the homepage ball runs down the touchline", async ({ p
   await page.evaluate(() => window.scrollTo(0, 6000));
   await expect.poll(async () => Math.abs((await top()) - 0.7 * 740)).toBeLessThan(80);
 });
+
+test("the floodlights come on and the board shows real fixtures", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByLabel(/^Next fixtures: /)).toBeAttached();
+  await expect.poll(() => page.evaluate(() => Number(getComputedStyle(document.querySelector(".night")!).opacity)), { timeout: 6000 }).toBe(0);
+  await expect(page.getByRole("region", { name: "Walking out of the tunnel" }).getByText(/clubs$/)).toBeAttached();
+});
+
+test("a player card flips to per 90 rankings", async ({ page }) => {
+  await page.goto("/app/players");
+  await page.getByLabel("Search by name").fill("Saka");
+  await page.getByRole("button", { name: /Saka/ }).first().click();
+  const card = page.getByRole("button", { name: /card\. Press to flip/ });
+  await expect(card).toHaveAttribute("aria-pressed", "false");
+  await card.press("Enter");
+  await expect(card).toHaveAttribute("aria-pressed", "true");
+});

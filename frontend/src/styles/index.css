@@ -101,6 +101,9 @@
   .tint-sand { --color-page: #f3ead9; --color-surface: #f9f3e7; --color-sunken: #e9dcc4; --color-line: #dac9aa; }
 
   /* League table rows: places are solid colour, fights a different one. */
+  /* Pitchside LED boards: lit dots, a little glow. */
+  .led { font-family: ui-monospace, "Cascadia Code", Menlo, monospace; letter-spacing: 0.08em; text-shadow: 0 0 10px rgb(255 212 0 / 0.55); color: #ffd400; font-weight: 800; }
+
   .race-ucl { --race: #a9e3b9; }
   .race-uel { --race: #b4d8f7; }
   .race-title { --race: #fbdd8c; }

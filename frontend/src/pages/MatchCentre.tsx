@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PageTitle } from "@/components/layout/DashboardLayout";
 import { ProbabilityBar } from "@/components/ui/ProbabilityBar";
 import { DataState, EmptyState, SkeletonRows } from "@/components/ui/states";
+import RubberSegment from "@/components/reactbits/RubberSegment";
 import { BuildUp } from "@/features/matches/BuildUp";
 import { ScoreGrid } from "@/features/matches/ScoreGrid";
 import { Scoreboard } from "@/features/matches/Scoreboard";
@@ -115,20 +116,17 @@ export default function MatchCentre() {
     <>
       <PageTitle title="Match Centre" intro="Fixtures, results and the model's view of each match." />
       <div className="mb-5 flex flex-wrap items-end gap-3">
-        <div role="tablist" aria-label="Fixture type" className="flex">
-          {(["SCHEDULED", "FINISHED"] as View[]).map((v) => (
-            <button
-              key={v}
-              role="tab"
-              type="button"
-              aria-selected={view === v}
-              onClick={() => { setView(v); setCount(PAGE); setOpen(null); }}
-              className={`min-h-11 border-b-2 px-4 font-medium ${view === v ? "border-accent text-accent" : "chalk text-muted hover:text-ink"}`}
-            >
-              {v === "SCHEDULED" ? "Upcoming" : "Results"}
-            </button>
-          ))}
-        </div>
+        <RubberSegment
+          aria-label="Fixture type"
+          items={[{ value: "SCHEDULED", label: "Upcoming" }, { value: "FINISHED", label: "Results" }]}
+          value={view}
+          onChange={(v) => { setView(v as View); setCount(PAGE); setOpen(null); }}
+          size="lg"
+          trackColor="var(--color-sunken)"
+          thumbColor="var(--color-accent)"
+          textColor="var(--color-ink)"
+          activeTextColor="var(--color-accent-ink)"
+        />
         <label className="min-w-40 flex-1 text-sm text-muted sm:max-w-56">Club
           <select className="field mt-0.5 text-ink" value={team} onChange={(e) => { setTeam(e.target.value); setCount(PAGE); }}>
             <option value="">All clubs</option>

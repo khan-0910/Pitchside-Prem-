@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { EASE } from "@/animations/presets";
 import { useReducedMotion } from "@/animations/useReducedMotion";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
+import { RollingNumber } from "@/components/ui/RollingNumber";
 import { ClubEmblem } from "@/components/ui/identity";
 import { DataState } from "@/components/ui/states";
 import { day, signed } from "@/lib/format";
@@ -82,7 +83,7 @@ function Rows({ data }: { data: Standings }) {
               </td>
               <td className="py-1.5 text-right"><AnimatedNumber value={line.played} countIn={false} /></td>
               <td className="py-1.5 text-right"><AnimatedNumber value={line.goal_difference} format={goalDifference} countIn={false} /></td>
-              <td className="py-1.5 pr-2 text-right font-semibold"><AnimatedNumber value={line.points} countIn={false} /></td>
+              <td className="py-1.5 pr-2 text-right font-semibold"><RollingNumber value={line.points} /></td>
             </motion.tr>
           );
         })}

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { PageTitle } from "@/components/layout/DashboardLayout";
 import { ClubEmblem, PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState } from "@/components/ui/states";
-import { FixtureRail } from "@/features/matches/FixtureRail";
+import { TicketStack } from "@/features/matches/TicketStack";
 import { LeagueTable } from "@/features/table/LeagueTable";
 import { ASSESSMENT, euros, signed, timeAgo } from "@/lib/format";
 import { api } from "@/services/api";
@@ -145,7 +145,7 @@ export default function Overview() {
     <>
       <PageTitle title="Overview" />
       <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-        <section className="board min-w-0 lg:col-span-2 xl:col-span-2"><Heading title="Next up" to="/app/matches" /><FixtureRail /></section>
+        <section className="board min-w-0 lg:col-span-2 xl:col-span-2"><Heading title="Next up" to="/app/matches" /><TicketStack /></section>
         <section aria-labelledby="table-h" className="board min-w-0"><div id="table-h"><Heading title="League table" /></div><LeagueTable /></section>
         <div className="min-w-0 space-y-10">
           <section className="board"><Heading title="Latest results" to="/app/matches" /><Results /></section>

@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 import { gsap, useGSAP } from "@/animations/gsap";
-import { prefersReducedMotion } from "@/animations/useReducedMotion";
+import { prefersReducedMotion, useReducedMotion } from "@/animations/useReducedMotion";
 import { Radar } from "@/components/charts/Radar";
 import { PitchObjects, type Item } from "@/components/football/PitchObjects";
+import ScrollStack, { ScrollStackItem } from "@/components/reactbits/ScrollStack";
 import { ShirtCard } from "@/components/football/ShirtCard";
 import { PlayerAvatar } from "@/components/ui/identity";
 import { DataState, EmptyState, Skeleton } from "@/components/ui/states";
@@ -181,30 +182,27 @@ const PIPELINE = [
 ];
 
 export function HowItWorks() {
-  const [active, setActive] = useState(0);
+  const reduced = useReducedMotion();
+  const cards = PIPELINE.map((step, i) => (
+    <ScrollStackItem key={step.name} itemClassName="!h-auto min-h-56 !rounded-[14px] !bg-[#0d2418] !p-7 !text-white sm:!p-10">
+      {/* Chalk on a tactics board: each step pins on top of the last as you scroll. */}
+      <div className="flex items-baseline gap-4">
+        <span className="display text-[clamp(2.5rem,5vw,4.5rem)] text-[#ffd400]">{i + 1}</span>
+        <h3 className="text-[clamp(1.4rem,2.4vw,2.1rem)]">{step.name}</h3>
+      </div>
+      <p className="mt-3 max-w-2xl text-lg font-medium leading-snug text-white/90">{step.body}</p>
+    </ScrollStackItem>
+  ));
   return (
     <section className="relative z-10 mx-auto max-w-[82rem] px-[7vw] py-20 lg:py-28 2xl:px-10">
       <h2 data-pass className="max-w-2xl text-[clamp(2rem,3.4vw,3.1rem)]">How a number gets here</h2>
-      <div role="tablist" aria-label="Pipeline steps" className="mt-7 flex gap-1 overflow-x-auto border-b border-white/30" data-lenis-prevent-horizontal>
-        {PIPELINE.map((step, i) => (
-          <button
-            key={step.name}
-            type="button"
-            role="tab"
-            id={`step-${i}`}
-            aria-selected={active === i}
-            aria-controls="step-panel"
-            onClick={() => setActive(i)}
-            className={`relative min-h-11 shrink-0 px-3 font-semibold transition-colors sm:px-5 ${active === i ? "text-accent" : "text-muted hover:text-ink"}`}
-          >
-            <span className="num mr-2 text-sm">{i + 1}</span>{step.name}
-            {active === i && <span aria-hidden className="absolute inset-x-0 -bottom-px h-[3px] bg-accent" />}
-          </button>
-        ))}
-      </div>
-      <p id="step-panel" role="tabpanel" aria-labelledby={`step-${active}`} className="mt-5 min-h-24 max-w-2xl text-xl font-medium leading-snug">
-        {PIPELINE[active].body}
-      </p>
+      {reduced ? (
+        <ol className="mt-7 grid list-none gap-4 p-0">{cards.map((card, i) => <li key={i}>{card}</li>)}</ol>
+      ) : (
+        <ScrollStack useWindowScroll smoothScroll={false} itemDistance={140} itemStackDistance={22} stackPosition="18%" baseScale={0.9} itemScale={0.025} dimAmount={0.25} className="mt-7 [&>div]:!px-0">
+          {cards}
+        </ScrollStack>
+      )}
     </section>
   );
 }

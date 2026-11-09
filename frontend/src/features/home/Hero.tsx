@@ -9,6 +9,10 @@ import { StatusPill } from "@/components/ui/StatusPill";
 import { timeAgo } from "@/lib/format";
 import { api } from "@/services/api";
 
+import Magnet from "@/components/reactbits/Magnet";
+
+import { FixtureBoard } from "./FixtureBoard";
+import { Floodlights } from "./Floodlights";
 import { KickBall } from "./KickBall";
 import { TeamShape } from "./TeamShape";
 
@@ -40,7 +44,8 @@ export function Hero() {
         const length = line.getTotalLength();
         gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
       });
-      gsap.timeline()
+      // The chalk goes down once the floodlights are up.
+      gsap.timeline({ delay: 1.15 })
         .to(lines, { strokeDashoffset: 0, duration: 1, stagger: 0.12, ease: "power2.inOut" }, 0)
         .from(q(".intro"), { y: 14, opacity: 0, duration: 0.55, stagger: 0.09 }, 0.15)
         .from(spot.current, { scale: 0, duration: 0.7, ease: "back.out(2.2)" }, 0.5);
@@ -65,6 +70,7 @@ export function Hero() {
         <circle className="chalk-line" cx="800" cy="690" r="170" />
         <circle cx="800" cy="690" r="7" fill="#fff" stroke="none" />
       </svg>
+      <Floodlights />
       <TeamShape ball={ball} />
 
       <header className="relative z-10 flex items-center justify-between px-5 py-5 sm:px-[5.5vw]">
@@ -84,12 +90,13 @@ export function Hero() {
         <div className="mt-7 max-w-[24rem]">
           <p className="intro text-lg font-medium leading-snug">Understand the Premier League beyond the scoreline.</p>
           <div className="intro mt-4 flex flex-wrap gap-2.5">
-            <Link to="/app" className="btn-primary">Explore Pitchside</Link>
+            <Magnet padding={60} magnetStrength={3} disabled={prefersReducedMotion()}><Link to="/app" className="btn-primary">Explore Pitchside</Link></Magnet>
             <button type="button" className="btn-ghost !border-white/70 hover:bg-white hover:!text-[#0f1512]" onClick={() => scrollToTarget("#intelligence")}>
               Explore the Intelligence
             </button>
           </div>
           <div className="intro mt-3 min-h-6"><LiveMark /></div>
+          <div className="intro mt-6"><FixtureBoard /></div>
         </div>
       </div>
 

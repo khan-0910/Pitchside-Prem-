@@ -6,6 +6,7 @@ import { percent } from "@/lib/format";
 import type { Prediction } from "@/types/api";
 
 import { AnimatedNumber } from "./AnimatedNumber";
+import { RollingNumber } from "./RollingNumber";
 
 interface Props {
   prediction: Prediction;
@@ -29,9 +30,13 @@ export function ProbabilityBar({ prediction, homeLabel, awayLabel, compact }: Pr
       aria-label={`${homeLabel} ${percent(home)}, draw ${percent(draw)}, ${awayLabel} ${percent(away)}`}
     >
       <div aria-hidden className={`mb-1 flex justify-between ${size}`}>
-        <AnimatedNumber value={home} format={fmt} className={home === leader ? "text-accent" : ""} />
-        <AnimatedNumber value={draw} format={fmt} className={draw === leader ? "text-accent" : "text-muted"} />
-        <AnimatedNumber value={away} format={fmt} className={away === leader ? "text-accent" : ""} />
+        {([[home, ""], [draw, "text-muted"], [away, ""]] as const).map(([v, tone], i) => {
+          const cls = v === leader ? "text-accent" : tone;
+          // The big strip rolls like a scoreboard; the compact one in lists just counts.
+          return compact
+            ? <AnimatedNumber key={i} value={v} format={fmt} className={cls} />
+            : <RollingNumber key={i} value={Math.round(v * 100)} suffix="%" className={cls} />;
+        })}
       </div>
       <div aria-hidden className={`flex gap-0.5 overflow-hidden rounded-[2px] ${compact ? "h-1.5" : "h-2.5"}`}>
         <motion.div className="bg-accent" initial={{ flexGrow: 1 / 3 }} animate={{ flexGrow: home }} transition={transition} style={{ flexBasis: 0 }} />

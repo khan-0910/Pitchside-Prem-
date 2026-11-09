@@ -13,9 +13,10 @@
     <div id="root"></div>
     <script>
       // The homepage headline is the first thing a person should see, so it paints before the app loads.
+      // It paints at night, as the floodlight intro starts, unless motion is reduced.
       if (location.pathname === "%BASE_URL%") {
         document.getElementById("root").innerHTML =
-          '<div style="min-height:100dvh;background:repeating-linear-gradient(180deg,#0b6738 0 150px,#0e7842 150px 300px);color:#fff;padding:0 max(1.25rem,5.5vw)">' +
+          '<div style="min-height:100dvh;background:' + (matchMedia("(prefers-reduced-motion: reduce)").matches ? "" : "linear-gradient(rgb(3 16 10 / .85),rgb(3 16 10 / .85)),") + 'repeating-linear-gradient(180deg,#0b6738 0 150px,#0e7842 150px 300px);color:#fff;padding:0 max(1.25rem,5.5vw)">' +
           '<div style="height:84px"></div>' +
           '<div style="margin-top:2vh;font-family:\'Archivo Variable\',sans-serif;font-stretch:125%;font-style:italic;font-weight:900;letter-spacing:-.025em;line-height:.94;font-size:clamp(2.5rem,8.15vw,10rem)">' +
           'THE GAME HAS<br />A DATA SIDE.</div></div>';
