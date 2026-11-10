@@ -58,7 +58,7 @@ test("reduced motion keeps all the content", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ reducedMotion: "reduce", baseURL });
   const page = await context.newPage();
   await page.goto("/");
-  await expect(page.getByText("Understand the Premier League beyond the scoreline.")).toBeVisible();
+  await expect(page.getByText("Understand the Premier League beyond the scoreline")).toBeVisible();
   await expect(page.getByRole("heading", { name: /SEE THE GAME DIFFERENTLY/ })).toBeAttached();
   await expect(page.getByText("THE GAME HAS", { exact: true })).toBeVisible();
   await context.close();

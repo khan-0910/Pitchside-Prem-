@@ -140,7 +140,7 @@ export function DashboardLayout() {
       </AnimatePresence>
 
       <div className={`relative min-h-dvh min-w-0 bg-page transition-colors duration-200 ${TINTS[pathname] ?? "tint-mint"}`}>
-        <div className="min-h-[63px]"><ScoreStrip /></div>
+        <div className="min-h-16"><ScoreStrip /></div>
         <main id="main" className="mx-auto w-full max-w-[76rem] min-w-0 px-4 py-6 text-[15px] sm:px-6 lg:px-8 lg:py-8">
           {STATIC && (
             <p className="mb-4 text-[13px] text-muted">

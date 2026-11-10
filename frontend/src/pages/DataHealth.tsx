@@ -13,7 +13,7 @@ export default function DataHealth() {
   return (
     <>
       <PageTitle title="Data Health" intro="Where every number comes from, how fresh it is and what is broken." />
-      <DataState query={query} isEmpty={(d) => d.sources.length === 0} empty={<EmptyState title="No sources are registered yet." />}>
+      <DataState query={query} isEmpty={(d) => d.sources.length === 0} empty={<EmptyState title="No sources are registered yet" />}>
         {(data) => (
           <div className="space-y-11">
             <section aria-labelledby="sources-h">
@@ -45,7 +45,7 @@ export default function DataHealth() {
                 <h2 className="text-lg">Quality checks</h2>
                 <ul className="mt-2">
                   {data.quality_checks.map((c) => (
-                    <li key={`${c.source_id}-${c.check}`} className="chalk flex items-start gap-2 border-b py-1.5">
+                    <li key={`${c.source_id}-${c.check}`} className="chalk flex items-start gap-2 border-b py-2">
                       {c.passed ? <CheckCircle aria-label="Passed" size={18} weight="fill" className="mt-0.5 shrink-0 text-accent" /> : <XCircle aria-label="Failed" size={18} weight="fill" className="mt-0.5 shrink-0 text-alert" />}
                       <span className="min-w-0">
                         {c.check.replaceAll("_", " ")}
@@ -59,11 +59,11 @@ export default function DataHealth() {
                 <section>
                   <h2 className="text-lg">Failed jobs</h2>
                   {data.failed_runs.length === 0 ? (
-                    <p className="text-muted">No failed ingestion jobs recorded.</p>
+                    <p className="text-muted">No failed ingestion jobs recorded</p>
                   ) : (
                     <ul className="mt-2">
                       {data.failed_runs.slice(0, 8).map((r) => (
-                        <li key={`${r.source_id}-${r.at}`} className="chalk border-b py-1.5">
+                        <li key={`${r.source_id}-${r.at}`} className="chalk border-b py-2">
                           {r.source_id.replaceAll("_", " ")} <span className="text-sm text-muted">{timeAgo(r.at).toLowerCase()}</span>
                           <span className="block text-sm text-muted">{r.error}</span>
                         </li>
@@ -74,7 +74,7 @@ export default function DataHealth() {
                 <section>
                   <h2 className="text-lg">Entities awaiting review</h2>
                   {Object.keys(data.unresolved_entities).length === 0 ? (
-                    <p className="text-muted">Nothing is waiting for a manual match.</p>
+                    <p className="text-muted">Nothing is waiting for a manual match</p>
                   ) : (
                     <ul className="mt-1">
                       {Object.entries(data.unresolved_entities).map(([type, count]) => (
@@ -82,13 +82,13 @@ export default function DataHealth() {
                       ))}
                     </ul>
                   )}
-                  <p className="mt-1 text-sm text-muted">Low-confidence matches are never accepted automatically.</p>
+                  <p className="mt-1 text-sm text-muted">Low-confidence matches are never accepted automatically</p>
                 </section>
                 <section>
                   <h2 className="text-lg">Model freshness</h2>
                   <ul className="mt-1">
                     {data.models.map((m) => (
-                      <li key={m.model_version} className="chalk flex justify-between gap-3 border-b py-1.5">
+                      <li key={m.model_version} className="chalk flex justify-between gap-3 border-b py-2">
                         <span className="capitalize">{m.model_type}</span>
                         <span className="text-muted">Trained {timeAgo(m.trained_at).toLowerCase()}</span>
                       </li>

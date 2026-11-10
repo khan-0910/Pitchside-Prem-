@@ -33,7 +33,7 @@ describe("DataState", () => {
 
   it("shows the empty state", async () => {
     render(wrap(<Demo fn={async () => []} />));
-    expect(await screen.findByText("Nothing to show yet.")).toBeInTheDocument();
+    expect(await screen.findByText("Nothing to show yet")).toBeInTheDocument();
   });
 
   it("shows the error and retries", async () => {

@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { gsap, useGSAP } from "@/animations/gsap";
 import { prefersReducedMotion, useReducedMotion } from "@/animations/useReducedMotion";
 import { Radar } from "@/components/charts/Radar";
-import { PitchObjects, type Item } from "@/components/football/PitchObjects";
 import ScrollStack, { ScrollStackItem } from "@/components/reactbits/ScrollStack";
 import { ShirtCard } from "@/components/football/ShirtCard";
 import { PlayerAvatar } from "@/components/ui/identity";
@@ -33,20 +32,18 @@ export function Sheet({ children, tilt = -1.6, tint = "tint-mint" }: { children:
   return <div ref={root} className={`sheet min-w-0 ${tint}`}>{children}</div>;
 }
 
-export function Band({ id, title, lead, children, to, cta, kit, tilt, tint }: {
+export function Band({ id, title, lead, children, to, cta, tilt, tint }: {
   id?: string;
   title: string;
   lead: string;
   children: ReactNode;
   to: string;
   cta: string;
-  kit?: Item[];
   tilt?: number;
   tint?: string;
 }) {
   return (
     <section id={id} className="relative z-10">
-      {kit && <PitchObjects items={kit} />}
       <div className="relative mx-auto grid max-w-[82rem] gap-8 px-[7vw] py-20 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-14 lg:py-28 2xl:px-10">
         <div data-pass className="max-w-sm">
           <h2 className="text-[clamp(2rem,3.4vw,3.1rem)]">{title}</h2>
@@ -64,8 +61,8 @@ const HomeSkeleton = () => <Skeleton className="h-64 w-full" />;
 export function MatchSection() {
   const query = useQuery({ queryKey: ["upcoming", 1], queryFn: () => api.upcoming(1) });
   return (
-    <Band tint="tint-peach" id="intelligence" title="Who is likely to win the next match?" lead="Win, draw and loss chances from form, Elo strength and squad data, scored against bookmaker prices." to="/app/matches" cta="Open Match Centre" kit={[{ kind: "yellow", left: "1.5%", top: "62%", depth: 0.8, tilt: -14 }]}>
-      <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => d.length === 0} empty={<EmptyState title="No upcoming fixtures are loaded." />}>
+    <Band tint="tint-peach" id="intelligence" title="Who is likely to win the next match?" lead="Win, draw and loss chances from form, Elo strength and squad data, scored against bookmaker prices." to="/app/matches" cta="Open Match Centre">
+      <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => d.length === 0} empty={<EmptyState title="No upcoming fixtures are loaded" />}>
         {(data) => <Scoreboard fixture={data[0]} />}
       </DataState>
     </Band>
@@ -104,8 +101,8 @@ function usePlayerPair() {
 export function PlayerSection() {
   const query = usePlayerPair();
   return (
-    <Band tint="tint-lilac" title="Which players play alike?" lead="Per-90 profiles compared within sensible positions, so a score means two players do similar work." to="/app/players" cta="Open Player Lab" tilt={1.4} kit={[{ kind: "cone", left: "92%", top: "20%", depth: 0.5, tilt: 0 }, { kind: "cone", left: "94%", top: "58%", depth: 0.7, tilt: 0 }]}>
-      <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => !d} empty={<EmptyState title="Player profiles are not ready yet." />}>
+    <Band tint="tint-lilac" title="Which players play alike?" lead="Per-90 profiles compared within sensible positions, so a score means two players do similar work." to="/app/players" cta="Open Player Lab" tilt={1.4}>
+      <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => !d} empty={<EmptyState title="Player profiles are not ready yet" />}>
         {(pair) => {
           const { a, b, score } = pair!;
           const radar = (p: PlayerDetail, axes: RadarAxis[]) => axes.map((axis) => ({ ...axis, percentile: p.profile?.percentiles[axis.stat] ?? 0 }));
@@ -142,8 +139,8 @@ export function PlayerSection() {
 export function TransferSection() {
   const query = useQuery({ queryKey: ["undervalued", "home"], queryFn: () => api.undervalued({ limit: 1 }) });
   return (
-    <Band tint="tint-butter" title="Who is undervalued?" lead="An estimate of each player's next recorded value, always shown with its range so a small gap is not oversold." to="/app/transfers" cta="Open Transfer Intelligence" kit={[{ kind: "red", left: "2%", top: "24%", depth: 0.7, tilt: 16 }]}>
-      <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No player has a positive gap right now." />}>
+    <Band tint="tint-butter" title="Who is undervalued?" lead="An estimate of each player's next recorded value, always shown with its range so a small gap is not oversold." to="/app/transfers" cta="Open Transfer Intelligence">
+      <DataState query={query} loading={<HomeSkeleton />} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No player has a positive gap right now" />}>
         {(data) => {
           const v = data.items[0];
           return (

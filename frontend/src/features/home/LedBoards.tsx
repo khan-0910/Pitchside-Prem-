@@ -28,7 +28,7 @@ export function LedBoards() {
             separator={<span className="px-6">•</span>}
             skewWithVelocity={6}
             fontSize="clamp(1.1rem, 2.2vw, 1.9rem)"
-            fontWeight={800}
+            fontWeight={600}
             color="#ffd400"
             className="led"
           />

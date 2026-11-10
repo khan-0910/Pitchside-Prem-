@@ -35,7 +35,8 @@
     text-rendering: optimizeLegibility;
   }
   body { min-height: 100dvh; overflow-x: hidden; background: var(--color-page); }
-  h1, h2, h3 { font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; text-wrap: balance; }
+  h1, h2, h3 { font-weight: 600; line-height: 1.05; text-wrap: balance; }
+  h1, h2 { letter-spacing: -0.02em; }
   :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 2px; }
   button, select, input { font: inherit; }
   button { cursor: pointer; }
@@ -102,7 +103,7 @@
 
   /* League table rows: places are solid colour, fights a different one. */
   /* Pitchside LED boards: lit dots, a little glow. */
-  .led { font-family: ui-monospace, "Cascadia Code", Menlo, monospace; letter-spacing: 0.08em; text-shadow: 0 0 10px rgb(255 212 0 / 0.55); color: #ffd400; font-weight: 800; }
+  .led { font-family: ui-monospace, "Cascadia Code", Menlo, monospace; letter-spacing: 0.08em; color: #ffd400; font-weight: 600; }
 
   .race-ucl { --race: #a9e3b9; }
   .race-uel { --race: #b4d8f7; }
@@ -183,11 +184,6 @@
   .spin-fast { animation: spin 0.55s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .bob { animation: bob 7s ease-in-out infinite; will-change: transform; }
-  @keyframes bob {
-    0%, 100% { transform: translate3d(0, 0, 0) rotate(-3deg); }
-    50% { transform: translate3d(0, -14px, 0) rotate(4deg); }
-  }
 
   .marquee { display: flex; width: max-content; animation: marquee 80s linear infinite; }
   .marquee-host:hover .marquee, .marquee-host:focus-within .marquee { animation-play-state: paused; }
@@ -199,7 +195,7 @@
   .sub-board {
     width: fit-content; min-width: 16rem; max-width: 100%; padding: 0.65rem 1rem; border-radius: 6px;
     background: #0b0f0d; border: 3px solid #2a2f2c;
-    font-stretch: 75%; font-weight: 800; font-size: 1.7rem; line-height: 1.15;
+    font-stretch: 75%; font-weight: 600; font-size: 1.7rem; line-height: 1.15;
   }
 
   .net {

@@ -21,7 +21,7 @@ export function ProbabilityBar({ prediction, homeLabel, awayLabel, compact }: Pr
   const reduced = useReducedMotion();
   const transition = reduced ? { duration: 0 } : { duration: DURATION.slow, ease: EASE };
   const leader = Math.max(home, draw, away);
-  const size = compact ? "text-sm font-semibold" : "text-3xl font-display font-extrabold";
+  const size = compact ? "text-sm font-semibold" : "text-3xl font-display font-semibold";
   const fmt = (v: number) => percent(v);
 
   return (

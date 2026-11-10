@@ -94,9 +94,9 @@ export function BuildUp({ prediction, home, away }: { prediction: Prediction; ho
                 type="button"
                 aria-current={i === at ? "step" : undefined}
                 onClick={() => go(i)}
-                className="flex min-h-11 w-full flex-col items-start justify-center gap-0.5 py-1.5 text-left"
+                className="flex min-h-11 w-full flex-col items-start justify-center gap-0.5 py-2 text-left"
               >
-                <span className={i === at ? "font-bold" : "font-medium"}>{s.title}</span>
+                <span className={i === at ? "font-semibold" : "font-medium"}>{s.title}</span>
                 {i === 0 ? (
                   <span className="num text-sm text-muted">
                     {home} {percent(s.probabilities.home_win)}, draw {percent(s.probabilities.draw)}, {away} {percent(s.probabilities.away_win)}
@@ -116,7 +116,7 @@ export function BuildUp({ prediction, home, away }: { prediction: Prediction; ho
                   >
                     <p className="text-sm text-muted">{s.note}</p>
                     {s.facts.length > 0 && (
-                      <table className="mb-2 mt-1.5 w-full max-w-md text-sm">
+                      <table className="mb-2 mt-2 w-full max-w-md text-sm">
                         <thead>
                           <tr className="text-muted">
                             <th className="py-0.5 text-left font-normal"><span className="sr-only">Input</span></th>
@@ -129,7 +129,7 @@ export function BuildUp({ prediction, home, away }: { prediction: Prediction; ho
                             <tr key={f.label} className="chalk border-t">
                               <th scope="row" className="py-1 pr-3 text-left font-normal">{f.label}</th>
                               {(["home", "away"] as const).map((side) => (
-                                <td key={side} className={`num py-1 pl-3 text-right ${f.edge === side ? "font-bold" : ""}`}>
+                                <td key={side} className={`num py-1 pl-3 text-right ${f.edge === side ? "font-semibold" : ""}`}>
                                   {f[side] ?? <span className="text-muted">No data</span>}
                                 </td>
                               ))}

@@ -20,7 +20,7 @@ export function FixtureBoard() {
   const words = fixtures.map(line);
   return (
     <figure className="m-0">
-      <figcaption className="mb-1.5 text-sm text-white/80">Next on the board</figcaption>
+      <figcaption className="mb-2 text-sm text-white/80">Next on the board</figcaption>
       <SplitFlapText
         words={reduced ? words.slice(0, 1) : words}
         loop={!reduced}

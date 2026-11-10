@@ -9,14 +9,14 @@ import type { Fixture } from "@/types/api";
 function Chip({ fixture }: { fixture: Fixture }) {
   const played = fixture.home_goals !== null;
   const line = (tla: string, goals: number | null) => (
-    <span className="flex items-center gap-1.5">
+    <span className="flex items-center gap-2">
       <ClubEmblem tla={tla} size={14} />
       <span className="font-semibold">{tla}</span>
       {played && <span className="num ml-auto pl-3 font-semibold">{goals}</span>}
     </span>
   );
   return (
-    <span className="chalk flex w-[7.75rem] shrink-0 flex-col justify-center border-r px-3 py-1.5 text-[13px] leading-[1.3]">
+    <span className="chalk flex w-[7.75rem] shrink-0 flex-col justify-center border-r px-3 py-2 text-[13px] leading-[1.3]">
       {line(fixture.home_tla, fixture.home_goals)}
       {line(fixture.away_tla, fixture.away_goals)}
       <span className="mt-0.5 truncate text-[11px] text-muted">{played ? "Full time" : kickoff(fixture.kickoff_utc)}</span>

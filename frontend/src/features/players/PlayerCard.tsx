@@ -44,7 +44,7 @@ function back(p: PlayerDetail): string {
     <rect width="${W}" height="${H}" rx="14" fill="#0f1512"/>
     <text x="24" y="44" fill="#ffd400" font-size="15" font-weight="800" letter-spacing="1">PER 90, PERCENTILE</text>
     <text x="24" y="66" fill="#9fb3a6" font-size="12">Against ${esc(p.profile?.position_name?.toLowerCase() ?? "their position")}s this season</text>
-    ${radar.length === 0 ? `<text x="24" y="120" fill="#fff" font-size="15">Not enough minutes for a profile.</text>` : radar.map((a, i) => {
+    ${radar.length === 0 ? `<text x="24" y="120" fill="#fff" font-size="15">Not enough minutes for a profile</text>` : radar.map((a, i) => {
       const y = 104 + i * 46, w = Math.max(4, (a.percentile / 100) * 200);
       return `<text x="24" y="${y}" fill="#fff" font-size="14" font-weight="700">${esc(a.label)}</text>
         <rect x="24" y="${y + 8}" width="200" height="10" rx="5" fill="#26302b"/>

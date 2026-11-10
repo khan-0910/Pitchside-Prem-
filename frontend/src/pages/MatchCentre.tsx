@@ -20,7 +20,7 @@ function Form({ teamId, name }: { teamId: string; name: string }) {
   return (
     <div>
       <h3 className="text-sm">{name} form</h3>
-      <DataState query={query} loading={<SkeletonRows rows={2} />} isEmpty={(d) => d.matches.length === 0} empty={<EmptyState title="No results yet." />}>
+      <DataState query={query} loading={<SkeletonRows rows={2} />} isEmpty={(d) => d.matches.length === 0} empty={<EmptyState title="No results yet" />}>
         {(data) => (
           <ol className="mt-1 flex list-none flex-wrap gap-1 p-0" aria-label={`Last ${data.matches.length} results, newest first`}>
             {data.matches.map((m) => (
@@ -141,7 +141,7 @@ export default function MatchCentre() {
         </label>
       </div>
 
-      <DataState query={query} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No matches fit these filters."><p>Try a different club or date range.</p></EmptyState>}>
+      <DataState query={query} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No matches fit these filters"><p>Try a different club or date range</p></EmptyState>}>
         {(data) => (
           <>
             <ul>
@@ -155,7 +155,7 @@ export default function MatchCentre() {
                   >
                     <span className="text-sm text-muted">{kickoff(f.kickoff_utc ?? f.match_date)}</span>
                     <span className="font-medium">
-                      {f.home_short} {f.home_goals !== null ? <span className="num mx-1 font-display text-xl font-bold">{f.home_goals}-{f.away_goals}</span> : "v"} {f.away_short}
+                      {f.home_short} {f.home_goals !== null ? <span className="num mx-1 font-display text-xl font-semibold">{f.home_goals}-{f.away_goals}</span> : "v"} {f.away_short}
                     </span>
                     {f.prediction ? (
                       <ProbabilityBar compact prediction={f.prediction} homeLabel={f.home_short} awayLabel={f.away_short} />

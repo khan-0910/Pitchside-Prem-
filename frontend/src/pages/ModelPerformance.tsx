@@ -54,27 +54,27 @@ function MatchTable({ m }: { m: ModelInfo }) {
         <table className="mt-1 w-full text-left">
           <thead>
             <tr className="chalk border-b text-sm text-muted">
-              <th scope="col" className="py-1.5 font-normal">Forecast</th>
-              <th scope="col" className="py-1.5 text-right font-normal">Log loss</th>
-              <th scope="col" className="py-1.5 text-right font-normal">Brier</th>
-              <th scope="col" className="py-1.5 text-right font-normal">Accuracy</th>
+              <th scope="col" className="py-2 font-normal">Forecast</th>
+              <th scope="col" className="py-2 text-right font-normal">Log loss</th>
+              <th scope="col" className="py-2 text-right font-normal">Brier</th>
+              <th scope="col" className="py-2 text-right font-normal">Accuracy</th>
             </tr>
           </thead>
           <tbody className="num">
             {rows.map((r, i) => (
               <tr key={r.name} className={`chalk border-b ${i === 0 ? "text-accent" : ""}`}>
-                <td className="py-1.5">{r.name}</td>
-                <td className="py-1.5 text-right">{r.s.log_loss.toFixed(3)}</td>
-                <td className="py-1.5 text-right">{r.s.brier.toFixed(3)}</td>
-                <td className="py-1.5 text-right">{percent(r.s.accuracy, 1)}</td>
+                <td className="py-2">{r.name}</td>
+                <td className="py-2 text-right">{r.s.log_loss.toFixed(3)}</td>
+                <td className="py-2 text-right">{r.s.brier.toFixed(3)}</td>
+                <td className="py-2 text-right">{percent(r.s.accuracy, 1)}</td>
               </tr>
             ))}
             {test.baseline_always_home && (
               <tr className="chalk border-b">
-                <td className="py-1.5">Always pick the home win</td>
-                <td className="py-1.5 text-right text-muted">n/a</td>
-                <td className="py-1.5 text-right text-muted">n/a</td>
-                <td className="py-1.5 text-right">{percent(test.baseline_always_home.accuracy, 1)}</td>
+                <td className="py-2">Always pick the home win</td>
+                <td className="py-2 text-right text-muted">n/a</td>
+                <td className="py-2 text-right text-muted">n/a</td>
+                <td className="py-2 text-right">{percent(test.baseline_always_home.accuracy, 1)}</td>
               </tr>
             )}
           </tbody>
@@ -89,15 +89,15 @@ function MatchTable({ m }: { m: ModelInfo }) {
         <table className="mt-1 w-full text-left">
           <thead>
             <tr className="chalk border-b text-sm text-muted">
-              <th scope="col" className="py-1.5 font-normal">Candidate, on validation seasons</th>
-              <th scope="col" className="py-1.5 text-right font-normal">Log loss</th>
+              <th scope="col" className="py-2 font-normal">Candidate, on validation seasons</th>
+              <th scope="col" className="py-2 text-right font-normal">Log loss</th>
             </tr>
           </thead>
           <tbody className="num">
             {validation.map(([name, s], i) => (
               <tr key={name} className="chalk border-b">
-                <td className="py-1.5">{name.replaceAll("_", " ")}{i === 0 ? " (chosen)" : ""}</td>
-                <td className="py-1.5 text-right">{s.log_loss.toFixed(4)}</td>
+                <td className="py-2">{name.replaceAll("_", " ")}{i === 0 ? " (chosen)" : ""}</td>
+                <td className="py-2 text-right">{s.log_loss.toFixed(4)}</td>
               </tr>
             ))}
           </tbody>
@@ -222,15 +222,15 @@ function Transfer({ m }: { m: ModelInfo }) {
     <>
       <Facts m={m} />
       <table className="mt-5 w-full text-left">
-        <thead><tr className="chalk border-b text-sm text-muted"><th scope="col" className="py-1.5 font-normal">Estimate</th><th scope="col" className="py-1.5 text-right font-normal">Mean error</th><th scope="col" className="py-1.5 text-right font-normal max-sm:hidden">RMSE</th><th scope="col" className="py-1.5 text-right font-normal">Median error</th><th scope="col" className="py-1.5 text-right font-normal">R², log scale</th></tr></thead>
+        <thead><tr className="chalk border-b text-sm text-muted"><th scope="col" className="py-2 font-normal">Estimate</th><th scope="col" className="py-2 text-right font-normal">Mean error</th><th scope="col" className="py-2 text-right font-normal max-sm:hidden">RMSE</th><th scope="col" className="py-2 text-right font-normal">Median error</th><th scope="col" className="py-2 text-right font-normal">R², log scale</th></tr></thead>
         <tbody className="num">
           {rows.filter(([, s]) => s).map(([name, s], i) => (
             <tr key={name} className={`chalk border-b ${i === 0 ? "text-accent" : ""}`}>
-              <td className="py-1.5">{name}</td>
-              <td className="py-1.5 text-right">{euros(s.mae_eur)}</td>
-              <td className="py-1.5 text-right max-sm:hidden">{euros(s.rmse_eur)}</td>
-              <td className="py-1.5 text-right">{euros(s.median_ae_eur)}</td>
-              <td className="py-1.5 text-right">{s.r2_log.toFixed(3)}</td>
+              <td className="py-2">{name}</td>
+              <td className="py-2 text-right">{euros(s.mae_eur)}</td>
+              <td className="py-2 text-right max-sm:hidden">{euros(s.rmse_eur)}</td>
+              <td className="py-2 text-right">{euros(s.median_ae_eur)}</td>
+              <td className="py-2 text-right">{s.r2_log.toFixed(3)}</td>
             </tr>
           ))}
         </tbody>
@@ -274,7 +274,7 @@ export default function ModelPerformance() {
   return (
     <>
       <PageTitle title="Model Performance" intro="How each model was built and how it scored on data it had never seen." />
-      <DataState query={query} isEmpty={(d) => !d.match && !d.transfer && !d.similarity} empty={<EmptyState title="No models have been trained yet." />}>
+      <DataState query={query} isEmpty={(d) => !d.match && !d.transfer && !d.similarity} empty={<EmptyState title="No models have been trained yet" />}>
         {(data) => (
           <div className="space-y-14">
             {data.match && (

@@ -59,6 +59,6 @@ interface DataStateProps<T> {
 export function DataState<T>({ query, loading, isEmpty, empty, children }: DataStateProps<T>) {
   if (query.isPending) return <>{loading ?? <SkeletonRows />}</>;
   if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
-  if (isEmpty?.(query.data)) return <>{empty ?? <EmptyState title="Nothing to show yet." />}</>;
+  if (isEmpty?.(query.data)) return <>{empty ?? <EmptyState title="Nothing to show yet" />}</>;
   return <>{children(query.data)}</>;
 }

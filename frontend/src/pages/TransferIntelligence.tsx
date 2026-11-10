@@ -135,7 +135,7 @@ export default function TransferIntelligence() {
         </label>
       </div>
 
-      <DataState query={query} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No players fit these filters." />}>
+      <DataState query={query} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No players fit these filters" />}>
         {(data) => (
           <>
             <table className="w-full text-left">

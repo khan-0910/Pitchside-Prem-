@@ -11,7 +11,7 @@ export function StatusPill({ status, optional }: { status: SourceStatus; optiona
   // An optional source being away is not an emergency, so it does not get the red.
   const style = optional && status === "UNAVAILABLE" ? { dot: "bg-muted", text: "text-muted", label: "Offline" } : STYLE[status];
   return (
-    <span className={`inline-flex items-center gap-1.5 font-medium ${style.text}`}>
+    <span className={`inline-flex items-center gap-2 font-medium ${style.text}`}>
       <span aria-hidden className={`size-2 rounded-full ${style.dot}`} />
       {style.label}
     </span>

@@ -88,7 +88,7 @@ export function Hero() {
           ))}
         </h1>
         <div className="mt-7 max-w-[24rem]">
-          <p className="intro text-lg font-medium leading-snug">Understand the Premier League beyond the scoreline.</p>
+          <p className="intro text-lg font-medium leading-snug">Understand the Premier League beyond the scoreline</p>
           <div className="intro mt-4 flex flex-wrap gap-2.5">
             <Magnet padding={60} magnetStrength={3} disabled={prefersReducedMotion()}><Link to="/app" className="btn-primary">Explore Pitchside</Link></Magnet>
             <button type="button" className="btn-ghost !border-white/70 hover:bg-white hover:!text-[#0f1512]" onClick={() => scrollToTarget("#intelligence")}>

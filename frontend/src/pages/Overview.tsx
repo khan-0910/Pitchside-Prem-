@@ -29,7 +29,7 @@ function Results() {
           {data.items.map((f) => (
             <li key={f.fixture_id} className="chalk grid grid-cols-[1fr_auto_1fr] items-center gap-3 border-b py-2">
               <span className="truncate text-right">{f.home_short}</span>
-              <span className="num bg-surface px-2 font-display text-xl font-bold">{f.home_goals}-{f.away_goals}</span>
+              <span className="num bg-surface px-2 font-display text-xl font-semibold">{f.home_goals}-{f.away_goals}</span>
               <span className="truncate">{f.away_short}</span>
             </li>
           ))}
@@ -42,7 +42,7 @@ function Results() {
 function ValueWatch() {
   const query = useQuery({ queryKey: ["undervalued", 4], queryFn: () => api.undervalued({ limit: 4 }) });
   return (
-    <DataState query={query} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No player has a positive gap right now." />}>
+    <DataState query={query} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No player has a positive gap right now" />}>
       {(data) => (
         <ul>
           {data.items.map((v) => (
@@ -95,7 +95,7 @@ function ClubInjuries({ club }: { club: ClubNews }) {
         <span className="num w-16 text-right text-sm" title="Share of the usual squad's market value expected to miss the next match">{Math.round(club.missing_share * 100)}% out</span>
         <CaretDown aria-hidden size={16} className="club-news-caret shrink-0" />
       </summary>
-      {count === 0 ? <p className="px-3 pb-3 text-sm text-muted">Nobody at this club is flagged.</p> : (
+      {count === 0 ? <p className="px-3 pb-3 text-sm text-muted">Nobody at this club is flagged</p> : (
         <table className="mb-2 w-full text-left text-sm">
           <caption className="sr-only">{club.team} injuries and expected returns</caption>
           <thead>
@@ -108,9 +108,9 @@ function ClubInjuries({ club }: { club: ClubNews }) {
           <tbody>
             {club.players.map((p) => (
               <tr key={p.player_id} className="chalk border-t">
-                <td className={`px-3 py-1.5 ${p.regular ? "font-bold" : ""}`}>{p.name}</td>
-                <td className="py-1.5">{p.reason}</td>
-                <td className="px-3 py-1.5 text-right">{p.expected_return}</td>
+                <td className={`px-3 py-2 ${p.regular ? "font-semibold" : ""}`}>{p.name}</td>
+                <td className="py-2">{p.reason}</td>
+                <td className="px-3 py-2 text-right">{p.expected_return}</td>
               </tr>
             ))}
           </tbody>
@@ -123,7 +123,7 @@ function ClubInjuries({ club }: { club: ClubNews }) {
 function Injuries() {
   const query = useQuery({ queryKey: ["team-news"], queryFn: api.teamNews });
   return (
-    <DataState query={query} isEmpty={(d) => Object.keys(d.teams).length === 0} empty={<EmptyState title="No injury data yet." />}>
+    <DataState query={query} isEmpty={(d) => Object.keys(d.teams).length === 0} empty={<EmptyState title="No injury data yet" />}>
       {(data) => (
         <>
           <div className="grid gap-x-5 gap-y-2 lg:grid-cols-2">

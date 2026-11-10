@@ -19,7 +19,7 @@ export function TicketStack({ limit = 8 }: { limit?: number }) {
   const query = useQuery({ queryKey: ["upcoming", 10], queryFn: () => api.upcoming(10) });
   if (reduced) return <FixtureRail />;
   return (
-    <DataState query={query} isEmpty={(d) => d.length === 0} empty={<EmptyState title="No upcoming fixtures are loaded." />}>
+    <DataState query={query} isEmpty={(d) => d.length === 0} empty={<EmptyState title="No upcoming fixtures are loaded" />}>
       {(all) => {
         const fixtures = all.slice(0, limit);
         return (
@@ -38,7 +38,7 @@ export function TicketStack({ limit = 8 }: { limit?: number }) {
               <p className="text-sm text-muted">Drag the top ticket away, or focus the pile and use the arrow keys.</p>
               <ol className="mt-2 list-none p-0">
                 {fixtures.map((f, i) => (
-                  <li key={f.fixture_id} className={`chalk flex justify-between gap-3 border-b py-1.5 text-sm ${i === top ? "font-bold" : "text-muted"}`} aria-current={i === top ? "true" : undefined}>
+                  <li key={f.fixture_id} className={`chalk flex justify-between gap-3 border-b py-2 text-sm ${i === top ? "font-semibold" : "text-muted"}`} aria-current={i === top ? "true" : undefined}>
                     <span className="truncate">{f.home_short} v {f.away_short}</span>
                     <span className="shrink-0">{kickoff(f.kickoff_utc ?? f.match_date)}</span>
                   </li>

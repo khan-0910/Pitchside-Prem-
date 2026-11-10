@@ -57,7 +57,7 @@ export function Floodlights({ onLit }: { onLit?: () => void }) {
               filter: "blur(10px)",
             }}
           />
-          <div className="bank relative -ml-5 grid max-sm:hidden grid-cols-4 gap-[3px] rounded-[3px] bg-[#0f1512] p-[4px] opacity-0 shadow-[0_0_28px_8px_rgb(255_250_225_/_0.55)]">
+          <div className="bank relative -ml-5 grid max-sm:hidden grid-cols-4 gap-1 rounded-[3px] bg-[#0f1512] p-[4px] opacity-0">
             {Array.from({ length: 8 }, (_, i) => <span key={i} className="block size-[6px] rounded-full bg-[#fffbe6]" />)}
           </div>
         </div>

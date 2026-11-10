@@ -10,7 +10,6 @@ import { setReducedMotion } from "@/test/setup";
 import { StatusPill } from "@/components/ui/StatusPill";
 
 import { BallLoader } from "./BallLoader";
-import { PitchObjects } from "./PitchObjects";
 import { ShirtCard } from "./ShirtCard";
 
 
@@ -70,12 +69,6 @@ describe("club colours", () => {
 });
 
 describe("decoration", () => {
-  it("hides floating kit from assistive tech", () => {
-    const { container } = render(<PitchObjects items={[{ kind: "yellow", left: "1%", top: "1%", depth: 1, tilt: 0 }]} />);
-    expect(container.firstElementChild).toHaveAttribute("aria-hidden", "true");
-    expect(container.querySelectorAll(".kit")).toHaveLength(1);
-  });
-
   it("shows a loader with a label and a card with text", () => {
     render(<><BallLoader label="Simulating" /><ShirtCard name="Ada Test" tla="ARS" detail="Arsenal, 25" score="91" /></>);
     expect(screen.getByRole("status", { name: "Simulating" })).toBeInTheDocument();

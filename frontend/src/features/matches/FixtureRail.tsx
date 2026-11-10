@@ -19,7 +19,7 @@ export function Ticket({ fixture, white }: { fixture: Fixture; white?: boolean }
           <span className="flex justify-center"><ShirtGraphic tla={fixture.home_tla} label={fixture.home_tla} size={46} /></span>
           <p className="mt-1 truncate text-sm font-semibold">{fixture.home_short}</p>
         </div>
-        <span className="font-display text-2xl font-extrabold text-muted">v</span>
+        <span className="font-display text-2xl font-medium text-muted">v</span>
         <div className="min-w-0 text-center">
           <span className="flex justify-center"><ShirtGraphic tla={fixture.away_tla} label={fixture.away_tla} size={46} /></span>
           <p className="mt-1 truncate text-sm font-semibold">{fixture.away_short}</p>
@@ -28,14 +28,14 @@ export function Ticket({ fixture, white }: { fixture: Fixture; white?: boolean }
       <div className="ticket-stub">
         {fixture.prediction ? (
           <>
-          <p className="mb-1.5 flex justify-between text-sm text-muted">
+          <p className="mb-2 flex justify-between text-sm text-muted">
             <span>Prediction</span>
             <span>Likely score <span className="num font-semibold text-ink">{fixture.prediction.most_likely_score}</span></span>
           </p>
           <ProbabilityBar compact prediction={fixture.prediction} homeLabel={fixture.home_short} awayLabel={fixture.away_short} />
           </>
         ) : (
-          <p className="text-sm text-muted">No prediction stored.</p>
+          <p className="text-sm text-muted">No prediction stored</p>
         )}
       </div>
     </article>
@@ -46,7 +46,7 @@ export function Ticket({ fixture, white }: { fixture: Fixture; white?: boolean }
 export function FixtureRail({ limit = 10 }: { limit?: number }) {
   const query = useQuery({ queryKey: ["upcoming", limit], queryFn: () => api.upcoming(limit) });
   return (
-    <DataState query={query} isEmpty={(d) => d.length === 0} empty={<EmptyState title="No upcoming fixtures are loaded." />}>
+    <DataState query={query} isEmpty={(d) => d.length === 0} empty={<EmptyState title="No upcoming fixtures are loaded" />}>
       {(fixtures) => (
         <div tabIndex={0} role="group" aria-label="Upcoming fixtures, scroll sideways" className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-3 sm:mx-0 sm:px-0" data-lenis-prevent-horizontal>
           {fixtures.map((f) => <Ticket key={f.fixture_id} fixture={f} />)}

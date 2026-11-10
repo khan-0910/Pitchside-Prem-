@@ -54,7 +54,7 @@ function NotFound() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-xl flex-col justify-center gap-4 px-4">
       <h1 className="text-6xl">Out of play</h1>
-      <p className="text-muted">That page does not exist.</p>
+      <p className="text-muted">That page does not exist</p>
       <Link className="btn-primary w-fit" to="/">
         Back to Pitchside
       </Link>

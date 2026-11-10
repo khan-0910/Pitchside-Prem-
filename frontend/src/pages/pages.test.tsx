@@ -45,7 +45,7 @@ describe("Match Centre", () => {
     renderPage(<MatchCentre />);
     await userEvent.click(screen.getByRole("radio", { name: "Results" }));
     await waitFor(() => expect(fetchMock.mock.calls.some(([u]) => /status=FINISHED.*sort=desc/.test(String(u)))).toBe(true));
-    expect(await screen.findByText("No matches fit these filters.")).toBeInTheDocument();
+    expect(await screen.findByText("No matches fit these filters")).toBeInTheDocument();
   });
 
   it("opens the detail panel with scoreline chances", async () => {
@@ -179,7 +179,7 @@ describe("Overview, Data Health and Model Performance", () => {
   it("says so when no model exists rather than showing numbers", async () => {
     mockApi({ "/models/metrics": { match: null, similarity: null, transfer: null } });
     renderPage(<ModelPerformance />);
-    expect(await screen.findByText("No models have been trained yet.")).toBeInTheDocument();
+    expect(await screen.findByText("No models have been trained yet")).toBeInTheDocument();
   });
 
   it("includes the disclaimer beside real metrics", async () => {

@@ -100,7 +100,7 @@ function Similar({ player, onCompare, compared }: { player: PlayerDetail; onComp
                     <p className="truncate">{s.name}</p>
                     <p className="truncate text-sm text-muted">{s.team_short}, {s.age ?? "age unknown"}, {s.role}</p>
                   </div>
-                  <span className="num w-12 text-right font-display text-2xl font-bold">{s.similarity_score.toFixed(0)}</span>
+                  <span className="num w-12 text-right font-display text-2xl font-semibold">{s.similarity_score.toFixed(0)}</span>
                   <button type="button" aria-label={`Compare with ${s.name}`} aria-pressed={compared === s.player_id} className={compared === s.player_id ? "btn-primary" : "btn-ghost"} onClick={() => onCompare(s.player_id)}>
                     Compare
                   </button>
@@ -238,7 +238,7 @@ export default function PlayerLab() {
             </label>
           </div>
           <div className="mt-3 max-h-[26rem] overflow-y-auto pr-1" data-lenis-prevent>
-            <DataState query={query} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No players fit these filters."><p>Try fewer minutes or a wider age range.</p></EmptyState>}>
+            <DataState query={query} isEmpty={(d) => d.items.length === 0} empty={<EmptyState title="No players fit these filters"><p>Try fewer minutes or a wider age range</p></EmptyState>}>
               {(data) => (
                 <ul>
                   {data.items.map((p) => (
@@ -247,7 +247,7 @@ export default function PlayerLab() {
                         type="button"
                         aria-current={active === p.player_id}
                         onClick={() => setSelected(p.player_id)}
-                        className={`chalk flex min-h-11 w-full items-center gap-2 border-b px-1 py-1.5 text-left ${active === p.player_id ? "bg-surface text-accent" : "hover:bg-surface/50"}`}
+                        className={`chalk flex min-h-11 w-full items-center gap-2 border-b px-1 py-2 text-left ${active === p.player_id ? "bg-surface text-accent" : "hover:bg-surface/50"}`}
                       >
                         <span className="min-w-0 flex-1 truncate">{p.name}</span>
                         <span className="text-sm text-muted">{p.tla}</span>
@@ -260,7 +260,7 @@ export default function PlayerLab() {
           </div>
         </section>
         <section aria-label="Player profile" className="min-w-0">
-          {active ? <Profile key={active} id={active} /> : <EmptyState title="Pick a player to see their profile." />}
+          {active ? <Profile key={active} id={active} /> : <EmptyState title="Pick a player to see their profile" />}
         </section>
       </div>
     </>
